@@ -1,0 +1,263 @@
+input:focus{
+    border-radius: .5rem;
+    border-color: #213e53;
+}
+.client-account{
+    margin: 1rem 5rem;
+}
+
+/*******************************************************
+************ Client Main Side*********************/
+.client-account-main{
+    display: flex;
+}
+
+/*### Left Side####*/
+.client-account-left{
+    flex: 1;
+    margin-right: 1rem;
+}
+.client-profile-details{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bolder;
+}
+.client-profile-details img{
+    object-fit: cover;
+    object-position: top;
+    height: 30vh;
+    width: 30vh;
+    border: .1rem dashed black;
+}
+.client-profile-details p{
+    margin: 1rem;
+}
+.client-profile-details button{
+    margin-bottom: 1rem;
+    padding: .75rem;
+    width: 100%;
+    color: white;
+    background-color: #8d2874;
+    border-color: #8d2874;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.client-account-left ul{
+    list-style-type: none;
+}
+
+.client-account-left li{
+    font-size: 1.5rem;
+    border-bottom: .1rem solid #213e53;
+    padding: 1rem;
+}
+
+.client-account-left li:nth-child(1){
+    border-top: .1rem solid #213e53;
+}
+
+.client-account-left li:hover{
+    cursor: pointer;
+    background-color: #213e53;
+    color: #ffffff;
+}
+
+/*### Middle Side####*/
+.client-account-middle{
+    flex: 3;
+    margin: 0 1rem;
+}
+/*
+* Bookings
+*/
+.client-bookings-header ul, .single-client-booking ul{
+    list-style: none;
+    display: grid;
+    grid-template-columns: 35% 25% 15% 15% 10%;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75rem 0;
+}
+.client-bookings-header ul li, .single-client-booking ul li{
+    text-align: center;
+    padding: 0 .5rem;
+}
+.client-bookings-header ul li{
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-right: .1rem solid black;
+}
+.client-bookings-header ul li:last-child{border: none;}
+.single-client-booking ul li{
+    font-size: 1.3rem;
+}
+.single-client-booking{
+    border-radius: 0 0 .5rem .5rem;
+    padding: 1rem 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.single-client-booking:first-child{
+    margin-top: .5rem;
+}
+.single-client-booking li:nth-child(4){
+    padding: 0;
+}
+.single-client-booking li:nth-child(4) select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    box-shadow: none;
+    border: 0;
+    background: #8d2874 none;
+    width: 100%;
+    color: white;
+    cursor: pointer;
+}
+.single-client-booking li:nth-child(4) select::-ms-expand {
+    display: none;
+}
+.single-client-booking li:nth-child(4) .select{
+    position: relative;
+    display: flex;
+    background: #2c3e50;
+    overflow: hidden;
+    border-radius: .25em;
+}
+.single-client-booking li:nth-child(4) .select::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .25rem .5rem .5rem .5rem;
+    background: #213e53;
+    cursor: pointer;
+    pointer-events: none;
+    -webkit-transition: .25s all ease;
+    -o-transition: .25s all ease;
+    transition: .25s all ease;
+    color: white;
+}
+
+.single-client-booking li:last-child{
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.5rem;
+}
+.single-client-booking li i{
+    cursor: pointer;
+}
+.far.fa-trash-alt:hover{
+    color: red;
+}
+.far.fa-edit:hover{
+    color: #213e53;
+}
+/*
+* Client Profile Update
+*/
+.client-profile-update h3, .client-current-bookings h3{
+    width: max-content;
+    padding-bottom: .25rem;
+    color: #213e53;
+    border-bottom: .25rem solid #213e53;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.client-profile-update label{
+    font-size: 1.5rem;
+}
+.client-profile-update  input{
+    width: 100%;
+    margin-top: .5rem;
+    background-color: white;
+    border: .1rem solid #ccc;
+    border-radius: .5rem;
+    font-size: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.client-profile-update input:focus{
+    border-color: #213e53;
+    outline: none;
+}
+
+.client-basic-infos, .client-password-infos{
+    display: grid;
+    grid-gap: 1%;
+    align-items: center;
+    border-bottom: .2rem solid #213e53;
+    padding-bottom: 1rem;
+}
+.client-basic-infos{
+    grid-template-columns: 65% 33%;
+    padding: .5rem;
+}
+.basic-infos-one, .basic-infos-two{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-gap: 1%;
+}
+.client-password-infos{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: .5rem;
+}
+
+.client-image-uploaded img{
+    padding: 1rem;
+    width: 30vh;
+    height: 30vh;
+    object-fit: cover;
+    object-position: top;
+}
+.basic-infos-three{
+    border: .1rem dashed #213e53;
+    text-align: center;
+    border-radius: .5rem;
+    padding: 1rem;
+}
+.basic-infos-three input{
+    margin: 0;
+}
+
+.client-profile-update-options{
+    margin-top: 1rem;
+}
+.client-profile-update-options input{
+    background-color: #213e53;
+    color: white;
+    border-color: #213e53;
+    cursor: pointer;
+}
+.client-profile-update-options input:hover{
+    background-color: #2a4f69;
+}
+.client-profile-update-options input:focus{
+    border-color: #213e53;
+    border-radius: .5rem;
+    outline: none;
+}
+.client-profile-update-options section{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-gap: 10%;
+    margin-top: 5rem;
+}
+.client-profile-update-options section button{
+    padding: 1rem;
+    border-radius: .5rem;
+    width: 100%;
+    color: white;
+    font-weight: bolder;
+ }
+.client-profile-update-options section a:first-child button{
+    background-color: #8d2874;
+    border-color: #8d2874;
+}
+.client-profile-update-options section a:last-child button{
+    background-color: red;
+    border-color: red;
+}

@@ -1,0 +1,256 @@
+input:focus{
+    border-radius: .5rem;
+    border-color: #213e53;
+}
+.index-page-one{
+    /*height: 35rem;*/
+    display: grid;
+    grid-template-columns: 65% 35%;
+    background: url("../images/backgroung1.jpg") center;
+    background-size: cover;
+    padding: 0 10rem;
+}
+.index-page-one-left{
+    margin-right: 8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}.index-page-one-left h1{
+    font-size: 3.15rem;
+    text-shadow: .11rem .11rem lightgrey;
+}.index-page-one-left p{
+    margin: 1rem 8rem 5rem 8rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-style: italic;
+    /*font-family:  Avenir Next Pro;*/
+    font-family:  Matrice;
+}
+.booking-buttons button, .index-page-one-right button{
+    width: 30rem;
+    padding: 1rem;
+    color: white;
+    background-color: #8d2874;
+    border-color: #8d2874;
+    border-radius: .5rem;
+    font-size: 3rem;
+    font-weight: bolder;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.booking-buttons button:hover{
+    box-shadow: .1rem .1rem #8d2874;
+}
+.booking-buttons a{
+    margin: 0 2rem;
+
+}
+/*
+* Page Right
+*/
+.index-page-one-right{
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+.index-page-one-right img{
+    height: 60vh;
+    width: 55vh;
+    object-fit: cover;
+    object-position: top;
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+}
+/**********************************************************************************************************************/
+/*****************************************    Index 2    **************************************************************/
+.index-page-two{
+    height: 15.5rem;
+    display: grid;
+    grid-template-columns: 65%;
+}
+.book-services-steps{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 2rem 8rem;
+    align-items: center;
+}
+.index-page-two p{
+    border: .2rem solid #213e53;
+    margin: 1rem;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    color: #213e53;
+}
+
+/**********************************************************************************************************************/
+/*****************************************    Index 3    **************************************************************/
+.index-page-three{
+    margin: 2rem 7rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: row;
+}
+.single-user-index-details{
+    border: .2rem solid lightgrey;
+    padding: 1rem 1rem 0 1rem;
+    margin: 1rem;
+    box-shadow: .2rem .2rem lightgrey;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+.single-user-index-details:hover{
+    border-color: #213e53;
+    box-shadow: .2rem .2rem #213e53;
+}
+.top-side{
+    display: flex;
+}
+.single-user-index-details .top-side img{
+    height: 8rem;
+    width: 8rem;
+    object-fit: cover;
+    position: center;
+    border-radius: 50%;
+}
+.top-side section{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+}
+.top-side section span{
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+}
+.top-side section span:first-child{
+    justify-content: center;
+    font-size: 1.7rem;
+    font-weight: bolder;
+}
+.top-side section span:last-child{
+    justify-content: end;
+    font-size: 1.3rem;
+    font-weight: bolder;
+    color: #213e53;
+}
+.top-side section span:last-child p{
+    border: .1rem solid #8d2874;
+    padding: .25rem;
+    border-radius: .5rem;
+    background-color: #8d2874;
+    color: white;
+    box-shadow: .1rem .1rem #8d2874;
+}
+.middle-side{
+    border-top: .1rem solid black;
+    border-bottom: .1rem solid black;
+    margin: 2rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 2rem;
+}
+.bottom-side{
+    border: none;
+    margin: 0;
+    padding-top: 0;
+}
+.middle-side p{
+    border: .1rem solid black;
+    border-radius: .5rem;
+    margin-right: 1rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    padding: .5rem;
+    font-size: 1.2rem;
+}
+.bottom-side{
+    margin: 2rem 0 1rem 0;
+    text-align: center;
+}
+.bottom-side a{
+    margin: 1rem;
+}
+.bottom-side a button{
+    width: 10rem;
+    padding: .5rem;
+    color: white;
+    cursor: pointer;
+    font-weight: bolder;
+    border-radius: .5rem;
+
+}
+.bottom-side a:first-child button{
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+.bottom-side a:last-child button{
+    background-color: #213e53;
+    border-color: #213e53;
+}
+/*********************************************************************************************************************/
+/********************************************** Footer  **********************************************/
+#contact{
+    background-color: #213e53;
+    font-size: 1.5rem;
+    /*font-family: Matrice;*/
+}
+#contact .container{
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+#contact .container .top-footer p{
+    width: fit-content;
+    margin: 0 20rem 2rem 20rem;
+    font-size: 1.7rem;
+    font-family: Matrice;
+}
+#contact .container .middle-footer .first-contact-section h6, .container .second-contact-section h6{
+    font-size: 1.5rem;
+}
+#contact .container .middle-footer .first-contact-section h6{
+    border-top: .2rem solid white;
+    margin: 0 35rem;
+    padding-top: 1rem;
+}
+.container .second-contact-section{
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+.container .second-contact-section span{
+    margin: 0 1rem;
+}
+#contact .contact-social ul{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+#contact .contact-social ul li{
+
+}
+#contact .contact-social ul li a{
+    transition: all 0.4s ease 0s;
+
+}
+#contact .contact-social ul li a i{
+    cursor: pointer;
+    font-size: 3rem;
+    margin: 0 1rem;
+    color: white;
+}
+.bottom-footer{
+    border-top: .1rem solid white;
+    margin: 1rem 3rem 0 3rem;
+    padding-top: 1rem;
+}
+.bottom-footer p{
+
+}

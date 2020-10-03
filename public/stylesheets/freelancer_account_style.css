@@ -1,0 +1,950 @@
+.freelancer-page-main-container{
+    margin: 1rem 5rem 0 5rem;
+}
+
+.user-general-information-one input:focus{
+    border-radius: .5rem;
+    border-color: #213e53;
+}
+.main-account-page{
+    display: flex;
+    color: black;
+    font: 1rem "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+/*margin: 1rem 1rem 1rem 5rem; Left side margin*/
+/*margin: 1rem 5rem 1rem 1rem; Right side margin*/
+/***********************************************************************************************************************
+************************************************************************************************************************
+****************************************      Freelancer Left Section   ***********************************/
+.freelancer_account_left_side{
+    flex: 1;
+    margin: 1rem 1rem 1rem 0;
+}
+.account-profile-image{
+    display: grid;
+    grid-template-rows: 30vh;
+    grid-template-columns: 30vh;
+    justify-content: center;
+}
+.account-profile-image img, .default-profile-image{
+    border: .1rem dashed black;
+}
+
+.default-profile-image{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#213e53;
+    background-color: #f1f1f1;
+}
+/*.default-profile-image .fas.fa-user-alt{
+    font-size: 25vh;
+    position: absolute;
+}*/
+.default-profile-image p{
+    font-size: 1.2rem;
+    font-weight: bolder;
+    border: .1rem dashed #0d3349;
+    color:  #0d3349;
+    position: absolute;
+    margin-bottom: 1rem;
+    bottom: 2vh;
+    align-self: end;
+    padding: .2rem;
+    display: none;
+    cursor: pointer;
+}
+.default-profile-image:hover p{
+    display: block;
+}
+.default-profile-image p:hover{
+    text-decoration: underline;
+}
+.account-profile-image img{
+    object-fit: cover;
+    object-position: top;
+    height: 30vh;
+    width: 30vh;
+}
+.account-profile-name{
+    text-align: center;
+    margin: 1rem;
+    font-size: 2rem;
+    font-weight: bolder;
+}
+
+.public-service-enquiry {
+    text-align: center;
+    margin: 0 1rem;
+}
+.public-service-enquiry button{
+    background-color: #213e53;
+    color: white;
+    border: .1rem solid #213e53;
+    cursor: pointer;
+    margin: 1rem 0.25rem 2rem 0.25rem;
+    padding: 1rem 0;
+    width: 15vh;
+    font-size: 1.5rem;
+    font-weight: bolder;
+}
+.public-service-enquiry .book-btn:nth-child(1){
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.freelancer-services, .user-account-skills section{
+    margin: 0 1rem 2rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: .2rem solid #213e53;
+    border-top: .2rem solid #213e53;
+}
+.default-service-container{
+    border: .1rem dashed black;
+    margin: 1rem;
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: center;align-items: center;
+}
+.default-service-container .default-service-p{
+    padding: .5rem;
+    font-size: 1.3rem;
+}
+.freelancer-services p, .user-account-skills section p{
+    margin: 1rem 1rem 1rem .5rem;
+    border: .1rem solid #213e53;
+    text-transform: uppercase;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1.3rem;
+    padding: .5rem;
+}
+.account-profile-information{
+    margin: 0 1rem;
+}
+
+.account-profile-information ul{
+    list-style-type: none;
+}
+
+.account-profile-information li{
+    font-size: 1.5rem;
+    border-bottom: .1rem solid #213e53;
+    padding: 1rem;
+}
+
+.account-profile-information li:nth-child(1){
+    border-top: .1rem solid #213e53;
+}
+
+.account-profile-information li:hover{
+    cursor: pointer;
+    background-color: #213e53;
+    color: #ffffff;
+}
+.clicked{
+    background-color: #213e53;
+    color: white;
+}
+
+/***********************************************************************************************************************
+************************************************************************************************************************
+****************************************      Freelancer Main Section   ***********************************************/
+.freelancer_account_main_side{
+    flex: 3;
+    margin: 1rem 0 1rem 1rem;
+}
+
+/*~~~~~~~~~~~~~ First Side ~~~~~~~~~~~~~~~*/
+.account-first-side{
+    border-bottom: .1rem solid #213e53;
+    display: flex;
+    flex-direction: column;
+}
+.account-first-side h1, .user-account-skills h1, .price-information h1, .account-third-side h1, .account-fourth-side h1,
+.account-fifth-side h1, .update-page h1, .freelancer-projects-current h1, .freelancer-portfolio-modal-container h1{
+    width: max-content;
+    padding-bottom: .25rem;
+    color: #213e53;
+    border-bottom: .25rem solid #213e53;
+}
+.account-first-side .default-description{
+    border: .1rem dashed black;
+    width: 100%;
+    margin: 2rem 0;
+    height: 10vh;
+    display: flex;
+    justify-content: center;align-items: center;
+}
+
+.account-first-side .default-description p{
+    font-size: 1.5rem;
+    margin: 1rem;
+}
+.account-first-side .default-description p:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+.account-first-side p{
+    font-size: 1.5rem;
+    text-justify: inter-word;
+    -ms-text-justify: inter-word;
+    margin: 1rem;
+}
+
+/*~~~~~~~~~~~~~ Second Side ~~~~~~~~~~~~~~~*/
+.account-second-side{
+    display: flex;
+    flex-direction: row;
+}
+.user-account-skills, .price-information{
+    flex: 1;
+    background-color: #213e53;
+    border-radius: 1rem;
+    margin: 2rem;
+    padding: 1rem;
+}
+.user-account-skills h1{
+    color: white;
+    border-bottom: .25rem solid white;
+}
+.user-account-skills section{
+    margin: 0;
+}
+.user-account-skills section p{
+    border-color: white;
+    border-radius: .5rem;
+    color: white;
+    font-weight: bold;
+}
+.default-skill{
+    display: flex; justify-content: center; align-items: center;
+}
+#addSkills{
+    border: .1rem dashed white; border-radius: 0;
+}
+#addSkills:hover, #addPrice:hover, #addEducation:hover, #addPortfolio:hover, .default-service-p:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+.price-information{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.price-information p{
+    color: white;
+    font-size: 3rem;
+    font-weight: bolder;
+}
+/*~~~~~~~~~~~~~ Third Side ~~~~~~~~~~~~~~~*/
+.account-third-side{
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    border-top: .1rem solid #213e53;
+}
+.each-education{
+    margin-top: 1rem;
+}
+.each-education p{
+    font-size: 1.5rem;
+}
+.each-education p:first-child{
+    font-weight: bolder;
+}
+.default-education{
+    border: .1rem dashed black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+}
+#addEducation{
+    font-weight: unset
+}
+/*~~~~~~~~~~~~~ Fourth Side ~~~~~~~~~~~~~~~*/
+.account-fourth-side{
+    border-top: .1rem solid #213e53;
+    padding: 1rem 0;
+}
+.account-fourth-side h1{
+    margin-bottom: 1rem;
+}
+.image-portfolio{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: .5%;
+    row-gap: .5%;
+    border: .1rem solid white;
+    grid-auto-flow: row;
+    margin-bottom: 1rem;
+}
+.image-portfolio p{
+    font-size: 1.5rem;
+}
+.image-portfolio div{
+    border: .25rem solid black;
+    position: relative;
+}
+.image-portfolio .portfolio-tag-overlay{
+    border: .1rem solid #213e53;
+    position: absolute;
+    width: 100%;
+    top: 40%;
+    background-color: #213e53;
+    display: none;
+}
+.image-portfolio>div:hover .portfolio-tag-overlay{
+    display: block;
+}
+.portfolio-tag-overlay p{
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+}
+
+.image-portfolio img, .image-portfolio video,
+.image-portfolio iframe, .image-portfolio embed{
+    border: .1rem solid green;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /*border: .1rem solid #23425a ;*/
+}
+/*
+*************** Portfolio Update Popup ******************
+*/
+.freelancer-portfolio-big-modal{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.freelancer-portfolio-modal-container{
+    width: 60%;
+    background-color: white;
+    padding: 2rem;
+    position: relative;
+    border-radius: .5rem;
+}
+/*
+.portfolio-item-upload-header{
+    display: flex;
+    justify-content: center;
+}
+.portfolio-item-upload-header h1{
+    font-size: 2rem;
+    border: .25rem solid #213e53;
+    background-color: #213e53;
+    color: white;
+    padding: 1rem;
+    border-radius: .5rem;
+}
+.portfolio-item-upload-section{
+    margin: 3rem 0;
+}
+.portfolio-item-upload-option{
+    display: flex;
+}
+
+.portfolio-item-upload-option a, .portfolio-item-upload-option input{
+    flex: 1;
+    cursor: context-menu;
+}
+.portfolio-item-upload-option a button, .portfolio-item-upload-option input{
+    max-width: 15rem;width: 15rem;
+    padding: .5rem 0;
+    cursor: pointer;
+    color: white;
+    font-weight: bolder;
+}
+.portfolio-item-upload-option a button{
+    background-color: #ca1212;
+    border-color: #ca1212;
+}
+.portfolio-item-upload-option input, .portfolio-item-upload-option input:focus,
+.portfolio-item-upload-option input:hover{
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    border-radius: 0;
+}
+*/
+/*~~~~~~~~~~~~~ Fifth Side ~~~~~~~~~~~~~~~*/
+.account-fifth-side{
+    /*margin-top: 10rem;*/
+    border-top: .5rem solid #213e53;
+    padding-top: 1rem;
+    margin: 10rem 25% 1rem 1rem;
+}
+
+.default-written-review{
+    padding: 1rem;
+    border-bottom: .2rem solid #213e53;
+    margin: 2rem 0;
+}
+.default-written-review p{
+    border: .1rem dashed black;
+    font-size: 1.3rem;
+    padding: 2rem;
+    text-align: center;
+    font-weight: bold;
+}
+.user-single-review{
+    border-top: .1rem solid #213e53;
+    display: grid;
+    grid-template-columns: 10% 90%;
+    padding: 1rem;
+}
+.user-single-review:first-child{
+    border-top: none;
+    border-bottom: .1rem solid #213e53;
+}
+.reviewer-identity{
+    text-align: center;
+    padding-right: 1rem;
+}
+.reviewer-identity img{
+    border-radius: 50%;
+}
+.reviewer-identity p{
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #213e53;
+}
+.review-content{
+    padding-left: 1rem;
+}
+.section-one{
+    display: flex;
+}
+
+.section-one p{
+    font-size: 1.3rem;
+    font-weight: bolder;
+    color: #213e53;
+}
+.section-one p:nth-child(2), .section-one p:nth-child(3){padding-left: 1rem;}
+.user-account-reviews{
+    text-align: justify;
+    text-justify: inter-word;
+    font-size: 1.3rem;
+    margin: 1rem 0;
+}
+.section-three{
+    display: flex;
+    justify-content: end;
+}
+button.like, button.dislike{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border-width: 1px;
+    font-size: 15px;
+    cursor: pointer;
+}
+button.dislike{
+    color: rgba(0,150,136 ,1);
+    background-color:rgba(38,166,154 ,0.3);
+    border-color: rgba(0,150,136 ,1);
+    margin: 0 .5rem;
+}
+button.like{
+    color: rgba(255,82,82 ,1);
+    background-color: rgba(255,138,128 ,0.3);
+    border-color: rgba(255,82,82 ,1);
+}
+.user-write-review{
+    margin-top: 5rem;
+}
+.user-write-review-area{
+    width: 100%;
+    height: 10vh;
+    border: .1rem solid #213e53;
+    box-shadow: 0 1px 0 0 #213e53;
+    margin: 1rem 0;
+    padding: 1rem;
+    font-family: "Times New Roman", Times, serif;
+}
+.review-rate {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    font-family: sans-serif;
+    font-weight: 700;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    border: 1px solid #213e53;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+    linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+    background-repeat: no-repeat, repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100%;
+}
+.review-rate::-ms-expand {
+    display: none;
+}
+.review-rate:focus {
+    border-color: #aaa;
+    box-shadow: 0 0 1px 3px #213e53;
+    color: #213e53;
+    outline: none;
+}
+.review-rate option {
+    font-weight: bold;
+}
+.review-submit-section{
+    margin: 1rem 0;
+    width: 100%;
+}
+.review-submit-section button, .update-page-submit #update-page-submission{
+    width: 100%;
+    background-color: white;
+    cursor: pointer;
+    border: .1rem solid #213e53;
+    color: #213e53;
+    font-weight: bolder;
+    font-size: 1.5rem;
+    padding: 1rem;
+    border-radius: .4rem;
+}
+
+.review-submit-section button:hover{
+    background-color: #213e53;
+    color: white;
+}
+
+/************************************************************************************************************************
+************************************************************************************************************************
+****************************************       Profile Update Page      *************************************************/
+.freelancer-update-page>p{
+    opacity:50%;
+    margin-top: .5rem;
+    font-size: 1.5rem;
+}
+.freelancer-update-page input:focus, .user-bio-one section textarea:focus, .user-education-years select:focus,
+.input-group-btn:focus, #add-services-btn:focus, #add-skills-button:focus{
+    border-color: #213e53;
+    border-radius: .5rem;
+    outline: none;
+}
+.input-group-btn:focus, #add-services-btn:focus, #add-skills-button:focus{
+    background-color: #213e53;
+    color: white;
+}
+.freelancer-update-page label{
+    font-size: 1.5rem;
+}
+
+.update-general-information{
+    margin: 1rem;
+    border-top: .1rem solid #213e53;
+}
+.update-general-information h3{
+    color: #213e53;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    opacity: 50%;
+}
+.update-general-information input{
+    width: 100%;
+    margin-top: .5rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+    border: .1rem solid #ccc;
+    border-radius: .5rem;
+    font-size: 1.5rem;
+    padding: 1rem;
+}
+
+/*~~~~~~~~~~~~~ General Information Section One ~~~~~~~~~~~~~~~*/
+.user-general-information-one{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: .5rem;
+    align-items: center;
+    column-gap: 1rem;
+}
+.general-information-section-three{
+    border: .1rem dashed #213e53;
+    text-align: center;
+    padding: 1rem;
+    border-radius: .5rem;
+}
+.file-image-area, .client-image-update-area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.file-image-upload img{
+    padding: 1rem;
+    width: 30vh;
+    height: 30vh;
+    object-fit: cover;
+    object-position: top;
+}
+.file-image-upload-btn, .client-image-upload-btn{
+    margin-top: 2rem;
+    border: .1rem dashed #213e53;
+    color: #213e53;
+    border-radius: .5rem;
+    position: relative;
+    padding: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    min-width: 19vh;
+    font-size: 1.2rem;
+}
+.file-image-upload-btn:hover, .client-image-upload-btn:hover{
+    color: white;
+    background-color: #213e53;
+}
+.file-image-upload-btn span, .client-image-upload-btn span{
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+.file-image-upload-btn span i, .client-image-upload-btn span i{
+    margin-right: .25rem;
+}
+.file-image-upload-btn span p, .client-image-upload-btn span p{
+    margin-left: .25rem;
+}
+.file-image-upload-btn input, .client-image-upload-btn input{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;left: 0;
+    font-size: 2rem;
+    min-width: 19vh;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.user-education-years button:hover{
+    color: white;
+    background-color: #213e53;
+    border-color: #213e53;
+}
+
+/*~~~~~~~~~~~~~ General Information Section Two ~~~~~~~~~~~~~~~*/
+.user-general-information-two{
+    border-top: .1rem solid #213e53;
+}
+.git-password-update-section{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1rem;
+}
+
+/*~~~~~~~~~~~~~ General Information Section Three ~~~~~~~~~~~~~~~*/
+.user-general-information-three{
+    border-top: .1rem solid #213e53;
+}
+
+.user-education{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1rem;
+}
+.user-education input, .user-education-years select, .user-education-years button{
+    padding: 1rem;
+    font-size: 1.5rem;
+    margin: .5rem 0 1.5rem 0;
+    border-radius: .5rem;
+}
+.user-education-years{
+    display: flex;
+    justify-content: space-between;
+}
+.user-education-years button, .user-education-years select{
+    border: .1rem solid lightgrey;
+    background-color: white;
+    cursor: pointer;
+}
+
+.user-education-years button{color: #213e53}
+
+.freelancer-single-education:last-child{
+    margin-bottom: 1.5rem;
+}
+.freelancer-single-education:nth-child(odd){
+    background-color: lightgrey;
+}
+.freelancer-single-education .show-section{
+    display: grid;
+    grid-template-columns: 40% 25% 15% 20%;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: .5rem;
+}
+.freelancer-single-education .show-section p{
+    text-align: center;
+}
+.freelancer-single-education .show-section button{
+    padding: .25rem;
+    margin-left: 12rem;
+    background-color: #ca1212;
+    border-color: #ca1212;
+    color: white;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.user-bio-details{
+    border-top: .1rem solid #213e53;
+}
+.user-bio-details-container .user-bio-one, .user-bio-details-container .user-bio-two{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+}
+.user-bio-details-container .user-bio-two{
+    margin-top: 3rem;
+}
+.user-bio-one section textarea{
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 10vh;
+    max-height: 20vh;
+    border: .1rem solid lightgrey;
+    padding: 1rem;
+    margin-top: .5rem;
+    font-family: "Times New Roman", Times, serif;
+    border-radius: .5rem;
+}
+.user-bio-container{
+    display: grid;
+    grid-template-columns: 80% 20%;
+    margin: 1rem 0;
+}
+.user-bio-container input{
+    padding: 1rem;
+    margin: 0;
+}
+.user-bio-container button{
+    cursor: pointer;
+    background-color: white;
+    border: .1rem solid lightgrey;
+    color: #213e53;
+    border-radius: .5rem;
+}
+.user-bio-container button:hover{
+    background-color: #213e53;
+    border-color: #213e53;
+    color: white;
+}
+
+.saved-service, .saved-skill{
+    background-color: #213e53;
+    width: 80%;
+}
+.single-service, .single-skill{
+    border-top: .5rem solid white;
+}
+.single-service:first-child, .single-skill:first-child{
+    border: none;
+}
+.single-service .shown-service, .single-skill .show-skill{
+    display: grid;
+    grid-template-columns: 90% 10%;
+    align-items: center;
+    padding: 1rem 0;
+    margin: 0 1rem;
+}
+.single-service .shown-service h4, .single-skill .show-skill h4{
+    font-size: 1.5rem;color: white;
+    margin-right: 1rem;
+}
+.delete-aService-btn, .delete-aSkill-btn{
+    background-color: #ca1212;
+    border-color: #ca1212;
+    color: white;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.update-page-submit{
+    border-top: .1rem solid #213e53;
+    padding-top: 1rem;
+    margin-top: 1.5rem;
+}
+.update-page-submit #update-page-submission{
+    color: white;
+    background-color: #213e53;
+}
+.update-page-submit #update-page-submission:hover{
+    color: white;
+    background-color: #091b28;
+}
+/*##### Page Errors #####*/
+
+.single-error, .single-update-container{
+    display: grid;
+    grid-template-columns: 90% 10%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: .5rem;
+    font-size: 1.5rem;
+    color: white;
+    background-color: #ca1212;
+    font-weight: bolder;
+}
+.single-error:last-child, .single-update-container:last-child{
+    margin-bottom: 2rem;
+}
+
+#updateInformation, #save-profile-success{
+    background-color: #4CAF50;
+}
+.update-error-delete-btn, .update-delete-btn{
+    cursor: pointer;
+    padding: .75rem 0;
+}
+
+.single-error h4, .single-update-container h4{
+    border-right: .1rem solid white;
+    padding: .75rem 0;
+}
+
+/************************************************************************************************************************
+************************************************************************************************************************
+****************************************       Freelancer Booking      *************************************************/
+.freelancer-projects-current{
+    background-color: #f1f1f1;
+    padding: 3rem;
+}
+.freelancer-current-project-container{
+    margin-top: 1rem;
+    box-shadow: 0 .2rem .2rem .2rem lightgrey;
+    border-radius: .5rem;
+    color: #213e53;
+
+}
+.freelancer-projects-header, .freelancer-projects-top, .freelancer-one-project{
+    display: grid;
+    grid-template-columns: 32.5% 17.5% 15% 10% 15% 10%;
+    background-color: white;
+
+}
+.freelancer-projects-header{
+    padding: 1rem 1rem 0.5rem 1rem;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+}
+.freelancer-projects-header p{
+    opacity: 50%;
+}
+.freelancer-projects-header p:nth-child(4), .freelancer-projects-header p:nth-child(5), .freelancer-projects-header p:nth-child(6)
+{
+    text-align: center;
+}
+.freelancer-projects-top, .freelancer-one-project{
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 1rem 1rem 2rem 1rem;
+    border-bottom-left-radius: .5rem;
+    border-bottom-right-radius: .5rem;
+}
+.freelancer-options, .freelancer-messages, .project-status{
+    text-align: center;
+}
+.freelancer-messages{
+    position: relative;
+}
+.freelancer-messages p{
+    position: absolute;
+    bottom: 1rem;
+    right: 2.5rem;
+    color: white;
+    background-color: green;
+    border-radius: 50%;
+    padding: .1rem .2rem;
+}
+.freelancer-options i{
+    margin: 0 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.freelancer-options i:nth-child(1):hover{
+    color: #ca1212;
+}
+.freelancer-options i:nth-child(2):hover{
+    color: green;
+}
+
+.freelancer-one-project{
+    padding: 3rem 4rem;
+    border-bottom: .2rem solid #213e53;
+    cursor: pointer;
+}.freelancer-one-project:hover{
+     background-color: #f1f1f1;
+ }
+
+
+
+/************************************************************************************************************************
+************************************************************************************************************************
+****************************************       Messages      *************************************************/
+.freelancer-single-message{
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    margin-bottom: 2rem;
+    border-radius: .5rem;
+    box-shadow: .25rem .25rem lightgrey;
+}
+.freelancer-single-message:hover{
+    cursor: pointer;
+    border: .1rem solid #213e53;
+    box-shadow: .25rem .25rem #213e53;
+}
+.client-message-identity, .client-message-input, .client-message-time{
+    text-align: center;
+    padding: .5rem;
+    font-size: 1.1rem;
+}
+.client-message-identity img{
+    width:4rem;
+    height:4rem;
+    object-fit: cover;
+    position: center;
+    border-radius: 50%;
+}
+.client-message-identity p{
+    color: #213e53;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.client-message-input p{
+    margin-top: 1rem;
+    text-align: left;
+    font-size: 1.1rem;
+}
+.client-message-time p{
+    border-radius: .5rem;
+    background-color: #db4a39;
+    color: white;
+    margin: 0 1rem;
+}
+
+
+
+

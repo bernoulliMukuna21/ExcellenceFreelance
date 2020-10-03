@@ -1,0 +1,114 @@
+extends layout
+
+block content
+  include partials/form_message
+  .index-page-one
+    .index-page-one-left
+      h1 Hire Excellent Freelancers around the World
+      p
+        span
+          | Excellence
+          bolder .
+          | Freelancer
+        |  facilitates the booking of freelancers all over the world. As well as booking freelancers, you can also become a freelancer.
+      .booking-buttons
+        if(!isLogged)
+          a(href='/users/join'): button JOIN US NOW
+        else
+          button#book-now-btn(class=pageType) BOOK NOW
+    .index-page-one-right
+      img(src='/images/excellenceFreelancerMaybeFinal.png')
+  .index-page-two
+    .book-services-steps
+      p Browse
+      p Find a Freelancer
+      p Book Freelance Service
+  .index-page-three
+    .single-user-index-details
+      .top-side
+        img(src='/images/eF4.jpg')
+        section
+            span
+                p Andre Mbombo
+            span
+                p Start at £8.79
+      .middle-side
+        p Software Developer
+        p Party Host
+        p Designer
+        p Painter
+        p Blogger
+      .bottom-side
+        a(href='#'): button Book
+        a(href='#'): button View Profile
+
+    .single-user-index-details
+      .top-side
+        img(src='/images/eF4.jpg')
+        section
+            span
+                p Andre Mbombo
+            span
+                p Start at £8.79
+      .middle-side
+        p Software Developer
+        p Party Host
+        p Designer
+        p Painter
+        p Blogger
+      .bottom-side
+        a(href='#'): button Book
+        a(href='#'): button View Profile
+
+    .single-user-index-details
+      .top-side
+        img(src='/images/eF4.jpg')
+        section
+            span
+                p Andre Mbombo
+            span
+                p Start at £8.79
+      .middle-side
+        p Software Developer
+        p Party Host
+        p Designer
+        p Painter
+        p Blogger
+      .bottom-side
+        a(href='#'): button Book
+        a(href='#'): button View Profile
+    .single-user-index-details
+      .top-side
+        img(src='/images/eF4.jpg')
+        section
+            span
+                p Andre Mbombo
+            span
+                p Start at £8.79
+      .middle-side
+        p Software Developer
+        p Party Host
+        p Designer
+        p Painter
+        p Blogger
+      .bottom-side
+        a(href='#'): button Book
+        a(href='#'): button View Profile
+    .single-user-index-details
+      .top-side
+        img(src='/images/eF4.jpg')
+        section
+            span
+                p Andre Mbombo
+            span
+                p Start at £8.79
+      .middle-side
+        p Software Developer
+        p Party Host
+        p Designer
+        p Painter
+        p Blogger
+      .bottom-side
+        a(href='#'): button Book
+        a(href='#'): button View Profile
+  include ./partials/footer

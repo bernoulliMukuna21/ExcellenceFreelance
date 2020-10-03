@@ -1,0 +1,480 @@
+extends layout
+
+block content
+    - console.log(); //user
+    - let this_title = 'Kunta Kinte and the 40 Thieves Book Reviews';
+    - let mainPageId = user.price;
+    - let currentYear = (new Date()).getFullYear();
+    - let startYear = currentYear - 50;
+    - let rangeOfYears = [];
+    - for(let i=currentYear; i>=startYear; i--){ rangeOfYears.push(i)}
+
+    .freelancer-page-main-container
+        .freelancer-update-infos
+        div.main-account-page(id=mainPageId)
+            .freelancer_account_left_side
+                .account-profile-details
+                    .account-profile-image
+                        if !user.profile_picture.data
+                            .default-profile-image
+                                img(src='/images/userDefaultImage.png')
+                                p.addProfilePicture + Add Profile Picture
+                        else
+                            img(src=freelancerImage)
+                    p.account-profile-name #{user.name + ' ' + user.surname}
+                    div.public-service-enquiry
+                        a(href='#'): button(class='book-btn') Book
+                        a(href='#'): button(id='enquire-btn') Enquire
+
+                    div.freelancer-services
+                        if user.service.length === 0
+                            .default-service-container
+                                .default-service-p#addService + Add Service (e.g. Web Designer)
+                        else
+                            each freelancerService in user.service
+                                p #{freelancerService}
+
+                    div.account-profile-information
+                        ul
+                            li.user-main-page(class='clicked') Main Page
+                            li.user-update-page Update Personal Information
+                            li.user-current-booking-page Bookings
+                            li.user-completed-booking-page Messages
+
+            .freelancer_account_main_side
+                .freelancer-main-page
+                    .account-first-side
+                        h1 About Me
+                        if !user.description
+                            .default-description
+                                p#addDescription + Add a Description about yourself
+                        else
+                            p #{user.description}
+                    .account-second-side
+                        div.user-account-skills
+                            h1 Skills
+                            if user.skill.length === 0
+                                section.default-skill
+                                    p#addSkills + Add Your Skills
+                            else
+                                section
+                                    each freelancerSkill in user.skill
+                                        p #{freelancerSkill}
+                        div.price-information
+                            if !user.price
+                                p#addPrice(style='font-size: 1.7rem; border: .1rem dashed white; padding: .25rem') + Add Min. Price for your Service
+                            else
+                                p.booking-price
+                                    | Minimum Price at #{' '}
+                                    i(style='text-decoration: underline') £#{user.price}
+                    .account-third-side
+                        h1 Education
+                        if user.education.length === 0
+                            section.each-education.default-education
+                                p#addEducation + Add Education
+                        else
+                            each freelancerEducation in user.education
+                                section.each-education
+                                    p #{freelancerEducation.degreeAndCourse}
+                                    p #{freelancerEducation.institute}
+                                    p Year:#{' '+ freelancerEducation.educationYear}
+
+                    .account-fourth-side
+                        h1 Portfolio
+
+                        div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
+                        'align-items: center; height: 15vh')
+                            p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
+
+                        div.image-portfolio
+                            div
+                                .portfolio-tag-overlay
+                                    p Some Photo I took
+                                img(src='/images/eF1.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p My Trip to Ghana
+                                img(src='/images/eF2.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Life is good
+                                iframe(src='/images/excellencePDF.pdf#toolbar=0&scrollbar=0')
+                            div
+                                .portfolio-tag-overlay
+                                    p Something else
+                                embed(src='https://alex.smola.org/drafts/thebook.pdf#toolbar=0&scrollbar=0')
+                            div
+                                .portfolio-tag-overlay
+                                    p Do you see this picture
+                                video(src='/images/videoExcellence1.mp4', controls)
+                            div
+                                .portfolio-tag-overlay
+                                    p My time at the University of Sheffield
+                                img(src='/images/eF4.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Throw back
+                                img(src='/images/eF5.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Hmmm
+                                img(src='/images/eF6.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Do you see what I see
+                                img(src='/images/eF7.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Christ in me da hope of glory
+                                img(src='/images/eF4.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p I have found IT!!
+                                video(src='/images/excellenceVideo.mp4', controls)
+                            div
+                                .portfolio-tag-overlay
+                                    p Some other thing
+                                img(src='/images/eF2.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Some final thing
+                                img(src='/images/eF3.jpg')
+                        .freelancer-page-popups
+                            // freelancer portfolio popup section
+                            .freelancer-portfolio-big-modal
+                                .freelancer-portfolio-modal-container
+                                    .portfolio-item-upload-top
+                                        p x
+                                    .portfolio-item-upload-middle
+                                        .portfolio-upload-empty
+                                            p Upload to Portfolio
+                                        .portfolio-upload-load
+                                            section.portfolio-item-upload-first
+                                                .portfolio-item-section
+                                                //
+                                                    img(src='/images/eF3.jpg')
+                                                .portfolio-item-caption
+                                                    textarea(placeholder='Write a Caption...')
+                                            setcion.portfolio-item-upload-second
+                                                .portfolio-upload-options
+                                                    .portfolio-save-upload
+                                                        a(href='#'): button Upload to Portfolio
+                                                        input#freelancer-portfolio-update(type='submit', value='Save')
+                                                    .portfolio-delete
+                                                        a(href='#'): button#freelancer-portfolio-delete Delete
+
+                    .account-fifth-side
+                        h1 All Reviews
+                        div.written-reviews
+                            .default-written-review
+                                p No Reviews
+                        //
+                            section.user-single-review
+                                section.reviewer-identity
+                                    img(src='/images/Jojo.jpg' style='width:5rem; height:5rem')
+                                    p Debbie Lambanot
+                                section.review-content
+                                    section.section-one
+                                        p Rating: 3.5/5
+                                        p Agree: 1000
+                                        p Disagree: 10
+                                    section.section-two
+                                        p.user-account-reviews Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+                                    section.section-three
+                                        button.dislike
+                                            i.far.fa-thumbs-up(aria-hidden='true')
+                                        button.like
+                                            i.far.fa-thumbs-down(aria-hidden='true')
+                        div.user-write-review
+                            section.user-review-section
+                                textarea.user-write-review-area(placeholder='Write a Review...')
+                                select.review-rate(name='star-rate')
+                                    option(value='star-rating') Enter a Rating
+                                    option(value='one') 1
+                                    option(value='one-half') 1.5
+                                    option(value='two') 2
+                                    option(value='two-half') 2.5
+                                    option(value='three') 3
+                                    option(value='three-half') 3.5
+                                    option(value='four') 4
+                                    option(value='four-half') 4.5
+                                    option(value='five') 5
+                            section.review-submit-section
+                                button(id='user-review-submission') Submit Review
+
+                .freelancer-update-page(style='display: none;')
+                    - let updateOption = 'pointer-events: auto';
+                    - if(user.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
+
+                    h1 Update Personal Information
+                    p Setup your general profile details.
+
+                    form.update-general-information(method='post', autocomplete="off")
+                        //
+                            action='/account/personal_account/:id',
+                        h3 Name and other General Information
+                        .user-general-information-one
+                            .general-information-section-one
+                                label(for='name') Name: #[br]
+                                input(id='name', type='text', placeholder='Enter Name', name='name',
+                                    value=typeof (user.name) != 'undefined' ? user.name: '', required)
+
+                                label(for='email') #[br] Email Address: #[br]
+                                input(id='email', type='email', placeholder='Enter Email', name='email',
+                                    value=typeof (user.email) != 'undefined' ? user.email: '', style=updateOption,
+                                    required)
+                            .general-information-section-two
+                                label(for='surname') Surname: #[br]
+                                input(id='surname', type='text', placeholder='Enter Surname', name='surname',
+                                    value=typeof (user.surname) != 'undefined' ? user.surname: '', required)
+
+                                label(for='phone-number') #[br] Phone Number: #[br]
+                                input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
+                                    value=typeof (user.phone_number) != 'undefined' ? user.phone_number: '')
+                                input(type='text', style='display: none;')
+                            .general-information-section-three
+                                label Profile Picture
+                                .file-image-area
+                                    .file-image-upload
+                                        img(id='imagePreview', src=freelancerImage)
+                                    .file-image-upload-btn
+                                        span
+                                            i.fas.fa-cloud-upload-alt
+                                            p Upload Image
+                                        input#freelancer-profile-picture(type='file',
+                                            name='freelancer_profile_picture')
+
+                        .user-general-information-two
+                            h3 Change your Password
+                            .git-password-update-section
+                                .git-old-password
+                                    label(for='old-password') Old Password #[br]
+                                    input(id='old-password', type='password', placeholder='Old Password',
+                                        name='old_password', style=updateOption,
+                                        onfocus = "this.removeAttribute('readonly')",
+                                        onfocusout ="this.setAttribute('readonly','readonly')", readonly)
+                                .git-new-password
+                                    label(for='new-password') New Password #[br]
+                                    input(id='new-password', type='password', placeholder='New Password',
+                                        name='new_password', style=updateOption)
+                                .git-new-repeat-password
+                                    label(for='new-repeat-password') Confirm New Password #[br]
+                                    input(id='new-repeat-password', type='password', placeholder='Repeat New Password',
+                                        name='confirm_password', style=updateOption)
+
+                        .user-general-information-three
+                            h3 Education
+                            .eduction-container
+                                .user-education
+                                    input#Schoolname.form-control(type='text', value='',
+                                        placeholder='University or College Name')
+                                    input#Major.form-control(type='text', value='',
+                                        placeholder='Degree Qualification (e.g. BSc, MSc, ...)')
+                                    input#Degree.form-control(type='text', value='',
+                                        placeholder='Degree Name (e.g. Business Management)')
+                                    .user-education-years
+                                        select#educationDateStart.form-control
+                                            option(value='') Year
+                                            each year in rangeOfYears
+                                                option(value= year) #{year}
+                                        select#educationDateEnd.form-control
+                                            option(value='') Year
+                                            each year in rangeOfYears
+                                                option(value= year) #{year}
+                                        button.education-input-btn: i.fas.fa-plus-square
+                                .saved-education
+                                    each education in user.education
+                                        .freelancer-single-education
+                                            .show-section
+                                                h4 #{education.degreeAndCourse}
+                                                p #{education.institute}
+                                                p Year #{' '+education.educationYear}
+                                                button.education-delete-btn x
+                                            .hide-section(style='display: none;')
+                                                input(type='text', name='degree', value=education.degreeAndCourse,
+                                                    readonly=true)
+                                                input(type='text', name='schoolName', value=education.institute,
+                                                    readonly=true)
+                                                input(type='text', name='educationYear', value=education.educationYear)
+                                        //
+                                            .freelancer-single-education
+                                                .show-section
+                                                    h4 Master of Science Computer Engineering
+                                                    p University of Sheffield
+                                                    p Year 2018-2019
+                                                    button.education-delete-btn x
+                                                .hide-section(style='display: none;')
+                                                    input(type='text', name='degree', value='Master of Science Computer Engineering',
+                                                        readonly=true)
+                                                    input(type='text', name='schoolName', value='University of Sheffield',
+                                                        readonly=true)
+                                                    input(type='text', name='educationYear', value='2018-2019')
+                                            .freelancer-single-education
+                                                .show-section
+                                                    h4 Bachelor of Science International Relation and Business
+                                                    p Aston University
+                                                    p Year 2011-2014
+                                                    button.education-delete-btn x
+                                                .hide-section(style='display: none;')
+                                                    input(type='text', name='degree', value='Bachelor of Science International Relation and Business',
+                                                        readonly=true)
+                                                    input(type='text', name='schoolName', value='Aston University',
+                                                        readonly=true)
+                                                    input(type='text', name='educationYear', value='2011-2014')
+
+                            .user-bio-details
+                                h3 Description and Other Necessary Information
+                                .user-bio-details-container
+                                    .user-bio-one
+                                        section
+                                            label(for='price') Price #[br]
+                                            input(type='text', name='price', id='price',
+                                                value=typeof (user.price) != 'undefined' ? user.price: '',
+                                                placeholder='Enter Minimum Price for your service in £ (e.g. 8.90)',
+                                                required=true)
+                                        section
+                                            label(for='freelancer_description') Description (Maximum 600 characters) #[br]
+                                            textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
+                                                name='freelancer_description', maxlength="600")
+                                               | #{typeof (user.description) != 'undefined' ? user.description : ''}
+                                    .user-bio-two
+                                        section
+                                            label Services #[br]
+                                            .user-bio-container#userBioServices
+                                                input(type='text', value='',
+                                                    placeholder='Enter Services (e.g. Developer, Translator, ...)')
+                                                button#add-services-btn: i.fas.fa-plus-square
+                                            .saved-service
+                                                each uniqueService in user.service
+                                                    .single-service
+                                                        .shown-service
+                                                            h4 #{uniqueService}
+                                                            button.delete-aService-btn x
+                                                        .hidden-service(style='display:none;')
+                                                            input(type='text', name='service', value=uniqueService, readonly=true)
+
+                                                //
+                                                    .single-service
+                                                        .shown-service
+                                                            h4 Something
+                                                            button.delete-aService-btn x
+                                                        .hidden-service(style='display:none;')
+                                                            input(type='text', name='service', value='Something', readonly=true)
+                                        section
+                                            label Skills #[br]
+                                            .user-bio-container#userBioSkills
+                                                input(type='text', value='',
+                                                    placeholder='Enter Skills (e.g. Microsoft Word, Java, ...)')
+                                                button#add-skills-button: i.fas.fa-plus-square
+                                            .saved-skill
+                                                each uniqueSkill in user.skill
+                                                    .single-skill
+                                                        .show-skill
+                                                            h4 #{uniqueSkill}
+                                                            button.delete-aSkill-btn x
+                                                        .hidden-skill(style='display:none;')
+                                                            input(type='text', name='skills', value=uniqueSkill, readonly=true)
+                                                //
+                                                    .single-skill
+                                                        .show-skill
+                                                            h4 Something Skill
+                                                            button.delete-aSkill-btn x
+                                                        .hidden-skill(style='display:none;')
+                                                            input(type='text', name='skills', value='Something Skill', readonly=true)
+
+                        .update-page-submit
+                            input#update-page-submission(type='submit', value='Save Profile')
+
+                .freelancer-booking-page(style='display: none;')
+                    div.freelancer-projects-current
+                        h1 Next Due Project
+                        .freelancer-current-project-container
+                            .freelancer-projects-header
+                                p Project Name
+                                p Client Name
+                                p Due Date
+                                p Messages
+                                p Status
+                                p Options
+                            .freelancer-projects-top
+                                p #{this_title.substring(0, 35)}...
+                                p Armando Kimuka
+                                p June 12, 2020
+                                .freelancer-messages
+                                    p 10
+                                    i.fas.fa-comment-dots
+                                p.project-status ongoing
+                                .freelancer-options
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
+                    div.freelancer-all-projects
+                        .freelancer-one-project
+                            p Les Corbeaux et Les Renards
+                            p Kokumbo l'ecrivain
+                            p June 12, 2023
+                            .freelancer-messages
+                                p 100
+                                i.fas.fa-comment-dots
+                            p.project-status yet to begin
+                            .freelancer-options
+                                i.far.fa-trash-alt
+                                i.far.fa-edit
+                    div.freelancer-all-projects
+                        .freelancer-one-project
+                            p Les Corbeaux et Les Renards
+                            p Kokumbo l'ecrivain
+                            p June 12, 2023
+                            .freelancer-messages
+                                p 100
+                                i.fas.fa-comment-dots
+                            p.project-status yet to begin
+                            .freelancer-options
+                                i.far.fa-trash-alt
+                                i.far.fa-edit
+                    div.freelancer-all-projects
+                        .freelancer-one-project
+                            p Les Corbeaux et Les Renards
+                            p Kokumbo l'ecrivain
+                            p June 12, 2023
+                            .freelancer-messages
+                                p 100
+                                i.fas.fa-comment-dots
+                            p.project-status yet to begin
+                            .freelancer-options
+                                i.far.fa-trash-alt
+                                i.far.fa-edit
+
+                .freelancer-message-page(style='display: none;')
+                    .freelancer-single-message
+                        .client-message-identity
+                            img(src='/images/eF6.jpg')
+                            p Kate Baldwin
+                        .client-message-input
+                            h3 Project Name: America Works
+                            p I want to put this number of people into work by the year 3030
+                        .client-message-time
+                            p 11:10
+                    .freelancer-single-message
+                        .client-message-identity
+                            img(src='/images/eF6.jpg')
+                            p Kate Baldwin
+                        .client-message-input
+                            h3 Project Name: America Works
+                            p I want to put this number of people into work by the year 3030
+                        .client-message-time
+                            p 11:10
+
+    //
+        .freelancer-page-popups
+            // freelancer portfolio popup section
+            .freelancer-portfolio-big-modal
+                .freelancer-portfolio-modal-container
+                    section.portfolio-item-upload-header
+                        h1 #{user.name}'s Portfolio Uploads
+                    section.portfolio-item-upload-section
+                    setcion.portfolio-item-upload-option
+                        a(href='#'): button Delete
+                        input#freelancer-portfolio-update(type='submit', value='Save')
+
+
+

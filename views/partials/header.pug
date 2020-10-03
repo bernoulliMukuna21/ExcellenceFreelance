@@ -1,0 +1,27 @@
+header
+    div.top-container
+        h1.web-title: a(href='/') UniLance
+        //
+            bolder .
+            |Freelance
+        div.top-navbar(style='color:#213e53;')
+            - console.log('Client Page Login Status: ', userType)
+            if (!isLogged)
+                a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
+                a(href='/users/login'): button(class='nav-btn') Login
+            else
+                if(user.user_stature === 'client')
+                    a(href='/account/freelancer/'+userEmail_encoded)
+                        button(class='nav-btn', id='be-freelancer') Be a Freelancer
+                    a(href='/account/client/'+userEmail_encoded): button(class='nav-btn') My Account, #{user.name} #{user.surname}
+                    a(href='/users/logout'): button(class='nav-btn') Logout
+
+                else if(user.user_stature === 'freelancer')
+                    a(href='/account/client/' + userEmail_encoded)
+                        button(class='nav-btn', id='be-freelancer') Switch to Client
+                    a(href='/account/freelancer/' + userEmail_encoded): button(class='nav-btn') My Account, #{user.name} #{user.surname}
+                    a(href='/users/logout'): button(class='nav-btn') Logout
+
+
+
+
