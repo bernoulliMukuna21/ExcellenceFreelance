@@ -5,4 +5,3 @@ bin/www
 bin/encodeDecode.js
 node_modules/
 public/images
-Procfile
