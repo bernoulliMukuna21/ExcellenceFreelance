@@ -120,7 +120,7 @@ module.exports = function(passport) {
     passport.use(new FacebookStrategy({
             clientID: process.env.facebook_clientID,
             clientSecret: process.env.facebook_secretID,
-            callbackURL: 'http://localhost:3000/users/facebook-authentication/callback',
+            callbackURL: 'https://excellence-freelance.herokuapp.com/users/facebook-authentication/callback',
             profileFields: ['emails', 'name', 'displayName', 'photos']
         },
         function (accessToken, refreshToken, profile, done) {
@@ -137,7 +137,7 @@ module.exports = function(passport) {
     passport.use(new GoogleStrategy({
         clientID: process.env.google_clientID,
         clientSecret: process.env.google_secretID,
-        callbackURL: 'http://localhost:3000/users/google-authentication/callback'
+        callbackURL: 'https://excellence-freelance.herokuapp.com/users/google-authentication/callback'
         },
         function (accessToken, refreshToken, profile, done) {
             profile.idName = 'google';
