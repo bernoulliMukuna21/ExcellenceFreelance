@@ -6,7 +6,9 @@ let connection_uri = process.env.local_connectionURI;
 //let mongoURI = 'mongodb+srv://bernoulliMukuna21:reJ2YhAXrv6mhMW@stickler-zmx1n.mongodb.net/test?authSource=admin&replicaSet=Stickler-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true'
 
 let database_name = '/excellence_freelance';
-let connection_URI = process.env.remote_MongoURI || connection_uri+database_name;
+
+let connection_URI = connection_uri+database_name;//process.env.remote_MongoURI || connection_uri+database_name;
+
 let connection_Options = {
     useNewUrlParser: true,
     useFindAndModify: false,
