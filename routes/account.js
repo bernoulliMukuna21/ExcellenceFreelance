@@ -12,8 +12,8 @@ var {ensureAuthentication} = require('../bin/authentication');
 var {base64ToImageSrc, arrayBufferToBase64} = require('../bin/imageBuffer');
 
 // Set Storage Engine
+//destination: './public/images/uploads',
 let storage = multer.diskStorage({
-    destination: './public/images/uploads',
     filename: function (req, file, callback) {
         callback(null, file.fieldname + '-' + Date.now()
             + path.extname(file.originalname));
@@ -156,9 +156,6 @@ router.put('/freelancer/update', ensureAuthentication, multerFreelancerData, asy
         upgradeFreelancer.save(function (error) {
             if (error) throw error;
             else{
-                console.log('-------------------------    Data sent to the Front-End    ------------------------');
-                console.log(freelancerObject);
-                console.log('-----------------------------------------------------------------------------------');
                 res.json(freelancerObject);
             }
         });
