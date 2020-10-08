@@ -7,7 +7,7 @@ let connection_uri = process.env.local_connectionURI;
 
 let database_name = '/excellence_freelance';
 
-let connection_URI = connection_uri+database_name;//process.env.remote_MongoURI || connection_uri+database_name;
+let connection_URI = process.env.remote_MongoURI;//process.env.remote_MongoURI || connection_uri+database_name;
 
 let connection_Options = {
     useNewUrlParser: true,
