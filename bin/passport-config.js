@@ -128,7 +128,6 @@ module.exports = function(passport) {
             profile.idName = 'facebook';
             let profilePicture = `https://graph.facebook.com/${profile.id}/picture?width=300&height=300&access_token=${accessToken}`;
             profile.photos[0].value = profilePicture;
-            console.log(profile);
             profileValidation(profile, done);
         })
     );
