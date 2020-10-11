@@ -3,13 +3,11 @@
     * created: 10/05/2020
 */
 var express = require('express');
-var smtpTransport = require('nodemailer-smtp-transport');
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var xoauth2 = require('xoauth2');
 var url = require('url');
 var fs = require('fs');
 var router = express.Router();
@@ -182,7 +180,29 @@ router.get('/forgot', function (req, res, next) {
     res.render('forgot')
 });
 
-// Password forgot
+/*
+* To send an email for resetting the password, the following codes creates a gmail
+* transport.
+* */
+let smtpTransport = nodemailer.createTransport(
+    {
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        //service: 'gmail',
+        auth:{
+            //type: "login",
+            type: 'OAuth2',
+            user: 'mmbernoulli@gmail.com',
+            clientId: process.env.google_clientID,
+            clientSecret: process.env.google_secretID,
+            refreshToken: process.env.google_refreshToken,
+            accessToken: null,
+            expires: 1484314697598
+            //pass: '#Bonsomi96'
+        },
+        tls: { rejectUnauthorized: false }
+    });
 router.post('/forgot', function (req, res, next) {
     async.waterfall([
         function (done) {
@@ -216,22 +236,9 @@ router.post('/forgot', function (req, res, next) {
         }
         ,
         function (token, user, done) {
-            let smtpTransport = nodemailer.createTransport(
-                {
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false,
-                    auth:{
-                        type: "login",
-                        user: 'mmbernoulli@gmail.com',
-                        pass: '#Bonsomi96'
-                    },
-                    tls: { rejectUnauthorized: false }
-                });
-            console.log('inside email composition')
             let reset_link = "http://"+ req.headers.host+"/users/reset/"+ token;
             let mailOptions = {
-                to: 'mukunabernoulli@yahoo.com',
+                to: req.body.email,
                 from: 'mmbernoulli@gmail.com',
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',
@@ -242,7 +249,7 @@ router.post('/forgot', function (req, res, next) {
                     '</p>' + '<a target="_blank" style="text-decoration: underline; color: #0645AD; cursor: pointer" ' +
                     'href="'+reset_link+'">'+reset_link+'</a><br><br>' + '<p style="font-weight: bold">'+
                     'If you did not request this, please ignore this email. (link expires in 1 hour)</p><br>' + '<p ' +
-                    'style="margin-top: 5rem">Admnistration Team<br>07167890065</p>'
+                    'style="margin-top: 5rem">Admnistration Team<br>07448804768</p>'
             };
             smtpTransport.sendMail(mailOptions, function (err) {
                 req.flash('success_message', 'Your email has been sent')
@@ -314,25 +321,12 @@ router.post('/reset/:token', function (req, res) {
                 }
             )
         }, function (user, done) {
-            let smtpTransport = nodemailer.createTransport(
-                {
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false,
-                    auth:{
-                        type: "login",
-                        user: 'mmbernoulli@gmail.com',
-                        pass: '#Bonsomi96'
-                    },
-                    tls: { rejectUnauthorized: false }
-                });
-
             let mailOptions = {
-                to: 'mukunabernoulli@yahoo.com',
+                to: user.email,
                 from: 'mmbernoulli@gmail.com',
                 subject: 'Password Reset',
-                text: 'Password Successfully Updated!. If you do not recognise this, Please contact us as' +
-                    'soon as possible on (mmbernoulli@gmail.com) or (07448804768)'
+                text: 'Password Successfully Updated. If you do not recognise this, Please contact us as' +
+                    ' soon as possible on mmbernoulli@gmail.com or 07448804768'
             };
             smtpTransport.sendMail(mailOptions, function (err) {
                 req.flash('success_message', 'Your email has been sent')
