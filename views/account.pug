@@ -23,8 +23,9 @@ block content
                             img(src=freelancerImage)
                     p.account-profile-name #{user.name + ' ' + user.surname}
                     div.public-service-enquiry
-                        a(href='#'): button(class='book-btn') Book
-                        a(href='#'): button(id='enquire-btn') Enquire
+                        //
+                            a(href='#'): button(class='book-btn') Book
+                            a(href='#'): button(id='enquire-btn') Enquire
 
                     div.freelancer-services
                         if user.service.length === 0
@@ -39,7 +40,8 @@ block content
                             li.user-main-page(class='clicked') Main Page
                             li.user-update-page Update Personal Information
                             li.user-current-booking-page Bookings
-                            li.user-completed-booking-page Messages
+                            //
+                                li.user-completed-booking-page Messages
 
             .freelancer_account_main_side
                 .freelancer-main-page
@@ -81,126 +83,127 @@ block content
 
                     .account-fourth-side
                         h1 Portfolio
-
-                        div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
-                        'align-items: center; height: 15vh')
-                            p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
-
-                        div.image-portfolio
-                            div
-                                .portfolio-tag-overlay
-                                    p Some Photo I took
-                                img(src='/images/eF1.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p My Trip to Ghana
-                                img(src='/images/eF2.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Life is good
-                                iframe(src='/images/excellencePDF.pdf#toolbar=0&scrollbar=0')
-                            div
-                                .portfolio-tag-overlay
-                                    p Something else
-                                embed(src='https://alex.smola.org/drafts/thebook.pdf#toolbar=0&scrollbar=0')
-                            div
-                                .portfolio-tag-overlay
-                                    p Do you see this picture
-                                video(src='/images/videoExcellence1.mp4', controls)
-                            div
-                                .portfolio-tag-overlay
-                                    p My time at the University of Sheffield
-                                img(src='/images/eF4.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Throw back
-                                img(src='/images/eF5.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Hmmm
-                                img(src='/images/eF6.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Do you see what I see
-                                img(src='/images/eF7.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Christ in me da hope of glory
-                                img(src='/images/eF4.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p I have found IT!!
-                                video(src='/images/excellenceVideo.mp4', controls)
-                            div
-                                .portfolio-tag-overlay
-                                    p Some other thing
-                                img(src='/images/eF2.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Some final thing
-                                img(src='/images/eF3.jpg')
-                        .freelancer-page-popups
-                            // freelancer portfolio popup section
-                            .freelancer-portfolio-big-modal
-                                .freelancer-portfolio-modal-container
-                                    .portfolio-item-upload-top
-                                        p x
-                                    .portfolio-item-upload-middle
-                                        .portfolio-upload-empty
-                                            p Upload to Portfolio
-                                        .portfolio-upload-load
-                                            section.portfolio-item-upload-first
-                                                .portfolio-item-section
-                                                //
-                                                    img(src='/images/eF3.jpg')
-                                                .portfolio-item-caption
-                                                    textarea(placeholder='Write a Caption...')
-                                            setcion.portfolio-item-upload-second
-                                                .portfolio-upload-options
-                                                    .portfolio-save-upload
-                                                        a(href='#'): button Upload to Portfolio
-                                                        input#freelancer-portfolio-update(type='submit', value='Save')
-                                                    .portfolio-delete
-                                                        a(href='#'): button#freelancer-portfolio-delete Delete
-
-                    .account-fifth-side
-                        h1 All Reviews
-                        div.written-reviews
-                            .default-written-review
-                                p No Reviews
                         //
-                            section.user-single-review
-                                section.reviewer-identity
-                                    img(src='/images/Jojo.jpg' style='width:5rem; height:5rem')
-                                    p Debbie Lambanot
-                                section.review-content
-                                    section.section-one
-                                        p Rating: 3.5/5
-                                        p Agree: 1000
-                                        p Disagree: 10
-                                    section.section-two
-                                        p.user-account-reviews Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
-                                    section.section-three
-                                        button.dislike
-                                            i.far.fa-thumbs-up(aria-hidden='true')
-                                        button.like
-                                            i.far.fa-thumbs-down(aria-hidden='true')
-                        div.user-write-review
-                            section.user-review-section
-                                textarea.user-write-review-area(placeholder='Write a Review...')
-                                select.review-rate(name='star-rate')
-                                    option(value='star-rating') Enter a Rating
-                                    option(value='one') 1
-                                    option(value='one-half') 1.5
-                                    option(value='two') 2
-                                    option(value='two-half') 2.5
-                                    option(value='three') 3
-                                    option(value='three-half') 3.5
-                                    option(value='four') 4
-                                    option(value='four-half') 4.5
-                                    option(value='five') 5
-                            section.review-submit-section
-                                button(id='user-review-submission') Submit Review
+                            div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
+                            'align-items: center; height: 15vh')
+                                p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
+
+                            div.image-portfolio
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some Photo I took
+                                    img(src='/images/eF1.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p My Trip to Ghana
+                                    img(src='/images/eF2.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Life is good
+                                    iframe(src='/images/excellencePDF.pdf#toolbar=0&scrollbar=0')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Something else
+                                    embed(src='https://alex.smola.org/drafts/thebook.pdf#toolbar=0&scrollbar=0')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Do you see this picture
+                                    video(src='/images/videoExcellence1.mp4', controls)
+                                div
+                                    .portfolio-tag-overlay
+                                        p My time at the University of Sheffield
+                                    img(src='/images/eF4.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Throw back
+                                    img(src='/images/eF5.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Hmmm
+                                    img(src='/images/eF6.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Do you see what I see
+                                    img(src='/images/eF7.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Christ in me da hope of glory
+                                    img(src='/images/eF4.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p I have found IT!!
+                                    video(src='/images/excellenceVideo.mp4', controls)
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some other thing
+                                    img(src='/images/eF2.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some final thing
+                                    img(src='/images/eF3.jpg')
+                        //
+                            .freelancer-page-popups
+                                // freelancer portfolio popup section
+                                .freelancer-portfolio-big-modal
+                                    .freelancer-portfolio-modal-container
+                                        .portfolio-item-upload-top
+                                            p x
+                                        .portfolio-item-upload-middle
+                                            .portfolio-upload-empty
+                                                p Upload to Portfolio
+                                            .portfolio-upload-load
+                                                section.portfolio-item-upload-first
+                                                    .portfolio-item-section
+                                                    //
+                                                        img(src='/images/eF3.jpg')
+                                                    .portfolio-item-caption
+                                                        textarea(placeholder='Write a Caption...')
+                                                setcion.portfolio-item-upload-second
+                                                    .portfolio-upload-options
+                                                        .portfolio-save-upload
+                                                            a(href='#'): button Upload to Portfolio
+                                                            input#freelancer-portfolio-update(type='submit', value='Save')
+                                                        .portfolio-delete
+                                                            a(href='#'): button#freelancer-portfolio-delete Delete
+                    //
+                        .account-fifth-side
+                            h1 All Reviews
+                            div.written-reviews
+                                .default-written-review
+                                    p No Reviews
+                            //
+                                section.user-single-review
+                                    section.reviewer-identity
+                                        img(src='/images/Jojo.jpg' style='width:5rem; height:5rem')
+                                        p Debbie Lambanot
+                                    section.review-content
+                                        section.section-one
+                                            p Rating: 3.5/5
+                                            p Agree: 1000
+                                            p Disagree: 10
+                                        section.section-two
+                                            p.user-account-reviews Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+                                        section.section-three
+                                            button.dislike
+                                                i.far.fa-thumbs-up(aria-hidden='true')
+                                            button.like
+                                                i.far.fa-thumbs-down(aria-hidden='true')
+                            div.user-write-review
+                                section.user-review-section
+                                    textarea.user-write-review-area(placeholder='Write a Review...')
+                                    select.review-rate(name='star-rate')
+                                        option(value='star-rating') Enter a Rating
+                                        option(value='one') 1
+                                        option(value='one-half') 1.5
+                                        option(value='two') 2
+                                        option(value='two-half') 2.5
+                                        option(value='three') 3
+                                        option(value='three-half') 3.5
+                                        option(value='four') 4
+                                        option(value='four-half') 4.5
+                                        option(value='five') 5
+                                section.review-submit-section
+                                    button(id='user-review-submission') Submit Review
 
                 .freelancer-update-page(style='display: none;')
                     - let updateOption = 'pointer-events: auto';
@@ -443,26 +446,26 @@ block content
                             .freelancer-options
                                 i.far.fa-trash-alt
                                 i.far.fa-edit
-
-                .freelancer-message-page(style='display: none;')
-                    .freelancer-single-message
-                        .client-message-identity
-                            img(src='/images/eF6.jpg')
-                            p Kate Baldwin
-                        .client-message-input
-                            h3 Project Name: America Works
-                            p I want to put this number of people into work by the year 3030
-                        .client-message-time
-                            p 11:10
-                    .freelancer-single-message
-                        .client-message-identity
-                            img(src='/images/eF6.jpg')
-                            p Kate Baldwin
-                        .client-message-input
-                            h3 Project Name: America Works
-                            p I want to put this number of people into work by the year 3030
-                        .client-message-time
-                            p 11:10
+                    //
+                        .freelancer-message-page(style='display: none;')
+                            .freelancer-single-message
+                                .client-message-identity
+                                    img(src='/images/eF6.jpg')
+                                    p Kate Baldwin
+                                .client-message-input
+                                    h3 Project Name: America Works
+                                    p I want to put this number of people into work by the year 3030
+                                .client-message-time
+                                    p 11:10
+                            .freelancer-single-message
+                                .client-message-identity
+                                    img(src='/images/eF6.jpg')
+                                    p Kate Baldwin
+                                .client-message-input
+                                    h3 Project Name: America Works
+                                    p I want to put this number of people into work by the year 3030
+                                .client-message-time
+                                    p 11:10
 
     //
         .freelancer-page-popups
