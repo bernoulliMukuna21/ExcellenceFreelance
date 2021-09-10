@@ -1,16 +1,4 @@
 module.exports = {
-    arrayBufferToBase64: function (buffer) {
-        /*
-        * This function will be used to help with the conversion of the
-        * source of the profile picture of the user
-        * */
-
-        var binary = '';
-        var bytes = [].slice.call(new Uint8Array(buffer));
-        bytes.forEach(b => binary += String.fromCharCode(b));
-        return Buffer.from(binary, 'binary').toString('base64');
-    }
-    ,
     base64ToImageSrc: function (imageInfos){
         /*
        * In this function, the update information of the user
@@ -21,10 +9,28 @@ module.exports = {
         let type = imageInfos.contentType;
         let data = imageInfos.data;
 
-        let source = module.exports.arrayBufferToBase64(data.buffer);
-        source = 'data:' + type + ';base64,' + source;
-
+        let source = 'data:' + type + ';base64,' + data.toString('base64');
         return source;
+    }
+    ,
+    imageToDisplay: function (userData) {
+        /*
+        * In this function, we are taking the user data from database to return a string
+        * image for display.
+        * */
+        let imageSource;
+        let pictureData = userData.profile_picture;
+
+
+        if(pictureData.data){
+            if(pictureData.name === 'oauth_picture'){
+                imageSource = pictureData.data.toString();
+            }else{
+                imageSource = module.exports.base64ToImageSrc(pictureData);
+            }
+        }
+
+        return imageSource;
     }
 }
 

@@ -1,0 +1,91 @@
+.booking {
+    display: none;
+    position: fixed;
+    z-index: 8;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.6);
+    cursor: default;
+}
+
+.booking-content {
+    /*margin-top: 20%;*/
+    width: 50%;
+}
+
+.booking-form {
+    padding: 1rem 2.5rem  2.5rem 2.5rem;
+    background: #eee;
+}
+.booking-form div:first-child{
+    display: flex;
+    justify-content: flex-end;
+}
+#service-booking-form select, #service-booking-form input,
+#service-booking-form textarea, #service-booking-form button{
+    width: 100%;
+    padding: 10px;
+    border-radius: .5rem;
+}
+#service-booking-form select, #service-booking-form button,
+#service-booking-dueDate{
+    cursor: pointer;
+}
+#service-booking-projectDescription{
+    resize: none;
+}
+.bookform-field {
+    margin-bottom: 20px;
+    border: 1px solid #213e53;
+    outline: none;
+}
+.booking-form button {
+    border: none;
+    background: #4CAF50;
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+}
+.booking-form button:hover{background-color: #308634;}
+.booktitle{
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.closebook-form {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.closebook-form:hover,
+.closebook-form:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.guess-booking-options{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 5rem;
+    font-size: 1.5rem;
+}
+
+.guess-booking-options a button{
+    background-color: #213e53;
+    padding: 1rem;
+    width: 30rem;
+    font-weight: bolder;
+    border-radius: .5rem;
+}
+.guess-booking-options a button:hover{
+    background-color: #182e3e;
+    cursor: pointer;
+}

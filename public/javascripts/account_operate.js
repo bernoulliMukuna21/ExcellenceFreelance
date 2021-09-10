@@ -32,6 +32,10 @@ function pageDispalyStyle(page, name_of_pages, different_pages){
 
     pageNavigation(page, name_of_pages, different_pages);
     $(page).addClass("clicked");
+    console.log('Page clicked: ', page)
+    if(page.childNodes[0].innerText === 'Messages'){
+        $('.newMessageReceived').hide();
+    }
 }
 
 
@@ -88,6 +92,7 @@ function profileImageEmpty(imageHtml){
 
     // get the source of the image
     let source_image = $(imageHtml).attr('src');
+
     if(source_image.length<=0){
         // The source image is returned as a string. If it is
         // empty, then there are images to display, so hide.
@@ -133,10 +138,28 @@ function showNames(name, surname, htmlContainer){
     $(htmlContainer)[0].innerText = name + ' ' + surname;
 }
 
-function showServicesOrSkills(elements, htmlContainer) {
-    elements.forEach(singleElement=>{
+function showServicesAndPrices(elements, htmlcontainer) {
+    elements.forEach(singleServiceAndPrice=>{
+        let serviceTag = document.createElement('h4');
+        serviceTag.innerText = singleServiceAndPrice.service;
+
+        let priceTag = document.createElement('h4');
+        priceTag.innerText = '£'+singleServiceAndPrice.price;
+
+        let singleServicePriceClass = document.createElement('div');
+        singleServicePriceClass.classList.add('freelancer-serviceAndPrice-profile');
+
+        singleServicePriceClass.appendChild(serviceTag);
+        singleServicePriceClass.appendChild(priceTag);
+
+        $(htmlcontainer).append(singleServicePriceClass);
+    });
+}
+
+function showSkills(skills, htmlContainer) {
+    skills.forEach(singleSkill=>{
         let pageTag = document.createElement('p');
-        pageTag.innerText = singleElement;
+        pageTag.innerText = singleSkill;
         $(htmlContainer).append(pageTag);
     });
 }
@@ -243,7 +266,7 @@ function deleteItem(containerHtml, buttonHtml){
             * */
 
             let container = item.parentElement;
-            if(buttonHtml === 'delete-aService-btn'){
+            if(buttonHtml === 'delete-aServiceAndPrice-btn'){
 
                 let numberOfServices = countServices(containerHtml);
                 let parentOfContainer = container.parentElement;
@@ -258,7 +281,7 @@ function deleteItem(containerHtml, buttonHtml){
                     $('.single-update-container').delay(5000).hide(1000);
                 }
             }
-            else if(buttonHtml === 'update-error-delete-btn'){
+            else if(buttonHtml === 'update-error-delete-btn' || buttonHtml === 'update-delete-btn'){
                 container.remove();
             }else{
                 container.parentElement.remove();
@@ -311,13 +334,184 @@ function ajaxUpdateMessage_creation(message, label, htmlContainer){
 }
 
 function ajaxFormMessage_generator(dataJSON, htmlContainer){
+    console.log('Check this out: ', $(htmlContainer));
     dataJSON.forEach(data=>{
         ajaxUpdateMessage_creation(data[0].message, data[0].label, htmlContainer);
     });
     deleteItem('.single-update-container', 'update-delete-btn');
 }
 
+/*
+* Message Helper Functions
+* */
+
+function createNewRoom(receiverData, sourceImage) {
+    let roomContainer = document.createElement('div');
+    roomContainer.classList.add('message-single-room');
+    roomContainer.classList.add(receiverData.uniqueKey);
+
+    if(receiverData.messageReceivedClassName){
+        roomContainer.classList.add(receiverData.messageReceivedClassName);
+    }
+
+    /******/
+    let roomContainerImage = document.createElement('div');
+    roomContainerImage.classList.add('message-sender-image');
+
+    let roomContainerImage_src = document.createElement('img');
+    $(roomContainerImage_src).attr('src', sourceImage);
+
+    roomContainerImage.append(roomContainerImage_src);
+
+    /*******/
+    let roomContainerDetails = document.createElement('div');
+    roomContainerDetails.classList.add('message-sender-details');
+
+    let roomContainerDetails_section1 = document.createElement('section');
+
+    let roomContainerDetails_h5Name = document.createElement('p');
+    roomContainerDetails_h5Name.innerText = receiverData.name + ' '+ receiverData.surname
+
+    let roomContainerDetails_Input = document.createElement('input');
+    roomContainerDetails_Input.classList.add('receiver-unique-key');
+    $(roomContainerDetails_Input).attr("style", "display:none")
+    $(roomContainerDetails_Input).val(JSON.stringify(receiverData))
+
+    roomContainerDetails_section1.append(roomContainerDetails_h5Name);
+    roomContainerDetails_section1.append(roomContainerDetails_Input);
+
+    roomContainerDetails.append(roomContainerDetails_section1);
+
+    /****/
+    roomContainer.append(roomContainerImage);
+    roomContainer.append(roomContainerDetails);
+
+    $('.user-messages-side').prepend(roomContainer);
+}
+
+function createNewConversationContainer(receiverData, sourceImage) {
+    let conversationsContainer = document.createElement('div');
+    conversationsContainer.classList.add('single-message-main-container-box');
+    conversationsContainer.classList.add(receiverData.uniqueKey);
+    $(conversationsContainer).attr("style", "display: none;")
+
+    /*~~~~~~~~~~~~*/
+    let conversationsContainer_top = document.createElement('div');
+    conversationsContainer_top.classList.add('message-container-top');
+
+    let conversationsContainer_image = document.createElement('img');
+    $(conversationsContainer_image).attr('src', sourceImage);
+
+    let conversationsContainer_h4Name = document.createElement('h4');
+    conversationsContainer_h4Name.innerText = receiverData.name + ' '+ receiverData.surname;
+
+    conversationsContainer_top.append(conversationsContainer_image);
+    conversationsContainer_top.append(conversationsContainer_h4Name);
+
+    /*~~~~~~~~~~~~~~~~~*/
+    let conversationsContainer_main = document.createElement('div');
+    conversationsContainer_main.classList.add('message-container-main');
+
+    /*~~~~~~~~~~~~~~~~~*/
+    let conversationsContainer_sendForm = document.createElement('form');
+    conversationsContainer_sendForm.classList.add('message-container-typeBox');
+    $(conversationsContainer_sendForm).attr('method', 'post');
+    $(conversationsContainer_sendForm).attr('autocomplete', 'off');
+
+    let conversationsContainer_sendFormInput = document.createElement('input');
+    $(conversationsContainer_sendFormInput).attr("class", 'chat-typing-area');
+    $(conversationsContainer_sendFormInput).attr("placeholder", 'Write a message...');
+    $(conversationsContainer_sendFormInput).attr("name", 'chat_typeBox');
+    $(conversationsContainer_sendFormInput).attr("type", 'text');
+    $(conversationsContainer_sendFormInput).val('');
+
+    let conversationsContainer_sendFormIcon = document.createElement('i');
+    $(conversationsContainer_sendFormIcon).attr("class", 'far fa-paper-plane');
+    $(conversationsContainer_sendFormIcon).attr("type", 'submit');
+    //$(conversationsContainer_sendFormIcon).attr("class", 'send-message');
+
+    conversationsContainer_sendForm.append(conversationsContainer_sendFormInput);
+    conversationsContainer_sendForm.append(conversationsContainer_sendFormIcon);
+
+    /*~~~~~~~~~~~~~~~*/
+    conversationsContainer.append(conversationsContainer_top);
+    conversationsContainer.append(conversationsContainer_main);
+    conversationsContainer.append(conversationsContainer_sendForm);
+
+    $('.all-different-conversations-container').prepend(conversationsContainer);
+}
+
+function roomConversationsNavigation(roomToShow, roomsContainerHtml, loggedInUser, receiver) {
+    /*
+    * This function will be used to navigate to different
+    * conversations that the user is having.
+    * */
+    let roomUID = Array.from(roomToShow.parentNode.children).indexOf(roomToShow);
+    let allRoomsContainer = $(roomsContainerHtml)[0].childNodes;
+
+    allRoomsContainer.forEach((currentRoomContainer, currentRoomUID) => {
+        if(currentRoomUID !== roomUID){
+            $(currentRoomContainer).hide();
+        }else{
+            $(roomToShow).addClass("roomClicked");
+
+            $('.message-container-main').empty();
+
+            $(currentRoomContainer).show();
+            $.ajax({
+                type: 'GET',
+                url: '/messages/get-user-messages/'+loggedInUser+'/'+receiver,
+                success: function (data) {
+                    data.forEach(singleMessage => {
+                        singleMessage = singleMessage.messages;
+                        singleMessage.day = singleMessage.sendDay;
+                        singleMessage.time = singleMessage.sendTime;
+
+                        if(loggedInUser === singleMessage.sender){
+                            createMessageHTML(singleMessage,
+                                'user-single-send-message', currentRoomContainer.childNodes[1]);
+                        }else{
+                            createMessageHTML(singleMessage,
+                                'user-single-receive-message', currentRoomContainer.childNodes[1]);
+                        }
+
+                    })
+
+                    var messageBody = currentRoomContainer.childNodes[1];
+                    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+                },
+                error: function (error) {
+                    console.log('Messages not uploaded - error: ', error)
+                }
+            });
+        }
+    })
+}
+
+function createMessageHTML(messageData, containerHTML, conversationRoomHTML) {
+    let messageContainer = document.createElement('div');
+    messageContainer.classList.add(containerHTML);
+
+    let messageDiv = document.createElement('div');
+
+    let message = document.createElement('p');
+    message.innerText = messageData.message
+
+    let time = document.createElement('p');
+    time.innerText = messageData.day+' '+messageData.time;
+
+    messageDiv.appendChild(message);
+    messageDiv.appendChild(time);
+
+    messageContainer.append(messageDiv);
+    conversationRoomHTML.append(messageContainer);
+    //$('.message-container-main').append(messageContainer);
+}
+
+
 export{pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
-    dataCollection, showNames, showServicesOrSkills, emptySkills, countServices,
-    showDescription, emptyDescription, showPrice, showEducations, emptyEducation,
-    deleteItem, keyBoardAction, ajaxFormMessage_generator}
+    dataCollection, showNames, showServicesAndPrices, showSkills,
+    emptySkills, countServices, showDescription, emptyDescription, showPrice,
+    showEducations, emptyEducation, deleteItem, keyBoardAction,
+    ajaxFormMessage_generator, createNewRoom, createNewConversationContainer,
+    roomConversationsNavigation, createMessageHTML}

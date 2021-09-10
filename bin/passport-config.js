@@ -120,7 +120,7 @@ module.exports = function(passport) {
     passport.use(new FacebookStrategy({
             clientID: process.env.facebook_clientID,
             clientSecret: process.env.facebook_secretID,
-            callbackURL: 'https://excellence-freelance.herokuapp.com/users/facebook-authentication/callback',
+            callbackURL: 'https://excellence-freelance.herokuapp.com/users/facebook-authentication/callback', //'http://localhost:3000/users/facebook-authentication/callback',
             profileFields: ['emails', 'name', 'displayName', 'photos']
         },
         function (accessToken, refreshToken, profile, done) {

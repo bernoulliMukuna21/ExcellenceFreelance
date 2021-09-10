@@ -1,27 +1,28 @@
 header
     div.top-container
-        h1.web-title: a(href='/') Excellence
-            bolder .
-            |Freelance
+        h1.web-title: a(href='/') UniLance
+        //
+            h1.web-title: a(href='/') Excellence
+                bolder .
+                |Freelance
         div.top-navbar(style='color:#213e53;')
-            - console.log('Client Page Login Status: ', userType)
             if (!isLogged)
                 a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
                 a(href='/users/login'): button(class='nav-btn') Login
             else
-                if(user.user_stature === 'client')
-                    //
-                        a(href='/account/freelancer/'+userEmail_encoded)
-                            button(class='nav-btn', id='be-freelancer') Be a Freelancer
-                    a(href='/account/client/'+userEmail_encoded): button(class='nav-btn') My Account, #{user.name} #{user.surname}
+                if(loggedInUser.user_stature === 'client')
+                    a(href='/account/switch/'+emailEncode(loggedInUser.email))
+                        button(class='nav-btn', id='be-freelancer') Be a Freelancer
+                    a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                     a(href='/users/logout'): button(class='nav-btn') Logout
 
-                else if(user.user_stature === 'freelancer')
-                    //
-                        a(href='/account/client/' + userEmail_encoded)
-                            button(class='nav-btn', id='be-freelancer') Switch to Client
-                    a(href='/account/freelancer/' + userEmail_encoded): button(class='nav-btn') My Account, #{user.name} #{user.surname}
+                else if(loggedInUser.user_stature === 'freelancer')
+                    a(href='/account/switch/' + emailEncode(loggedInUser.email))
+                        button(class='nav-btn', id='be-freelancer') Switch to Client
+                    a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                     a(href='/users/logout'): button(class='nav-btn') Logout
+                - let loggedinUser_Mssg = {type: loggedInUser.user_stature, uniqueKey: emailEncode(loggedInUser.email)}
+                input(style='display: none;' id='sender-unique-key' value=JSON.stringify(loggedinUser_Mssg))
 
 
 

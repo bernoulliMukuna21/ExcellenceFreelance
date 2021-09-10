@@ -1,6 +1,7 @@
 extends layout
 
 block content
+
   include partials/form_message
   .index-page-one
     .index-page-one-left
@@ -18,98 +19,59 @@ block content
           button#book-now-btn(class=pageType) BOOK NOW
     .index-page-one-right
       img(src='/images/excellenceFreelancerMaybeFinal.png')
-  //
-    .index-page-two
-      .book-services-steps
-        p Browse
-        p Find a Freelancer
-        p Book Freelance Service
-    .index-page-three
+  .index-page-two
+    .book-services-steps
+      p Browse
+      p Find a Freelancer
+      p Book Freelance Service
+  .index-page-three
+    each freelancer in allFreelancers
+      .single-user-index-details
+        .top-side
+          if !freelancer.profile_picture.data
+            img(src='/images/userDefaultImage.png')
+          else
+            - let imageSource;
+            if freelancer.profile_picture.name === 'oauth_picture'
+              - imageSource = freelancer.profile_picture.data.toString();
+            else
+              - imageSource = "data:image/"+freelancer.profile_picture.contentType+";base64,"+freelancer.profile_picture.data.toString('base64')
+            img(src=imageSource)
+          section
+            span
+              a(href='/account/freelancer/'+emailEncode(freelancer.email)): p #{freelancer.name+' '+freelancer.surname}
+        .middle-side
+          div
+            each service_price in freelancer.serviceAndPrice
+              .index-serviceAndPrice
+                p #{service_price.service}
+                p #{'£'+service_price.price}
+        .bottom-side
+          button Book
+          a(href='/account/freelancer/'+emailEncode(freelancer.email)): button View Profile
+
+    //
       .single-user-index-details
         .top-side
           img(src='/images/eF4.jpg')
           section
-              span
-                  p Andre Mbombo
-              span
-                  p Start at £8.79
+            span
+              p Andre Mbombo
         .middle-side
-          p Software Developer
-          p Party Host
-          p Designer
-          p Painter
-          p Blogger
+          div
+            .index-serviceAndPrice
+              p Software Developer
+              p £36.60
+            .index-serviceAndPrice
+              p Painter
+              p £61.87
+            .index-serviceAndPrice
+              p Interior Designer
+              p £49.91
+
         .bottom-side
-          a(href='#'): button Book
+          button Book
           a(href='#'): button View Profile
 
-      .single-user-index-details
-        .top-side
-          img(src='/images/eF4.jpg')
-          section
-              span
-                  p Andre Mbombo
-              span
-                  p Start at £8.79
-        .middle-side
-          p Software Developer
-          p Party Host
-          p Designer
-          p Painter
-          p Blogger
-        .bottom-side
-          a(href='#'): button Book
-          a(href='#'): button View Profile
-
-      .single-user-index-details
-        .top-side
-          img(src='/images/eF4.jpg')
-          section
-              span
-                  p Andre Mbombo
-              span
-                  p Start at £8.79
-        .middle-side
-          p Software Developer
-          p Party Host
-          p Designer
-          p Painter
-          p Blogger
-        .bottom-side
-          a(href='#'): button Book
-          a(href='#'): button View Profile
-      .single-user-index-details
-        .top-side
-          img(src='/images/eF4.jpg')
-          section
-              span
-                  p Andre Mbombo
-              span
-                  p Start at £8.79
-        .middle-side
-          p Software Developer
-          p Party Host
-          p Designer
-          p Painter
-          p Blogger
-        .bottom-side
-          a(href='#'): button Book
-          a(href='#'): button View Profile
-      .single-user-index-details
-        .top-side
-          img(src='/images/eF4.jpg')
-          section
-              span
-                  p Andre Mbombo
-              span
-                  p Start at £8.79
-        .middle-side
-          p Software Developer
-          p Party Host
-          p Designer
-          p Painter
-          p Blogger
-        .bottom-side
-          a(href='#'): button Book
-          a(href='#'): button View Profile
-    include ./partials/footer
+    include ./partials/booking_form
+  include ./partials/footer

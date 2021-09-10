@@ -9,7 +9,8 @@ var path = require('path');
 var UpdateProfileChecker = require('../public/javascripts/profileUpdateController');
 var UserModel = require('../models/UserModel');
 var {ensureAuthentication} = require('../bin/authentication');
-var {base64ToImageSrc, arrayBufferToBase64} = require('../bin/imageBuffer');
+var {emailEncode, emailDecode} = require('../bin/encodeDecode');
+var {base64ToImageSrc, imageToDisplay} = require('../bin/imageBuffer');
 
 // Set Storage Engine
 //destination: './public/images/uploads',
@@ -20,65 +21,110 @@ let storage = multer.diskStorage({
     }
 });
 
-let multerFreelancerData = multer({
+let multerUserProfilePicture = multer({
     storage: storage
-}).single('freelancer_profile_picture');
-
-let multerClientData = multer({
-    storage: storage
-}).single('client_profile_picture');
+}).single('user_profile_picture');
 
 
 router.get('/', ensureAuthentication, function (req, res) {
     console.log('I am inside the account function')
     req.flash('error_message', 'Please login to access your account');
-    res.redirect('/users/login');
+    res.send(req.user)//res.redirect('/users/login');
 });
 
-router.get('/client/:this_user', ensureAuthentication , (req, res)=>{
+router.get('/client/:this_user', ensureAuthentication , async (req,
+                                                               res) => {
+    let loggedInUser = req.user;
+    let loggedInUser_imageSrc = '';
 
-    let user = req.user;
-    let clientImage = '';
+    /* The following variables are used to help with the messasging setup
+    * for two users. 'messageIdHTML' signals that there is an initiation of
+    * the message from another user, so we have to show the message section in
+    * the HTML. 'userToMessage' is the unique of the user to message.
+    * */
+    let  userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
 
-    if(user.profile_picture.data){
-        if(user.profile_picture.name === 'oauth_picture'){
-            clientImage = user.profile_picture.data.toString();
-        }else{
-            clientImage = base64ToImageSrc(user.profile_picture);
+    // Get the picture of the current logged in client
+    loggedInUser_imageSrc = imageToDisplay(loggedInUser);
+
+    // Messaging setup
+    userToMessageUniqueKey = req.query.receiverKey;
+
+    if (userToMessageUniqueKey) {
+        try {
+            userToMessage = await UserModel.find({
+                email: emailDecode(userToMessageUniqueKey)}
+            );
+            if (userToMessage){
+                userToMessage = userToMessage[0];
+                userToMessageImageSrc = imageToDisplay(userToMessage);
+                messageIdHTML= 'show-user-messages';
+            }
+        } catch (error) {
+            res.send('An Error occurred!');
         }
     }
-
     res.render('account_client', {
-        user: user,
-        isLogged:req.isAuthenticated(),
-        userStatus: req.user.user_stature,
-        userEmail_encoded: req.params.this_user,
-        clientImage: clientImage
+        loggedInUser,
+        isLogged: req.isAuthenticated(),
+        loggedInUser_imageSrc,
+        emailEncode,
+        userToMessageUniqueKey,
+        messageIdHTML,
+        userToMessage,
+        userToMessageImageSrc
     });
 })
 
-router.get('/freelancer/:this_user', function (req, res) {
-    let user = req.user;
-    let freelancerImage = '';
-    if(user.profile_picture.data){
-        if(user.profile_picture.name === 'oauth_picture'){
-            freelancerImage = user.profile_picture.data.toString();
-        }else{
-            freelancerImage = base64ToImageSrc(user.profile_picture);
+router.get('/freelancer/:this_user', async function (req, res) {
+    let loggedInUser, freelancerUser;
+    let loggedInUser_imageSrc = '';
+
+    let isLogged = req.isAuthenticated();
+    let  userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
+
+    if (isLogged) {
+        loggedInUser = req.user;
+
+        userToMessageUniqueKey = req.query.receiverKey;
+
+        if (userToMessageUniqueKey) {
+            try{
+                userToMessage = await UserModel.find({
+                    email: emailDecode(userToMessageUniqueKey)}
+                );
+                if(userToMessage){
+                    userToMessage = userToMessage[0];
+                    userToMessageImageSrc = imageToDisplay(userToMessage);
+                    messageIdHTML = 'show-user-messages'
+                }
+            }catch (e) {
+                res.send('An Error occurred!');
+            }
         }
     }
 
+    freelancerUser = await UserModel.find({email: emailDecode(req.params.this_user)});
+    freelancerUser = freelancerUser[0];
+
+    loggedInUser_imageSrc = imageToDisplay(freelancerUser);
+
     res.render('account', {
-        user: user,
-        isLogged:req.isAuthenticated(),
-        userStatus: req.user.user_stature,
-        userEmail_encoded: req.params.this_user,
-        freelancerImage: freelancerImage
+        isLogged, // The user accessing this page is logged in?
+        freelancerUser, // The freelancer - profile owner
+        loggedInUser, // Details of the logged in user
+        loggedInUser_imageSrc,
+        emailEncode,
+        imageToDisplay,
+        userToMessageUniqueKey,
+        messageIdHTML,
+        userToMessage,
+        userToMessageImageSrc
     });
 });
 
 // client information update
-router.put('/client/update', ensureAuthentication, multerClientData, async function (req, res) {
+router.put('/client/update', ensureAuthentication, multerUserProfilePicture, async function (req, res) {
     console.log('Inside client put function');
     let clientInformationChecker = new UpdateProfileChecker(req.user, req.body,
         req.file, 'client');
@@ -86,30 +132,23 @@ router.put('/client/update', ensureAuthentication, multerClientData, async funct
     let updateInfos = await clientInformationChecker.checkLoginStrategyAndReturnInformation();
 
     if(Object.keys(updateInfos.updateErrors).length>0){
-         /*
-         * If the object of the errors is bigger than 0, the update form
-         * contains some errors.
-         * */
+        /*
+        * If the object of the errors is bigger than 0, the update form
+        * contains some errors.
+        * */
 
         res.status(404).send(Object.values(updateInfos.updateErrors));
 
-     }else{
-         /*
-         * When there are no errors, the next thing that happens is updating
-         * the database for the using the user's current details.
-         * */
+    }else{
+        /*
+        * When there are no errors, the next thing that happens is updating
+        * the database for the using the user's current details.
+        * */
 
         let upgradeUser = updateInfos.updateUser;
         let this_object = JSON.stringify(upgradeUser);
         this_object = JSON.parse(this_object);
-
-        if(upgradeUser.profile_picture.data){
-            if(upgradeUser.profile_picture.name === 'oauth_picture'){
-                this_object.profileImageSrc = upgradeUser.profile_picture.data.toString();
-            }else{
-                this_object.profileImageSrc = base64ToImageSrc(upgradeUser.profile_picture);
-            }
-        }
+        this_object.profileImageSrc = imageToDisplay(upgradeUser);
 
         upgradeUser.save(function (error) {
             if (error) throw error;
@@ -117,12 +156,11 @@ router.put('/client/update', ensureAuthentication, multerClientData, async funct
                 res.json(this_object);
             }
         });
-     }
+    }
 })
 
-
 // freelancer information update
-router.put('/freelancer/update', ensureAuthentication, multerFreelancerData, async function (req, res) {
+router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture, async function (req, res) {
 
     let freelancerInformationChecker = new UpdateProfileChecker(req.user, req.body,
         req.file, 'freelancer');
@@ -144,14 +182,7 @@ router.put('/freelancer/update', ensureAuthentication, multerFreelancerData, asy
         let upgradeFreelancer = updateInfos.updateUser;
         let freelancerObject = JSON.stringify(upgradeFreelancer);
         freelancerObject = JSON.parse(freelancerObject);
-
-        if(upgradeFreelancer.profile_picture.data){
-            if(upgradeFreelancer.profile_picture.name === 'oauth_picture'){
-                freelancerObject.profileImageSrc = upgradeFreelancer.profile_picture.data.toString();
-            }else{
-                freelancerObject.profileImageSrc = base64ToImageSrc(upgradeFreelancer.profile_picture);
-            }
-        }
+        freelancerObject.profileImageSrc = imageToDisplay(upgradeFreelancer);
 
         upgradeFreelancer.save(function (error) {
             if (error) throw error;

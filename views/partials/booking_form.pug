@@ -1,0 +1,40 @@
+div.booking
+    .booking-form-container
+    div.booking-content
+        div.booking-form
+            div
+                .closebook-form &times;
+
+            div
+                section
+                    //
+                        h1.booktitle(style='text-align: center') Book Service with Andre Mbombo
+
+                if isLogged
+                    // If the user is logged in, pull up the form to book freelancer
+                    form(action='/service-booking', method='POST', id='service-booking-form')
+                        select(name='dropDown', class='bookform-field')
+                            //
+                                each val in ['Software Developer' , 'Party Host' , 'Designer', 'Painter', 'Blogger']
+                                    option=val
+
+                        input#service-booking-price.bookform-field.form-control(type='number', placeholder='Minimum price e.g. £100',
+                            name='price', required='true')
+
+                        input#service-booking-projectName.bookform-field.form-control(type='text',
+                            placeholder='Project Name e.g. Animated marketting video', name='projectname', required='true')
+
+                        textarea#service-booking-projectDescription.bookform-field.form-control(type='text',
+                            placeholder='Project Description e.g. This is an important project, lets work together.'
+                            name='Description', required='true' rows="10")
+
+                        input#service-booking-dueDate.bookform-field.form-control(type='date', name='date', required='true')
+
+                        button.btn.btn-primary(type='submit') Book
+
+                else
+                    // If user is not logged in, prompt them to login
+                    .guess-booking-options
+                        a(href='#'): button Login
+                        p(style='font-weight: bolder') OR
+                        a(href='#'): button Sign Up

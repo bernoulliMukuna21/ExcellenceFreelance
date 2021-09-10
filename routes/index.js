@@ -8,26 +8,50 @@ var url = require('url');
 var UserModel = require('../models/UserModel');
 var {ensureAuthentication} = require('../bin/authentication');
 var {emailEncode, emailDecode} = require('../bin/encodeDecode');
+var {base64ToImageSrc, imageToDisplay} = require('../bin/imageBuffer');
+var BinData = require('bindata');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-    let userEmail_encoded;
-    if(req.isAuthenticated()){
-        userEmail_encoded = emailEncode(req.user.email);
-    }
-    console.log(userEmail_encoded)
-    res.render('index',
-        { title: 'Excellence.Freelance',
-            user: req.user,
+router.get('/', async function (req, res, next) {
+    try{
+        let loggedInUser;
+        let loggedInUser_imageSrc;
+
+        let allFreelancers = await UserModel.find({user_stature: 'freelancer'});
+
+        if (req.isAuthenticated()) {
+            loggedInUser = req.user;
+            loggedInUser_imageSrc = imageToDisplay(loggedInUser);
+
+            if(loggedInUser.user_stature === 'freelancer'){
+                allFreelancers = await UserModel.find({
+                    $and: [{
+                        user_stature: 'freelancer'
+                    }, {
+                        email: { $ne: loggedInUser.email }
+                    }]
+                });
+            }
+        }
+
+        res.render('index', {
+            title: 'Excellence.Freelance',
+            allFreelancers,
+            loggedInUser,
+            loggedInUser_imageSrc,
             isLogged: req.isAuthenticated(),
-            userEmail_encoded: userEmail_encoded
+            emailEncode
         });
+    }catch (e) {
+        console.log('This An error occured!')
+    }
 });
 
+//localhost:3000/login
 router.get('/login', function(req, res, next) {
   res.redirect('/users/login');
 });
-
+//localhost:3000/join
 router.get('/join', function(req, res, next) {
   res.redirect('/users/join');
 });

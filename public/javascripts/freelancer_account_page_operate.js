@@ -5,24 +5,60 @@ import {ajaxFormMessage_generator} from "./account_operate.js";
 * only the one that the user has clicked on. The 'main profile information'
 * will be the default once the page has loaded.
 * */
+
 let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes;
-let freelancersectionNames = $('.account-profile-information ul li');;
+let freelancersectionNames = $('.account-profile-information ul li');
 
 $(document).ready(function(){
     $(freelancersectionNames).click(function(){
         accountsOperation.pageDispalyStyle(this, freelancersectionNames, freelancerProfileSections);
     });
     $('.freelancer-update-infos').empty();
+
+    let freelancerMessage_pageToGo = freelancersectionNames[3];
+    if(freelancerMessage_pageToGo.id === 'show-user-messages'){
+        accountsOperation.pageDispalyStyle(freelancerMessage_pageToGo, freelancersectionNames,
+            freelancerProfileSections);
+    }
 });
 $(document).click(function (event) {
     let elementClicked = event.target;
 
+    /*
+     From the main page, the lines of codes below are used to navigate to the 'update information'
+     section of the profile.
+     */
     if(elementClicked.className === 'addProfilePicture'|| elementClicked.id == 'addDescription'
         || elementClicked.id == 'addSkills' || elementClicked.id == 'addEducation'
-        || elementClicked.id == 'addService' || elementClicked.id == 'addPrice'){
+        || elementClicked.id == 'addService' || elementClicked.id == 'addPrice'
+        || elementClicked.id == 'addServiceAndPrice'
+    ){
         let pageToGo = freelancersectionNames[1];
         accountsOperation.pageDispalyStyle(pageToGo, freelancersectionNames,
             freelancerProfileSections);
+    }
+
+    /*
+    * In the lines of codes below, the border lines will be removed from the input fields that produced
+    * errors when the button that triggered their actions were clicked.
+    * */
+
+    // For the education fields
+    /*if(elementClicked.className!=='education-input-btn'){
+        $('#Schoolname, #Major, #Degree, .user-education-years select')
+            .css('border-color', 'lightgrey');
+    }*/
+
+    // For service and price
+    if(elementClicked.id!=='servicePriceBttn'){
+        $('.user-servicePrice-container input')
+            .css('border-color', 'lightgrey');
+    }
+
+    // For skills
+    if(elementClicked.id!=='add-skills-button'){
+        $('#userBioSkills input')
+            .css('border-color', 'lightgrey');
     }
 });
 
@@ -35,10 +71,10 @@ $(document).click(function (event) {
 * The following codes deal with the changes and display of the profile
 * of the freelancer
 * */
+
 accountsOperation.profileImageChange("#freelancer-profile-picture",
     '#imagePreview')
 accountsOperation.profileImageEmpty('#imagePreview')
-
 
 /*
 * The following is for handling the information update process of a freelancer
@@ -70,6 +106,7 @@ $('.education-input-btn').click(function (event) {
     if(!school_name || !major || !degree || !start_year || !end_year){
         if(!school_name){
             $('#Schoolname').css('border-color', 'red');
+
         }
         if(!major){
             $('#Major').css('border-color', 'red');
@@ -165,6 +202,11 @@ $('.education-input-btn').click(function (event) {
 
     }
 })
+
+// When an error is throw, the borders of the education fields are highlighted
+// in red. When a click is made away on a blank part of the page, the border
+// must return to its default color.
+
 // Add the Possibility of a freelancer deleting their education
 accountsOperation.deleteItem('.saved-education',
     'education-delete-btn');
@@ -179,12 +221,43 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
     * This function is for add and showing skills and services of the freelancer
     * */
 
-    let singleValue = $(inputIdName+ ' input').val();
+    let serviceOrSkillValue = $(inputIdName+ ' input').val().trim();
+    let currentService_priceValue;
+
+    // At the beginning of each addition of either the service and its
+    // price or the skill, it must be ensure that the border of the
+    // input field is in its default color.
     $(inputIdName+ ' input').css('border-color', 'lightgrey');
 
-    if(!singleValue){
-        $(inputIdName+ ' input').css('border-color', 'red');
+    if(inputHtmlName==='service'){
+        // Each service must have its own price. This loop
+        // is used to check if we are dealing with the service
+        // because this loop is also used for the process of
+        // extracting data for the skills.
+        let priceValue = $('#userServicesPriceField input').val().trim();
+
+        // default color for the input field of the price
+        $('#userServicesPriceField input').css('border-color', 'lightgrey');
+        $('.user-servicePrice-container section:nth-child(2) p').hide();
+
+        // The first check to be carried on the price of the current service is
+        // to find out whether the field was left empty
+        if((isNaN(priceValue) && !Number(priceValue))){
+            $('#userServicesPriceField input').css('border-color', 'red');
+        }else{
+            currentService_priceValue = priceValue;
+        }
     }
+
+    if((inputHtmlName==='service' && !currentService_priceValue)||!serviceOrSkillValue){
+        if(inputHtmlName==='service' && !currentService_priceValue){
+            $('#userServicesPriceField input').css('border-color', 'red');
+        }
+        if(!serviceOrSkillValue){
+            $(inputIdName+ ' input').css('border-color', 'red');
+        }
+    }
+    // START FROM HERE
     else{
         // Create a container for one input
         let containerDiv = document.createElement('div');
@@ -201,30 +274,70 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
 
         // Show childNodes
         let singleName_html = document.createElement('h4');
-        singleName_html.innerText = singleValue;
+        singleName_html.innerText = serviceOrSkillValue;
         showDiv.appendChild(singleName_html);
 
         let removeButton = document.createElement('button');
         removeButton.classList.add(deleteButton);
         removeButton.innerText = 'x';
-        showDiv.appendChild(removeButton);
 
         // Hide ChildNodes
         let input_html = document.createElement('input');
         input_html.type = 'text';
         input_html.name = inputHtmlName;
-        input_html.value = singleValue;
+        input_html.value = serviceOrSkillValue;
         input_html.readOnly = true;
         hideDiv.appendChild(input_html);
+
+        if(inputHtmlName==='service'){
+            // In this if statement, another field for the price
+            // is added for each of the services
+            let singlePrice_html = document.createElement('h4');
+            singlePrice_html.innerText = '£'+currentService_priceValue;
+            showDiv.appendChild(singlePrice_html);
+
+            // Add the remove button on the show section
+            showDiv.appendChild(removeButton);
+
+            // On the section of the service, Add an input tag for the price
+            let priceInput_html = document.createElement('input');
+            priceInput_html.type = 'text';
+            priceInput_html.name = 'price';
+            priceInput_html.value = currentService_priceValue;
+            priceInput_html.readOnly = true;
+            hideDiv.appendChild(priceInput_html);
+        }else{
+            /*
+            * here, it is when we are dealing with the skills
+            * */
+            // Add the remove button on the show section
+            showDiv.appendChild(removeButton);
+        }
 
         // Make the single container
         containerDiv.appendChild(showDiv);
         containerDiv.appendChild(hideDiv);
         $(containerHtml).append(containerDiv);
 
+        // Empty the field
         $(inputIdName+ ' input').val('');
+        $('#userServicesPriceField input').val('');
     }
 }
+// services
+$('#servicePriceBttn').click(function (event) {
+    event.preventDefault();
+
+    serviceAndSkill('#userServiceField', 'single-serviceAndPrice',
+        'delete-aServiceAndPrice-btn', '.saved-serviceAndPrice',
+        'show-serviceAndPrice', 'hide-serviceAndPrice', 'service');
+})
+
+// Add the possibility of freelancer deleting their services
+accountsOperation.deleteItem('.saved-serviceAndPrice',
+    'delete-aServiceAndPrice-btn');
+
+
 
 // skills
 $('#add-skills-button').click(function (event) {
@@ -238,18 +351,6 @@ $('#add-skills-button').click(function (event) {
 accountsOperation.deleteItem('.saved-skill',
     'delete-aSkill-btn');
 
-
-// services
-$('#add-services-btn').click(function (event) {
-    event.preventDefault();
-
-    serviceAndSkill('#userBioServices', 'single-service',
-        'delete-aService-btn', '.saved-service', 'shown-service',
-        'hidden-service', 'services');
-})
-// Add the possibility of freelancer deleting their services
-accountsOperation.deleteItem('.saved-service',
-    'delete-aService-btn');
 
 
 /*
@@ -282,7 +383,7 @@ function getInputValues(mainContainerHtml){
 
 $('.update-general-information').submit(function (event) {
     event.preventDefault();
-    console.log('Freelancer profile update profile submission');
+    let startTime = Date.now();
     let freelancerErrorInfos = '.freelancer-update-infos';
 
     $(freelancerErrorInfos).empty();
@@ -292,10 +393,10 @@ $('.update-general-information').submit(function (event) {
 
     // Get the profile picture uploaded by the freelancer
     let saved_profilePicture = $('#freelancer-profile-picture')[0].files[0];
-    formData.append('freelancer_profile_picture', saved_profilePicture);
+    formData.append('user_profile_picture', saved_profilePicture);
 
     formData.append('saved_educations', getInputValues('.saved-education'));
-    formData.append('saved_services', getInputValues('.saved-service'));
+    formData.append('saved_servicesAndPrices', getInputValues('.saved-serviceAndPrice'));
     formData.append('saved_skills', getInputValues('.saved-skill'));
 
     $.ajax({
@@ -306,8 +407,8 @@ $('.update-general-information').submit(function (event) {
         contentType: false,
         processData: false,
         success: function (data) {
-            console.log(data)
-            /********* display the updated profile picture of the freelancer *********/
+
+            /***** display the updated profile picture of the freelancer *****/
             $('.account-profile-image img').attr('src',
                 data.profileImageSrc);
 
@@ -315,14 +416,14 @@ $('.update-general-information').submit(function (event) {
             accountsOperation.showNames(data.name, data.surname,
                 '.account-profile-name');
 
-            /******** display services and skills of the freelancer ********/
-            /*
-            * The service cannot be empty, therefore, all the
+            /******** display services and skills of the freelancer ********
+            *
+            * The service cannot be empty. Therefore, all the
             * children under the section that the service can
             * be hidden to show the updated services.
             */
             $('.freelancer-services').children().hide();
-            accountsOperation.showServicesOrSkills(data.service,
+            accountsOperation.showServicesAndPrices(data.serviceAndPrice,
                 '.freelancer-services');
 
             /*
@@ -339,7 +440,7 @@ $('.update-general-information').submit(function (event) {
                */
                 $('.user-account-skills section').children().hide();
                 $('.user-account-skills h1').show();
-                accountsOperation.showServicesOrSkills(data.skill,
+                accountsOperation.showSkills(data.skill,
                     '.user-account-skills section');
             }else{
                 $('.user-account-skills section').children().hide();
@@ -361,12 +462,6 @@ $('.update-general-information').submit(function (event) {
                 accountsOperation.emptyDescription('+ Add a Description about yourself',
                     '.account-first-side');
             }
-
-            // display the price of the service of the freelancer
-            $('.price-information').children().hide();
-            accountsOperation.showPrice(data.price,
-                '.price-information');
-
 
             // display the education of the freelancer
             let freelancerEducation = data.education;
@@ -394,7 +489,6 @@ $('.update-general-information').submit(function (event) {
         },
         error: function (error) {
             let errors = error.responseJSON;
-            console.log(errors);
             accountsOperation.ajaxFormMessage_generator(errors, freelancerErrorInfos);
             $("html, body").animate({ scrollTop: 0 }, "slow");
         }

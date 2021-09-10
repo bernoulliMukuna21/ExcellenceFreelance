@@ -8,82 +8,84 @@ block content
             .client-account-left
                 .client-profile-details
                     .account-profile-image
-                        if !user.profile_picture.data
+                        if !loggedInUser.profile_picture.data
                             .default-profile-image
                                 img(src='/images/userDefaultImage.png')
                                 p.addProfilePicture + Add Profile Picture
                         else
-                            img(src=clientImage)
-                    p.client-profile-name #{user.name +' '+user.surname}
+                            img(src=loggedInUser_imageSrc)
+                    p.client-profile-name #{loggedInUser.name +' '+loggedInUser.surname}
                     a#client-page-find-freelancer(href='/'): button Find Freelancers
                 .client-profile-information
                     ul
                      li(class='clicked') Bookings
                      li Profile Update
+                     li(id=messageIdHTML)
+                         p Messages
+                         p.newMessageReceived(style='display:none;') new
             .client-account-middle
                 .client-current-bookings
                     h3 My Bookings
-                    //
-                        .client-bookings-header
+                    .client-bookings-header
+                        ul
+                            li Project Name
+                            li Freelancer
+                            li Expected Date
+                            li Progress Status
+                            li Options
+                    .client-bookings-body
+                        .single-client-booking
                             ul
-                                li Project Name
-                                li Freelancer
-                                li Expected Date
-                                li Progress Status
-                                li Options
-                        .client-bookings-body
-                            .single-client-booking
-                                ul
-                                    li Web Design for a Mobile App
-                                    li Janine Molengeli
-                                    li Jun 10, 2022
-                                    li
-                                        .select
-                                            select(name='progression')
-                                                option(value='No start') No start
-                                                option(value='started') Started
-                                                option(value='progressed') Progressing
-                                                option(value='ending') Ending
-                                                option(value='Completed') Completed
-                                    li
-                                        i.far.fa-trash-alt
-                                        i.far.fa-edit
-                            .single-client-booking
-                                ul
-                                    li Shirts Printing
-                                    li Jonathan Lennon
-                                    li Jun 10, 2022
-                                    li
-                                        .select
-                                            select(name='progression')
-                                                option(value='No start') No start
-                                                option(value='started') Started
-                                                option(value='progressed') Progressing
-                                                option(value='ending') Ending
-                                                option(value='Completed') Completed
-                                    li
-                                        i.far.fa-trash-alt
-                                        i.far.fa-edit
-                            .single-client-booking
-                                ul
-                                    li Wedding Planning
-                                    li Yasmine Malila
-                                    li Jun 10, 2022
-                                    li
-                                        .select
-                                            select(name='progression')
-                                                option(value='No start') No start
-                                                option(value='started') Started
-                                                option(value='progressed') Progressing
-                                                option(value='ending') Ending
-                                                option(value='Completed') Completed
-                                    li
-                                        i.far.fa-trash-alt
-                                        i.far.fa-edit
+                                li Web Design for a Mobile App
+                                li Janine Molengeli
+                                li Jun 10, 2022
+                                li
+                                    .select
+                                        select(name='progression')
+                                            option(value='No start') No start
+                                            option(value='started') Started
+                                            option(value='progressed') Progressing
+                                            option(value='ending') Ending
+                                            option(value='Completed') Completed
+                                li
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
+                        .single-client-booking
+                            ul
+                                li Shirts Printing
+                                li Jonathan Lennon
+                                li Jun 10, 2022
+                                li
+                                    .select
+                                        select(name='progression')
+                                            option(value='No start') No start
+                                            option(value='started') Started
+                                            option(value='progressed') Progressing
+                                            option(value='ending') Ending
+                                            option(value='Completed') Completed
+                                li
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
+                        .single-client-booking
+                            ul
+                                li Wedding Planning
+                                li Yasmine Malila
+                                li Jun 10, 2022
+                                li
+                                    .select
+                                        select(name='progression')
+                                            option(value='No start') No start
+                                            option(value='started') Started
+                                            option(value='progressed') Progressing
+                                            option(value='ending') Ending
+                                            option(value='Completed') Completed
+                                li
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
 
                 .client-profile-update(style='display:none;')
                     - let updateOption = 'pointer-events: auto';
-                    - if(user.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';};
+                    - if(loggedInUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';};
 
                     .client-update-form-errors
                     h3 Profile Update
@@ -93,27 +95,27 @@ block content
                                 .basic-infos-one
                                     label(for='client-name') Name: #[br]
                                         input(id='client-name', type='text', placeholder='Enter Name', name='name',
-                                            value=user.name, required)
+                                            value=loggedInUser.name, required)
 
                                     label(for='client-surname') Surname: #[br]
                                         input(id='client-surname', type='text', placeholder='Enter Surname',
-                                                name='surname', value=user.surname, required)
+                                                name='surname', value=loggedInUser.surname, required)
                                 .basic-infos-two
                                     label(for='client-phone-number') #[br] Phone Number: #[br]
                                         input(id='client-phone-number', type='tel', placeholder='Enter Phone Number',
                                                 name='phone_number', value=
-                                            typeof (user.phone_number) != 'undefined' ? user.phone_number: '')
+                                            typeof (loggedInUser.phone_number) != 'undefined' ? loggedInUser.phone_number: '')
 
                                     label(for='client-email') #[br] Email Address: #[br]
                                         input(id = 'client-email', type='email', placeholder = 'Enter Email',
-                                            name='email', value= user.email, tyle = updateOption, required)
+                                            name='email', value= loggedInUser.email, tyle = updateOption, required)
 
                             section
                                 .basic-infos-three
                                     Label Profile Picture
                                     .client-image-update-area
                                         .client-image-uploaded
-                                            img(id='client-imagePreview', src=clientImage)
+                                            img(id='client-imagePreview', src=loggedInUser_imageSrc)
                                         .client-image-upload-btn
                                             span
                                                 i.fas.fa-cloud-upload-alt
@@ -124,17 +126,20 @@ block content
                             .pasword-infos
                                 label(for='old-password') #[br]Old Password #[br]
                                 input(id='old-password', type='password', placeholder='Old Password',
-                                    name='old_password',style=updateOption )
+                                    name='old_password',style=updateOption, readonly)
 
                             .pasword-infos
                                 label(for='new-password') #[br]New Password #[br]
                                 input(id='new-password', type='password', placeholder='New Password',
-                                    name='new_password', style=updateOption)
+                                    name='new_password', style=updateOption,
+                                    onfocus = "this.removeAttribute('readonly')", readonly)
 
                             .pasword-infos
                                 label(for='confirm-password') #[br]Confirm New Password #[br]
                                 input(id='confirm-password', type='password', placeholder='Confirm Password',
-                                    name='confirm_password', value='', style=updateOption)
+                                    name='confirm_password', value='', style=updateOption,
+                                    onfocus = "this.removeAttribute('readonly')", readonly)
+
                         .client-profile-update-options
                             input#clientUpdate(type='submit', value='Save Profile')
                             //
@@ -143,3 +148,5 @@ block content
                                     a(href='#'): button Delete Account
 
 
+                .client-profile-message(style='display:none;')
+                    include ./partials/message

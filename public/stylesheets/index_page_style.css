@@ -55,7 +55,6 @@ input:focus{
     justify-content: center;
     padding: 1rem 0;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-
 }
 .index-page-one-right img{
     height: 60vh;
@@ -94,21 +93,29 @@ input:focus{
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-auto-flow: row;
+    grid-gap: 2rem;
 }
 .single-user-index-details{
     border: .2rem solid lightgrey;
-    padding: 1rem 1rem 0 1rem;
-    margin: 1rem;
-    box-shadow: .2rem .2rem lightgrey;
     border-radius: .5rem;
-    cursor: pointer;
-}
-.single-user-index-details:hover{
-    border-color: #213e53;
-    box-shadow: .2rem .2rem #213e53;
 }
 .top-side{
     display: flex;
+    align-items: center;
+    padding: .5rem;
+}
+.top-side section{
+    margin-left: 10%;
+}
+.top-side section span p{
+    font-size: 1.7rem;
+    font-weight: bolder;
+}
+.single-user-index-details>.top-side section span p{
+    cursor: pointer;
+}
+.single-user-index-details>.top-side section span p:hover{
+    text-decoration: underline;
 }
 .single-user-index-details .top-side img{
     height: 8rem;
@@ -117,82 +124,61 @@ input:focus{
     position: center;
     border-radius: 50%;
 }
-.top-side section{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-}
-.top-side section span{
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-}
-.top-side section span:first-child{
-    justify-content: center;
-    font-size: 1.7rem;
-    font-weight: bolder;
-}
-.top-side section span:last-child{
-    justify-content: end;
-    font-size: 1.3rem;
-    font-weight: bolder;
-    color: #213e53;
-}
-.top-side section span:last-child p{
-    border: .1rem solid #8d2874;
-    padding: .25rem;
-    border-radius: .5rem;
-    background-color: #8d2874;
-    color: white;
-    box-shadow: .1rem .1rem #8d2874;
-}
 .middle-side{
-    border-top: .1rem solid black;
-    border-bottom: .1rem solid black;
-    margin: 2rem 0;
+    height: 23vh;
+    padding: 1rem .5rem;
+    border-top: .1rem solid lightgrey;
+    border-bottom: .1rem solid lightgrey;
+    overflow: hidden;
+    /*overflow: auto;*/
+}
+.middle-side div{
     display: flex;
     flex-wrap: wrap;
-    padding-top: 2rem;
 }
-.bottom-side{
-    border: none;
-    margin: 0;
-    padding-top: 0;
-}
-.middle-side p{
+.middle-side .index-serviceAndPrice{
     border: .1rem solid black;
     border-radius: .5rem;
-    margin-right: 1rem;
-    margin-bottom: 2rem;
-    text-transform: uppercase;
     padding: .5rem;
+    margin: 0 1rem 1rem 0;
+}
+.middle-side .index-serviceAndPrice p{
+    text-transform: uppercase;
     font-size: 1.2rem;
 }
+.middle-side .index-serviceAndPrice p:first-child{
+    padding-right: .25rem;
+    border-right: .1rem solid black;
+}
+.middle-side .index-serviceAndPrice p:last-child{
+    padding-left: 1rem;
+    border-left: .1rem solid black;
+    font-weight: bolder;
+    font-style: italic;
+}
 .bottom-side{
-    margin: 2rem 0 1rem 0;
     text-align: center;
+    padding: 1rem 0 .5rem 0;
 }
-.bottom-side a{
-    margin: 1rem;
-}
-.bottom-side a button{
+.bottom-side button{
     width: 10rem;
-    padding: .5rem;
     color: white;
     cursor: pointer;
     font-weight: bolder;
     border-radius: .5rem;
-
+    padding: .5rem;
 }
-.bottom-side a:first-child button{
+.bottom-side>button{
     background-color: #4CAF50;
     border-color: #4CAF50;
+    margin-right: .5rem;
 }
-.bottom-side a:last-child button{
+.bottom-side a button{
     background-color: #213e53;
     border-color: #213e53;
+    margin-left: .5rem;
 }
+
 /*********************************************************************************************************************/
 /********************************************** Footer  **********************************************/
 #contact{

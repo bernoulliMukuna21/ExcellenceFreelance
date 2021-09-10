@@ -1,81 +1,94 @@
 extends layout
 
 block content
-    - console.log(); //user
     - let this_title = 'Kunta Kinte and the 40 Thieves Book Reviews';
-    - let mainPageId = user.price;
     - let currentYear = (new Date()).getFullYear();
     - let startYear = currentYear - 50;
     - let rangeOfYears = [];
-    - for(let i=currentYear; i>=startYear; i--){ rangeOfYears.push(i)}
+    - for(let i=currentYear+6; i>=startYear; i--){ rangeOfYears.push(i)}
 
     .freelancer-page-main-container
         .freelancer-update-infos
-        div.main-account-page(id=mainPageId)
+        div.main-account-page
             .freelancer_account_left_side
                 .account-profile-details
                     .account-profile-image
-                        if !user.profile_picture.data
+                        if !freelancerUser.profile_picture.data
                             .default-profile-image
                                 img(src='/images/userDefaultImage.png')
-                                p.addProfilePicture + Add Profile Picture
+                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                    p.addProfilePicture + Add Profile Picture
                         else
-                            img(src=freelancerImage)
-                    p.account-profile-name #{user.name + ' ' + user.surname}
-                    div.public-service-enquiry
-                        //
-                            a(href='#'): button(class='book-btn') Book
-                            a(href='#'): button(id='enquire-btn') Enquire
+                            img(src=loggedInUser_imageSrc)
+                    p.account-profile-name #{freelancerUser.name + ' ' + freelancerUser.surname}
+                    if (isLogged && (emailEncode(freelancerUser.email) !== emailEncode(loggedInUser.email)))
+                        div.public-service-enquiry
+                            - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
+                            button(class='book-btn') Book
+                            a(id='freelance-mssg-btn')
+                                p Message
+                                i.far.fa-envelope
+                                input(style='display: none;' id='freelancerToMessage-unique-key' value=freelancerUser_Mssg)
 
                     div.freelancer-services
-                        if user.service.length === 0
-                            .default-service-container
-                                .default-service-p#addService + Add Service (e.g. Web Designer)
+                        if freelancerUser.serviceAndPrice.length === 0
+                            .freelancer-serviceAndPrice-empty
+                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                    p#addServiceAndPrice + Add Service and Price
+                                else
+                                    p(style='font-weight: bold') Service and Prices Empty
                         else
-                            each freelancerService in user.service
-                                p #{freelancerService}
+                            each servicePrice in freelancerUser.serviceAndPrice
+                                .freelancer-serviceAndPrice-profile
+                                    h4 #{servicePrice.service}
+                                    h4 #{servicePrice.price}
 
                     div.account-profile-information
                         ul
                             li.user-main-page(class='clicked') Main Page
-                            li.user-update-page Update Personal Information
+                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                li.user-update-page Update Personal Information
                             li.user-current-booking-page Bookings
-                            //
-                                li.user-completed-booking-page Messages
+                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                li.user-completed-booking-page(id=messageIdHTML)
+                                    p Messages
+                                    p.newMessageReceived(style='display:none;') new
 
             .freelancer_account_main_side
                 .freelancer-main-page
                     .account-first-side
                         h1 About Me
-                        if !user.description
+                        if !freelancerUser.description
                             .default-description
-                                p#addDescription + Add a Description about yourself
+                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                    p#addDescription + Add a Description about yourself
+                                else
+                                    p(style='font-weight: bold') Description Empty
                         else
-                            p #{user.description}
+                            p #{freelancerUser.description}
                     .account-second-side
                         div.user-account-skills
                             h1 Skills
-                            if user.skill.length === 0
+                            if freelancerUser.skill.length === 0
                                 section.default-skill
-                                    p#addSkills + Add Your Skills
+                                    if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                        p#addSkills + Add Your Skills
+                                    else
+                                        p(style='font-weight: bold') Skill Empty
                             else
                                 section
-                                    each freelancerSkill in user.skill
+                                    each freelancerSkill in freelancerUser.skill
                                         p #{freelancerSkill}
-                        div.price-information
-                            if !user.price
-                                p#addPrice(style='font-size: 1.7rem; border: .1rem dashed white; padding: .25rem') + Add Min. Price for your Service
-                            else
-                                p.booking-price
-                                    | Minimum Price at #{' '}
-                                    i(style='text-decoration: underline') £#{user.price}
                     .account-third-side
                         h1 Education
-                        if user.education.length === 0
+                        if freelancerUser.education.length === 0
                             section.each-education.default-education
-                                p#addEducation + Add Education
+                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                    p#addEducation + Add Education
+                                else
+                                    p(style='font-weight: bold') Education Empty
                         else
-                            each freelancerEducation in user.education
+                            each freelancerEducation in freelancerUser.education
                                 section.each-education
                                     p #{freelancerEducation.degreeAndCourse}
                                     p #{freelancerEducation.institute}
@@ -83,88 +96,58 @@ block content
 
                     .account-fourth-side
                         h1 Portfolio
-                        //
-                            div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
-                            'align-items: center; height: 15vh')
+                        div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
+                        'align-items: center; height: 15vh')
+                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                                 p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
+                            else
+                                p(style='font-weight: bold') Portfolio Empty
 
-                            div.image-portfolio
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some Photo I took
-                                    img(src='/images/eF1.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p My Trip to Ghana
-                                    img(src='/images/eF2.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Life is good
-                                    iframe(src='/images/excellencePDF.pdf#toolbar=0&scrollbar=0')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Something else
-                                    embed(src='https://alex.smola.org/drafts/thebook.pdf#toolbar=0&scrollbar=0')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Do you see this picture
-                                    video(src='/images/videoExcellence1.mp4', controls)
-                                div
-                                    .portfolio-tag-overlay
-                                        p My time at the University of Sheffield
-                                    img(src='/images/eF4.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Throw back
-                                    img(src='/images/eF5.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Hmmm
-                                    img(src='/images/eF6.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Do you see what I see
-                                    img(src='/images/eF7.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Christ in me da hope of glory
-                                    img(src='/images/eF4.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p I have found IT!!
-                                    video(src='/images/excellenceVideo.mp4', controls)
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some other thing
-                                    img(src='/images/eF2.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some final thing
-                                    img(src='/images/eF3.jpg')
-                        //
-                            .freelancer-page-popups
-                                // freelancer portfolio popup section
-                                .freelancer-portfolio-big-modal
-                                    .freelancer-portfolio-modal-container
-                                        .portfolio-item-upload-top
-                                            p x
-                                        .portfolio-item-upload-middle
-                                            .portfolio-upload-empty
-                                                p Upload to Portfolio
-                                            .portfolio-upload-load
-                                                section.portfolio-item-upload-first
-                                                    .portfolio-item-section
-                                                    //
-                                                        img(src='/images/eF3.jpg')
-                                                    .portfolio-item-caption
-                                                        textarea(placeholder='Write a Caption...')
-                                                setcion.portfolio-item-upload-second
-                                                    .portfolio-upload-options
-                                                        .portfolio-save-upload
-                                                            a(href='#'): button Upload to Portfolio
-                                                            input#freelancer-portfolio-update(type='submit', value='Save')
-                                                        .portfolio-delete
-                                                            a(href='#'): button#freelancer-portfolio-delete Delete
+                        div.image-portfolio
+                            div
+                                .portfolio-tag-overlay
+                                    p Some Photo I took
+                                img(src='/images/eF1.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p My Trip to Ghana
+                                img(src='/images/eF2.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Do you see this picture
+                                video(src='/images/videoExcellence1.mp4', controls)
+                            div
+                                .portfolio-tag-overlay
+                                    p My time at the University of Sheffield
+                                img(src='/images/eF4.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Throw back
+                                img(src='/images/eF5.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Hmmm
+                                img(src='/images/eF6.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Do you see what I see
+                                img(src='/images/eF7.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Christ in me da hope of glory
+                                img(src='/images/eF4.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p I have found IT!!
+                                video(src='/images/excellenceVideo.mp4', controls)
+                            div
+                                .portfolio-tag-overlay
+                                    p Some other thing
+                                img(src='/images/eF2.jpg')
+                            div
+                                .portfolio-tag-overlay
+                                    p Some final thing
+                                img(src='/images/eF3.jpg')
                     //
                         .account-fifth-side
                             h1 All Reviews
@@ -205,188 +188,177 @@ block content
                                 section.review-submit-section
                                     button(id='user-review-submission') Submit Review
 
-                .freelancer-update-page(style='display: none;')
-                    - let updateOption = 'pointer-events: auto';
-                    - if(user.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
 
-                    h1 Update Personal Information
-                    p Setup your general profile details.
+                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                    .freelancer-update-page(style='display: none;')
+                        - let updateOption = 'pointer-events: auto';
+                        - //if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                        - // The line of code right below checks whether the current logged in user is using either Google or Facebook strategy.
+                        - // if that is the case, then they are not allowd to update the email and password on this platform.
+                        - if(freelancerUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
 
-                    form.update-general-information(method='post', autocomplete="off")
-                        //
-                            action='/account/personal_account/:id',
-                        h3 Name and other General Information
-                        .user-general-information-one
-                            .general-information-section-one
-                                label(for='name') Name: #[br]
-                                input(id='name', type='text', placeholder='Enter Name', name='name',
-                                    value=typeof (user.name) != 'undefined' ? user.name: '', required)
+                        h1 Update Personal Information
+                        p Setup your general profile details.
 
-                                label(for='email') #[br] Email Address: #[br]
-                                input(id='email', type='email', placeholder='Enter Email', name='email',
-                                    value=typeof (user.email) != 'undefined' ? user.email: '', style=updateOption,
-                                    required)
-                            .general-information-section-two
-                                label(for='surname') Surname: #[br]
-                                input(id='surname', type='text', placeholder='Enter Surname', name='surname',
-                                    value=typeof (user.surname) != 'undefined' ? user.surname: '', required)
+                        form.update-general-information(method='post', autocomplete="off")
+                            h3 Name and other General Information
+                            .user-general-information-one
+                                .general-information-section-one
+                                    label(for='name') Name: #[br]
+                                    input(id='name', type='text', placeholder='Enter Name', name='name',
+                                        value=typeof (freelancerUser.name) != 'undefined' ? freelancerUser.name: '', required)
 
-                                label(for='phone-number') #[br] Phone Number: #[br]
-                                input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
-                                    value=typeof (user.phone_number) != 'undefined' ? user.phone_number: '')
-                                input(type='text', style='display: none;')
-                            .general-information-section-three
-                                label Profile Picture
-                                .file-image-area
-                                    .file-image-upload
-                                        img(id='imagePreview', src=freelancerImage)
-                                    .file-image-upload-btn
-                                        span
-                                            i.fas.fa-cloud-upload-alt
-                                            p Upload Image
-                                        input#freelancer-profile-picture(type='file',
-                                            name='freelancer_profile_picture')
+                                    label(for='email') #[br] Email Address: #[br]
+                                    input(id='email', type='email', placeholder='Enter Email', name='email',
+                                        value=typeof (freelancerUser.email) != 'undefined' ? freelancerUser.email: '', style=updateOption,
+                                        required)
+                                .general-information-section-two
+                                    label(for='surname') Surname: #[br]
+                                    input(id='surname', type='text', placeholder='Enter Surname', name='surname',
+                                        value=typeof (freelancerUser.surname) != 'undefined' ? freelancerUser.surname: '', required)
 
-                        .user-general-information-two
-                            h3 Change your Password
-                            .git-password-update-section
-                                .git-old-password
-                                    label(for='old-password') Old Password #[br]
-                                    input(id='old-password', type='password', placeholder='Old Password',
-                                        name='old_password', style=updateOption,
-                                        onfocus = "this.removeAttribute('readonly')",
-                                        onfocusout ="this.setAttribute('readonly','readonly')", readonly)
-                                .git-new-password
-                                    label(for='new-password') New Password #[br]
-                                    input(id='new-password', type='password', placeholder='New Password',
-                                        name='new_password', style=updateOption)
-                                .git-new-repeat-password
-                                    label(for='new-repeat-password') Confirm New Password #[br]
-                                    input(id='new-repeat-password', type='password', placeholder='Repeat New Password',
-                                        name='confirm_password', style=updateOption)
+                                    label(for='phone-number') #[br] Phone Number: #[br]
+                                    input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
+                                        value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
+                                    input(type='text', style='display: none;')
+                                .general-information-section-three
+                                    label Profile Picture
+                                    .file-image-area
+                                        .file-image-upload
+                                            img(id='imagePreview', src=loggedInUser_imageSrc)
+                                        .file-image-upload-btn
+                                            span
+                                                i.fas.fa-cloud-upload-alt
+                                                p Upload Image
+                                            input#freelancer-profile-picture(type='file',
+                                                name='user_profile_picture')
 
-                        .user-general-information-three
-                            h3 Education
-                            .eduction-container
-                                .user-education
-                                    input#Schoolname.form-control(type='text', value='',
-                                        placeholder='University or College Name')
-                                    input#Major.form-control(type='text', value='',
-                                        placeholder='Degree Qualification (e.g. BSc, MSc, ...)')
-                                    input#Degree.form-control(type='text', value='',
-                                        placeholder='Degree Name (e.g. Business Management)')
-                                    .user-education-years
-                                        select#educationDateStart.form-control
-                                            option(value='') Year
-                                            each year in rangeOfYears
-                                                option(value= year) #{year}
-                                        select#educationDateEnd.form-control
-                                            option(value='') Year
-                                            each year in rangeOfYears
-                                                option(value= year) #{year}
-                                        button.education-input-btn: i.fas.fa-plus-square
-                                .saved-education
-                                    each education in user.education
-                                        .freelancer-single-education
-                                            .show-section
-                                                h4 #{education.degreeAndCourse}
-                                                p #{education.institute}
-                                                p Year #{' '+education.educationYear}
-                                                button.education-delete-btn x
-                                            .hide-section(style='display: none;')
-                                                input(type='text', name='degree', value=education.degreeAndCourse,
-                                                    readonly=true)
-                                                input(type='text', name='schoolName', value=education.institute,
-                                                    readonly=true)
-                                                input(type='text', name='educationYear', value=education.educationYear)
-                                        //
+                            .user-general-information-two
+                                h3 Change your Password
+                                .git-password-update-section
+                                    .git-old-password
+                                        label(for='old-password') Old Password #[br]
+                                        input(id='old-password', type='password', placeholder='Old Password',
+                                            name='old_password', style=updateOption, readonly)
+                                    .git-new-password
+                                        label(for='new-password') New Password #[br]
+                                        input(id='new-password', type='password', placeholder='New Password',
+                                            name='new_password', style=updateOption,
+                                            onfocus = "this.removeAttribute('readonly')", readonly)
+                                    .git-new-repeat-password
+                                        label(for='new-repeat-password') Confirm New Password #[br]
+                                        input(id='new-repeat-password', type='password', placeholder='Repeat New Password',
+                                            name='confirm_password', style=updateOption,
+                                            onfocus = "this.removeAttribute('readonly')", readonly)
+
+                            .user-general-information-three
+                                h3 Education
+                                .eduction-container
+                                    .user-education
+                                        input#Schoolname.form-control(type='text', value='',
+                                            placeholder='University or College Name')
+                                        input#Major.form-control(type='text', value='',
+                                            placeholder='Degree Qualification (e.g. BSc, MSc, ...)')
+                                        input#Degree.form-control(type='text', value='',
+                                            placeholder='Degree Name (e.g. Business Management)')
+                                        .user-education-years
+                                            select#educationDateStart.form-control
+                                                option(value='') Year
+                                                each year in rangeOfYears
+                                                    option(value= year) #{year}
+                                            select#educationDateEnd.form-control
+                                                option(value='') Year
+                                                each year in rangeOfYears
+                                                    option(value= year) #{year}
+                                            button.education-input-btn: i.fas.fa-plus-square
+                                    .saved-education
+                                        each education in freelancerUser.education
                                             .freelancer-single-education
                                                 .show-section
-                                                    h4 Master of Science Computer Engineering
-                                                    p University of Sheffield
-                                                    p Year 2018-2019
+                                                    h4 #{education.degreeAndCourse}
+                                                    p #{education.institute}
+                                                    p Year #{' '+education.educationYear}
                                                     button.education-delete-btn x
                                                 .hide-section(style='display: none;')
-                                                    input(type='text', name='degree', value='Master of Science Computer Engineering',
+                                                    input(type='text', name='degree', value=education.degreeAndCourse,
                                                         readonly=true)
-                                                    input(type='text', name='schoolName', value='University of Sheffield',
+                                                    input(type='text', name='schoolName', value=education.institute,
                                                         readonly=true)
-                                                    input(type='text', name='educationYear', value='2018-2019')
-                                            .freelancer-single-education
-                                                .show-section
-                                                    h4 Bachelor of Science International Relation and Business
-                                                    p Aston University
-                                                    p Year 2011-2014
-                                                    button.education-delete-btn x
-                                                .hide-section(style='display: none;')
-                                                    input(type='text', name='degree', value='Bachelor of Science International Relation and Business',
-                                                        readonly=true)
-                                                    input(type='text', name='schoolName', value='Aston University',
-                                                        readonly=true)
-                                                    input(type='text', name='educationYear', value='2011-2014')
+                                                    input(type='text', name='educationYear', value=education.educationYear)
+                                            //
+                                                .freelancer-single-education
+                                                    .show-section
+                                                        h4 Master of Science Computer Engineering
+                                                        p University of Sheffield
+                                                        p Year 2018-2019
+                                                        button.education-delete-btn x
+                                                    .hide-section(style='display: none;')
+                                                        input(type='text', name='degree', value='Master of Science Computer Engineering',
+                                                            readonly=true)
+                                                        input(type='text', name='schoolName', value='University of Sheffield',
+                                                            readonly=true)
+                                                        input(type='text', name='educationYear', value='2018-2019')
 
-                            .user-bio-details
-                                h3 Description and Other Necessary Information
-                                .user-bio-details-container
-                                    .user-bio-one
-                                        section
-                                            label(for='price') Price #[br]
-                                            input(type='text', name='price', id='price',
-                                                value=typeof (user.price) != 'undefined' ? user.price: '',
-                                                placeholder='Enter Minimum Price for your service in £ (e.g. 8.90)',
-                                                required=true)
-                                        section
-                                            label(for='freelancer_description') Description (Maximum 600 characters) #[br]
-                                            textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
-                                                name='freelancer_description', maxlength="600")
-                                               | #{typeof (user.description) != 'undefined' ? user.description : ''}
-                                    .user-bio-two
-                                        section
-                                            label Services #[br]
-                                            .user-bio-container#userBioServices
-                                                input(type='text', value='',
-                                                    placeholder='Enter Services (e.g. Developer, Translator, ...)')
-                                                button#add-services-btn: i.fas.fa-plus-square
-                                            .saved-service
-                                                each uniqueService in user.service
-                                                    .single-service
-                                                        .shown-service
-                                                            h4 #{uniqueService}
-                                                            button.delete-aService-btn x
-                                                        .hidden-service(style='display:none;')
-                                                            input(type='text', name='service', value=uniqueService, readonly=true)
+                                    .user-service_and_price
+                                        h3 Service and Price
+                                        .user-servicePrice-container
+                                            section#userServiceField
+                                                label Service #[br]
+                                                input(type='text', name='service', id='service', value='',
+                                                        placeholder='Enter Services (e.g. Developer, Translator, ...)')
 
-                                                //
-                                                    .single-service
-                                                        .shown-service
-                                                            h4 Something
-                                                            button.delete-aService-btn x
-                                                        .hidden-service(style='display:none;')
-                                                            input(type='text', name='service', value='Something', readonly=true)
-                                        section
-                                            label Skills #[br]
-                                            .user-bio-container#userBioSkills
-                                                input(type='text', value='',
-                                                    placeholder='Enter Skills (e.g. Microsoft Word, Java, ...)')
-                                                button#add-skills-button: i.fas.fa-plus-square
-                                            .saved-skill
-                                                each uniqueSkill in user.skill
-                                                    .single-skill
-                                                        .show-skill
-                                                            h4 #{uniqueSkill}
-                                                            button.delete-aSkill-btn x
-                                                        .hidden-skill(style='display:none;')
-                                                            input(type='text', name='skills', value=uniqueSkill, readonly=true)
-                                                //
-                                                    .single-skill
-                                                        .show-skill
-                                                            h4 Something Skill
-                                                            button.delete-aSkill-btn x
-                                                        .hidden-skill(style='display:none;')
-                                                            input(type='text', name='skills', value='Something Skill', readonly=true)
+                                            section
+                                                label(for='price') Price #[br]
+                                                div#userServicesPriceField
+                                                    input(type='text', name='price', id='price', value='',
+                                                        placeholder='Enter Price (e.g. 8.90, 134)')
+                                                    button#servicePriceBttn: i.fas.fa-plus-square
+                                        .saved-serviceAndPrice
+                                            //
+                                                .single-serviceAndPrice
+                                                    .show-serviceAndPrice
+                                                        h4 Industrial Engineer
+                                                        h4 £19.89
+                                                        button.delete-aServiceAndPrice-btn x
+                                                    .hide-serviceAndPrice(style='display: none')
+                                                        input(type='text', name='service', value='Industrial Engineer', readonly=true)
+                                                        input(type='text', name='price', value='£19.89', readonly=true)
 
-                        .update-page-submit
-                            input#update-page-submission(type='submit', value='Save Profile')
+                                    .user-bio-details
+                                        h3 Description and Other Necessary Information
+                                        .user-bio-details-container
+                                            .user-bio-one
+                                                section
+                                                    label(for='freelancer_description') Description (Maximum 600 characters) #[br]
+                                                    textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
+                                                        name='freelancer_description', maxlength="600")
+                                                        | #{typeof (freelancerUser.description) != 'undefined' ? freelancerUser.description : ''}
+
+                                                section
+                                                    label Skills #[br]
+                                                        .user-bio-container#userBioSkills
+                                                            input(type='text', value='',
+                                                                placeholder='Enter Skills (e.g. Microsoft Word, Java, ...)')
+                                                            button#add-skills-button: i.fas.fa-plus-square
+                                                        .saved-skill
+                                                            each uniqueSkill in freelancerUser.skill
+                                                                .single-skill
+                                                                    .show-skill
+                                                                        h4 #{uniqueSkill}
+                                                                        button.delete-aSkill-btn x
+                                                                    .hidden-skill(style='display:none;')
+                                                                        input(type='text', name='skills', value=uniqueSkill, readonly=true)
+                                                                //
+                                                                   .single-skill
+                                                                       .show-skill
+                                                                           h4 Something Skill
+                                                                           button.delete-aSkill-btn x
+                                                                       .hidden-skill(style='display:none;')
+                                                                           input(type='text', name='skills', value='Something Skill', readonly=true)
+
+
+                            .update-page-submit
+                                    input#update-page-submission(type='submit', value='Save Profile')
 
                 .freelancer-booking-page(style='display: none;')
                     div.freelancer-projects-current
@@ -446,38 +418,9 @@ block content
                             .freelancer-options
                                 i.far.fa-trash-alt
                                 i.far.fa-edit
-                    //
-                        .freelancer-message-page(style='display: none;')
-                            .freelancer-single-message
-                                .client-message-identity
-                                    img(src='/images/eF6.jpg')
-                                    p Kate Baldwin
-                                .client-message-input
-                                    h3 Project Name: America Works
-                                    p I want to put this number of people into work by the year 3030
-                                .client-message-time
-                                    p 11:10
-                            .freelancer-single-message
-                                .client-message-identity
-                                    img(src='/images/eF6.jpg')
-                                    p Kate Baldwin
-                                .client-message-input
-                                    h3 Project Name: America Works
-                                    p I want to put this number of people into work by the year 3030
-                                .client-message-time
-                                    p 11:10
 
-    //
-        .freelancer-page-popups
-            // freelancer portfolio popup section
-            .freelancer-portfolio-big-modal
-                .freelancer-portfolio-modal-container
-                    section.portfolio-item-upload-header
-                        h1 #{user.name}'s Portfolio Uploads
-                    section.portfolio-item-upload-section
-                    setcion.portfolio-item-upload-option
-                        a(href='#'): button Delete
-                        input#freelancer-portfolio-update(type='submit', value='Save')
+                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                    .freelancer-message-page(style='display: none;')
+                        include ./partials/message
 
-
-
+    include ./partials/booking_form

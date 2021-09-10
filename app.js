@@ -8,16 +8,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport');
-var EF_DB_conn = require('./bin/db_connection');
 var flash = require('connect-flash');
 var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+var MongoStore = require("connect-mongo");
 var passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var serviceRouter = require('./routes/services');// This path should not exist. It will go
 var aboutRouter = require('./routes/aboutUs');
 var accountRouter = require('./routes/account');
+var messageRouter = require('./routes/sever-side-messages').router;
 
 var app = express();
 
@@ -38,10 +38,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
-let sessionStore = new MongoStore({
-    mongooseConnection: EF_DB_conn.excellence_freelanceDB,
-    collection: 'ef_sessions'
+let sessionDB_name = '/ef_session';
+
+let sessionStore = MongoStore.create({
+    mongoUrl: process.env.local_connectionURI+sessionDB_name
 });
+
 app.use(
     session({
       secret: process.env.session_secretID,
@@ -70,12 +72,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', indexRouter);
+app.use('/', indexRouter); 
 app.use('/users', usersRouter);
 app.use('/account', accountRouter);
 app.use('/join', indexRouter);// using the same route
 app.use('/login', indexRouter); //
 app.use('/about-us', aboutRouter);
+app.use('/messages', messageRouter);
 
 
 // catch 404 and forward to error handler

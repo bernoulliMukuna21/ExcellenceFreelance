@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
-var EF_DB_conn = require('../bin/db_connection');
+var DB_connection = require('../bin/database-connection-cache');
 
 let UserSchema = new mongoose.Schema({
     name:{
@@ -27,12 +27,12 @@ let UserSchema = new mongoose.Schema({
         authName: String,
         authID: String
     },
-    service:[{type:String}],
+    serviceAndPrice:[{
+        service: String,
+        price: String
+    }],
     description: String,
     skill:[{type: String}],
-    price:{
-        type: Number,
-    },
     education:[{
         institute: String,
         degreeAndCourse: String,
@@ -74,5 +74,6 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb){
     });
 };
 
-let UserModel = EF_DB_conn.excellence_freelanceDB.model('UserModel', UserSchema);
+
+let UserModel = DB_connection.EF_DB_conn.excellence_freelanceDB.model('UserModel', UserSchema);
 module.exports = UserModel;

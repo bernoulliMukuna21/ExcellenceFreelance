@@ -80,6 +80,7 @@ class ProfileUpdateController{
 
     checkImageFile(){
         if(this.userProfilePictureFile){
+
             let fileFormatCheck =
                 formChecker.profilePhotoFormatChecker(this.userProfilePictureFile);
             if(fileFormatCheck.length>=1){
@@ -88,21 +89,17 @@ class ProfileUpdateController{
                 // If there are no errors, then a file with the right format must
                 // have been picked
 
-                let imageData = fs.readFileSync(this.userProfilePictureFile.path);
-                let encodedImageData = imageData.toString('base64');
-                encodedImageData = Buffer.from(encodedImageData, 'base64');
-
                 this.user.profile_picture = {
                     name: this.userProfilePictureFile.filename,
                     contentType: this.userProfilePictureFile.mimetype,
-                    data: encodedImageData
+                    data: fs.readFileSync(this.userProfilePictureFile.path)
                 }
             }
         }
     }
 
     checkFreelancerInformation(){
-        let education, price, description, services, skills;
+        let education, description, servicesAndPrices, skills;
 
         // description
         if(this.userUpdateData.freelancer_description){
@@ -111,42 +108,28 @@ class ProfileUpdateController{
             this.user.description = undefined;
         }
 
-        // Price
-        if(this.userUpdateData.price){
-            price = this.userUpdateData.price;
-            let priceChecker = formChecker.priceChecker(price);
-            if(priceChecker.length>=1){
-                this.errors.priceError = priceChecker;
-            }else{
-                this.user.price = price;
-            }
-        }
-
-        // Services
-        if(this.userUpdateData.saved_services){
-            services = JSON.parse(this.userUpdateData.saved_services);
-            let serviceChecker = formChecker.servicesChecker(services);
-            if(serviceChecker.length>=1){
-                this.errors.serviceError = serviceChecker;
-            }else{
-                this.user.service = [];
-                for(let i=0; i<services.length; i++){
-                    this.user.service.push(services[i][0]);
-                }
-            }
-        }
-
         // skills
         if(this.userUpdateData.saved_skills){
             skills = JSON.parse(this.userUpdateData.saved_skills);
-            console.log('Empty Freelancer Skills: ');
-            console.log(skills);
             if(Object.keys(skills).length>0){
                 this.user.skill = [];
                 for(let i=0; i<skills.length; i++){
                     this.user.skill.push(skills[i][0]);
                 }
             }else {this.user.skill = []}
+        }
+
+        if(this.userUpdateData.saved_servicesAndPrices){
+            servicesAndPrices = JSON.parse(this.userUpdateData.saved_servicesAndPrices);
+            if(Object.keys(servicesAndPrices).length>0){
+                this.user.serviceAndPrice=[];
+                for(let i=0; i<servicesAndPrices.length; i++){
+                    let singleServiceAndPrice = new Object();
+                    singleServiceAndPrice.service = servicesAndPrices[i][0];
+                    singleServiceAndPrice.price = servicesAndPrices[i][1];
+                    this.user.serviceAndPrice.push(singleServiceAndPrice);
+                }
+            }else{this.user.serviceAndPrice=[]}
         }
 
         //education
