@@ -43,7 +43,8 @@ router.get('/', async function (req, res, next) {
             emailEncode
         });
     }catch (e) {
-        console.log('This An error occured!')
+        console.log('This An error occured!');
+        throw e;
     }
 });
 

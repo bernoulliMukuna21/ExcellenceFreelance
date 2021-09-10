@@ -103,24 +103,28 @@ router.get('/freelancer/:this_user', async function (req, res) {
             }
         }
     }
+    try {
+        freelancerUser = await UserModel.find({email: emailDecode(req.params.this_user)});
+        freelancerUser = freelancerUser[0];
 
-    freelancerUser = await UserModel.find({email: emailDecode(req.params.this_user)});
-    freelancerUser = freelancerUser[0];
+        loggedInUser_imageSrc = imageToDisplay(freelancerUser);
 
-    loggedInUser_imageSrc = imageToDisplay(freelancerUser);
+        res.render('account', {
+            isLogged, // The user accessing this page is logged in?
+            freelancerUser, // The freelancer - profile owner
+            loggedInUser, // Details of the logged in user
+            loggedInUser_imageSrc,
+            emailEncode,
+            imageToDisplay,
+            userToMessageUniqueKey,
+            messageIdHTML,
+            userToMessage,
+            userToMessageImageSrc
+        });
+    }catch (e) {
+        res.send('An Error occurred!');
+    }
 
-    res.render('account', {
-        isLogged, // The user accessing this page is logged in?
-        freelancerUser, // The freelancer - profile owner
-        loggedInUser, // Details of the logged in user
-        loggedInUser_imageSrc,
-        emailEncode,
-        imageToDisplay,
-        userToMessageUniqueKey,
-        messageIdHTML,
-        userToMessage,
-        userToMessageImageSrc
-    });
 });
 
 // client information update
