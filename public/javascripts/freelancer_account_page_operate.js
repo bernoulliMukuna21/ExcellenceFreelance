@@ -15,7 +15,7 @@ $(document).ready(function(){
     });
     $('.freelancer-update-infos').empty();
 
-    let freelancerMessage_pageToGo = freelancersectionNames[3];
+    let freelancerMessage_pageToGo = $('.account-profile-information ul li:last-child');
     if(freelancerMessage_pageToGo.id === 'show-user-messages'){
         accountsOperation.pageDispalyStyle(freelancerMessage_pageToGo, freelancersectionNames,
             freelancerProfileSections);
