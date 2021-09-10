@@ -25,63 +25,64 @@ block content
                          p.newMessageReceived(style='display:none;') new
             .client-account-middle
                 .client-current-bookings
-                    h3 My Bookings
-                    .client-bookings-header
-                        ul
-                            li Project Name
-                            li Freelancer
-                            li Expected Date
-                            li Progress Status
-                            li Options
-                    .client-bookings-body
-                        .single-client-booking
+                    h3 Client Bookings
+                    //
+                        .client-bookings-header
                             ul
-                                li Web Design for a Mobile App
-                                li Janine Molengeli
-                                li Jun 10, 2022
-                                li
-                                    .select
-                                        select(name='progression')
-                                            option(value='No start') No start
-                                            option(value='started') Started
-                                            option(value='progressed') Progressing
-                                            option(value='ending') Ending
-                                            option(value='Completed') Completed
-                                li
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
-                        .single-client-booking
-                            ul
-                                li Shirts Printing
-                                li Jonathan Lennon
-                                li Jun 10, 2022
-                                li
-                                    .select
-                                        select(name='progression')
-                                            option(value='No start') No start
-                                            option(value='started') Started
-                                            option(value='progressed') Progressing
-                                            option(value='ending') Ending
-                                            option(value='Completed') Completed
-                                li
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
-                        .single-client-booking
-                            ul
-                                li Wedding Planning
-                                li Yasmine Malila
-                                li Jun 10, 2022
-                                li
-                                    .select
-                                        select(name='progression')
-                                            option(value='No start') No start
-                                            option(value='started') Started
-                                            option(value='progressed') Progressing
-                                            option(value='ending') Ending
-                                            option(value='Completed') Completed
-                                li
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
+                                li Project Name
+                                li Freelancer
+                                li Expected Date
+                                li Progress Status
+                                li Options
+                        .client-bookings-body
+                            .single-client-booking
+                                ul
+                                    li Web Design for a Mobile App
+                                    li Janine Molengeli
+                                    li Jun 10, 2022
+                                    li
+                                        .select
+                                            select(name='progression')
+                                                option(value='No start') No start
+                                                option(value='started') Started
+                                                option(value='progressed') Progressing
+                                                option(value='ending') Ending
+                                                option(value='Completed') Completed
+                                    li
+                                        i.far.fa-trash-alt
+                                        i.far.fa-edit
+                            .single-client-booking
+                                ul
+                                    li Shirts Printing
+                                    li Jonathan Lennon
+                                    li Jun 10, 2022
+                                    li
+                                        .select
+                                            select(name='progression')
+                                                option(value='No start') No start
+                                                option(value='started') Started
+                                                option(value='progressed') Progressing
+                                                option(value='ending') Ending
+                                                option(value='Completed') Completed
+                                    li
+                                        i.far.fa-trash-alt
+                                        i.far.fa-edit
+                            .single-client-booking
+                                ul
+                                    li Wedding Planning
+                                    li Yasmine Malila
+                                    li Jun 10, 2022
+                                    li
+                                        .select
+                                            select(name='progression')
+                                                option(value='No start') No start
+                                                option(value='started') Started
+                                                option(value='progressed') Progressing
+                                                option(value='ending') Ending
+                                                option(value='Completed') Completed
+                                    li
+                                        i.far.fa-trash-alt
+                                        i.far.fa-edit
 
                 .client-profile-update(style='display:none;')
                     - let updateOption = 'pointer-events: auto';
