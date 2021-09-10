@@ -95,106 +95,9 @@ block content
                                     p #{freelancerEducation.institute}
                                     p Year:#{' '+ freelancerEducation.educationYear}
 
-                    //
-                        .account-fourth-side
-                            h1 Portfolio
-                            div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
-                            'align-items: center; height: 15vh')
-                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                                    p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
-                                else
-                                    p(style='font-weight: bold') Portfolio Empty
-
-                            div.image-portfolio
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some Photo I took
-                                    img(src='/images/eF1.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p My Trip to Ghana
-                                    img(src='/images/eF2.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Do you see this picture
-                                    video(src='/images/videoExcellence1.mp4', controls)
-                                div
-                                    .portfolio-tag-overlay
-                                        p My time at the University of Sheffield
-                                    img(src='/images/eF4.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Throw back
-                                    img(src='/images/eF5.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Hmmm
-                                    img(src='/images/eF6.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Do you see what I see
-                                    img(src='/images/eF7.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Christ in me da hope of glory
-                                    img(src='/images/eF4.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p I have found IT!!
-                                    video(src='/images/excellenceVideo.mp4', controls)
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some other thing
-                                    img(src='/images/eF2.jpg')
-                                div
-                                    .portfolio-tag-overlay
-                                        p Some final thing
-                                    img(src='/images/eF3.jpg')
-                    //
-                        .account-fifth-side
-                            h1 All Reviews
-                            div.written-reviews
-                                .default-written-review
-                                    p No Reviews
-                            //
-                                section.user-single-review
-                                    section.reviewer-identity
-                                        img(src='/images/Jojo.jpg' style='width:5rem; height:5rem')
-                                        p Debbie Lambanot
-                                    section.review-content
-                                        section.section-one
-                                            p Rating: 3.5/5
-                                            p Agree: 1000
-                                            p Disagree: 10
-                                        section.section-two
-                                            p.user-account-reviews Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
-                                        section.section-three
-                                            button.dislike
-                                                i.far.fa-thumbs-up(aria-hidden='true')
-                                            button.like
-                                                i.far.fa-thumbs-down(aria-hidden='true')
-                            div.user-write-review
-                                section.user-review-section
-                                    textarea.user-write-review-area(placeholder='Write a Review...')
-                                    select.review-rate(name='star-rate')
-                                        option(value='star-rating') Enter a Rating
-                                        option(value='one') 1
-                                        option(value='one-half') 1.5
-                                        option(value='two') 2
-                                        option(value='two-half') 2.5
-                                        option(value='three') 3
-                                        option(value='three-half') 3.5
-                                        option(value='four') 4
-                                        option(value='four-half') 4.5
-                                        option(value='five') 5
-                                section.review-submit-section
-                                    button(id='user-review-submission') Submit Review
-
-
                 if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                     .freelancer-update-page(style='display: none;')
                         - let updateOption = 'pointer-events: auto';
-                        - //if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                         - // The line of code right below checks whether the current logged in user is using either Google or Facebook strategy.
                         - // if that is the case, then they are not allowd to update the email and password on this platform.
                         - if(freelancerUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
@@ -287,19 +190,6 @@ block content
                                                     input(type='text', name='schoolName', value=education.institute,
                                                         readonly=true)
                                                     input(type='text', name='educationYear', value=education.educationYear)
-                                            //
-                                                .freelancer-single-education
-                                                    .show-section
-                                                        h4 Master of Science Computer Engineering
-                                                        p University of Sheffield
-                                                        p Year 2018-2019
-                                                        button.education-delete-btn x
-                                                    .hide-section(style='display: none;')
-                                                        input(type='text', name='degree', value='Master of Science Computer Engineering',
-                                                            readonly=true)
-                                                        input(type='text', name='schoolName', value='University of Sheffield',
-                                                            readonly=true)
-                                                        input(type='text', name='educationYear', value='2018-2019')
 
                                     .user-service_and_price
                                         h3 Service and Price
@@ -316,15 +206,6 @@ block content
                                                         placeholder='Enter Price (e.g. 8.90, 134)')
                                                     button#servicePriceBttn: i.fas.fa-plus-square
                                         .saved-serviceAndPrice
-                                            //
-                                                .single-serviceAndPrice
-                                                    .show-serviceAndPrice
-                                                        h4 Industrial Engineer
-                                                        h4 £19.89
-                                                        button.delete-aServiceAndPrice-btn x
-                                                    .hide-serviceAndPrice(style='display: none')
-                                                        input(type='text', name='service', value='Industrial Engineer', readonly=true)
-                                                        input(type='text', name='price', value='£19.89', readonly=true)
 
                                     .user-bio-details
                                         h3 Description and Other Necessary Information
@@ -350,77 +231,10 @@ block content
                                                                         button.delete-aSkill-btn x
                                                                     .hidden-skill(style='display:none;')
                                                                         input(type='text', name='skills', value=uniqueSkill, readonly=true)
-                                                                //
-                                                                   .single-skill
-                                                                       .show-skill
-                                                                           h4 Something Skill
-                                                                           button.delete-aSkill-btn x
-                                                                       .hidden-skill(style='display:none;')
-                                                                           input(type='text', name='skills', value='Something Skill', readonly=true)
 
 
                             .update-page-submit
                                     input#update-page-submission(type='submit', value='Save Profile')
-
-                //
-                    .freelancer-booking-page(style='display: none;')
-                        div.freelancer-projects-current
-                            h1 Next Due Project
-                            .freelancer-current-project-container
-                                .freelancer-projects-header
-                                    p Project Name
-                                    p Client Name
-                                    p Due Date
-                                    p Messages
-                                    p Status
-                                    p Options
-                                .freelancer-projects-top
-                                    p #{this_title.substring(0, 35)}...
-                                    p Armando Kimuka
-                                    p June 12, 2020
-                                    .freelancer-messages
-                                        p 10
-                                        i.fas.fa-comment-dots
-                                    p.project-status ongoing
-                                    .freelancer-options
-                                        i.far.fa-trash-alt
-                                        i.far.fa-edit
-                        div.freelancer-all-projects
-                            .freelancer-one-project
-                                p Les Corbeaux et Les Renards
-                                p Kokumbo l'ecrivain
-                                p June 12, 2023
-                                .freelancer-messages
-                                    p 100
-                                    i.fas.fa-comment-dots
-                                p.project-status yet to begin
-                                .freelancer-options
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
-                        div.freelancer-all-projects
-                            .freelancer-one-project
-                                p Les Corbeaux et Les Renards
-                                p Kokumbo l'ecrivain
-                                p June 12, 2023
-                                .freelancer-messages
-                                    p 100
-                                    i.fas.fa-comment-dots
-                                p.project-status yet to begin
-                                .freelancer-options
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
-                        div.freelancer-all-projects
-                            .freelancer-one-project
-                                p Les Corbeaux et Les Renards
-                                p Kokumbo l'ecrivain
-                                p June 12, 2023
-                                .freelancer-messages
-                                    p 100
-                                    i.fas.fa-comment-dots
-                                p.project-status yet to begin
-                                .freelancer-options
-                                    i.far.fa-trash-alt
-                                    i.far.fa-edit
 
                 if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                     .freelancer-message-page(style='display: none;')
