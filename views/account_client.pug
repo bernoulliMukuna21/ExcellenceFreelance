@@ -115,8 +115,7 @@ block content
                                     Label Profile Picture
                                     .client-image-update-area
                                         .client-image-uploaded
-                                            if loggedInUser_imageSrc
-                                                img(id='client-imagePreview', src=loggedInUser_imageSrc)
+                                            img(id='client-imagePreview', src=loggedInUser_imageSrc? loggedInUser_imageSrc:'/images/userDefaultImage.png')
                                         .client-image-upload-btn
                                             span
                                                 i.fas.fa-cloud-upload-alt
