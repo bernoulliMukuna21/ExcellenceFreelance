@@ -29,8 +29,8 @@ module.exports = {
                 imageSource = module.exports.base64ToImageSrc(pictureData);
             }
         }
-
-        return imageSource;
+        if (imageSource){ return imageSource}
+        else return '';
     }
 }
 
