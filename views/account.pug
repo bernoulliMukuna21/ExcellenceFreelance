@@ -48,7 +48,8 @@ block content
                             li.user-main-page(class='clicked') Main Page
                             if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                                 li.user-update-page Update Personal Information
-                            li.user-current-booking-page Bookings
+                            //
+                                li.user-current-booking-page Bookings
                             if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                                 li.user-completed-booking-page(id=messageIdHTML)
                                     p Messages
@@ -361,64 +362,65 @@ block content
                             .update-page-submit
                                     input#update-page-submission(type='submit', value='Save Profile')
 
-                .freelancer-booking-page(style='display: none;')
-                    div.freelancer-projects-current
-                        h1 Next Due Project
-                        .freelancer-current-project-container
-                            .freelancer-projects-header
-                                p Project Name
-                                p Client Name
-                                p Due Date
-                                p Messages
-                                p Status
-                                p Options
-                            .freelancer-projects-top
-                                p #{this_title.substring(0, 35)}...
-                                p Armando Kimuka
-                                p June 12, 2020
+                //
+                    .freelancer-booking-page(style='display: none;')
+                        div.freelancer-projects-current
+                            h1 Next Due Project
+                            .freelancer-current-project-container
+                                .freelancer-projects-header
+                                    p Project Name
+                                    p Client Name
+                                    p Due Date
+                                    p Messages
+                                    p Status
+                                    p Options
+                                .freelancer-projects-top
+                                    p #{this_title.substring(0, 35)}...
+                                    p Armando Kimuka
+                                    p June 12, 2020
+                                    .freelancer-messages
+                                        p 10
+                                        i.fas.fa-comment-dots
+                                    p.project-status ongoing
+                                    .freelancer-options
+                                        i.far.fa-trash-alt
+                                        i.far.fa-edit
+                        div.freelancer-all-projects
+                            .freelancer-one-project
+                                p Les Corbeaux et Les Renards
+                                p Kokumbo l'ecrivain
+                                p June 12, 2023
                                 .freelancer-messages
-                                    p 10
+                                    p 100
                                     i.fas.fa-comment-dots
-                                p.project-status ongoing
+                                p.project-status yet to begin
                                 .freelancer-options
                                     i.far.fa-trash-alt
                                     i.far.fa-edit
-                    div.freelancer-all-projects
-                        .freelancer-one-project
-                            p Les Corbeaux et Les Renards
-                            p Kokumbo l'ecrivain
-                            p June 12, 2023
-                            .freelancer-messages
-                                p 100
-                                i.fas.fa-comment-dots
-                            p.project-status yet to begin
-                            .freelancer-options
-                                i.far.fa-trash-alt
-                                i.far.fa-edit
-                    div.freelancer-all-projects
-                        .freelancer-one-project
-                            p Les Corbeaux et Les Renards
-                            p Kokumbo l'ecrivain
-                            p June 12, 2023
-                            .freelancer-messages
-                                p 100
-                                i.fas.fa-comment-dots
-                            p.project-status yet to begin
-                            .freelancer-options
-                                i.far.fa-trash-alt
-                                i.far.fa-edit
-                    div.freelancer-all-projects
-                        .freelancer-one-project
-                            p Les Corbeaux et Les Renards
-                            p Kokumbo l'ecrivain
-                            p June 12, 2023
-                            .freelancer-messages
-                                p 100
-                                i.fas.fa-comment-dots
-                            p.project-status yet to begin
-                            .freelancer-options
-                                i.far.fa-trash-alt
-                                i.far.fa-edit
+                        div.freelancer-all-projects
+                            .freelancer-one-project
+                                p Les Corbeaux et Les Renards
+                                p Kokumbo l'ecrivain
+                                p June 12, 2023
+                                .freelancer-messages
+                                    p 100
+                                    i.fas.fa-comment-dots
+                                p.project-status yet to begin
+                                .freelancer-options
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
+                        div.freelancer-all-projects
+                            .freelancer-one-project
+                                p Les Corbeaux et Les Renards
+                                p Kokumbo l'ecrivain
+                                p June 12, 2023
+                                .freelancer-messages
+                                    p 100
+                                    i.fas.fa-comment-dots
+                                p.project-status yet to begin
+                                .freelancer-options
+                                    i.far.fa-trash-alt
+                                    i.far.fa-edit
 
                 if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
                     .freelancer-message-page(style='display: none;')
