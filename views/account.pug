@@ -94,60 +94,61 @@ block content
                                     p #{freelancerEducation.institute}
                                     p Year:#{' '+ freelancerEducation.educationYear}
 
-                    .account-fourth-side
-                        h1 Portfolio
-                        div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
-                        'align-items: center; height: 15vh')
-                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                                p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
-                            else
-                                p(style='font-weight: bold') Portfolio Empty
+                    //
+                        .account-fourth-side
+                            h1 Portfolio
+                            div.image-portfolio(style='border: .1rem dashed black; display: flex; justify-content: center; ' +
+                            'align-items: center; height: 15vh')
+                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                    p#addPortfolio + Add to your Portfolio(images, videos or PDFs)
+                                else
+                                    p(style='font-weight: bold') Portfolio Empty
 
-                        div.image-portfolio
-                            div
-                                .portfolio-tag-overlay
-                                    p Some Photo I took
-                                img(src='/images/eF1.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p My Trip to Ghana
-                                img(src='/images/eF2.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Do you see this picture
-                                video(src='/images/videoExcellence1.mp4', controls)
-                            div
-                                .portfolio-tag-overlay
-                                    p My time at the University of Sheffield
-                                img(src='/images/eF4.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Throw back
-                                img(src='/images/eF5.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Hmmm
-                                img(src='/images/eF6.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Do you see what I see
-                                img(src='/images/eF7.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Christ in me da hope of glory
-                                img(src='/images/eF4.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p I have found IT!!
-                                video(src='/images/excellenceVideo.mp4', controls)
-                            div
-                                .portfolio-tag-overlay
-                                    p Some other thing
-                                img(src='/images/eF2.jpg')
-                            div
-                                .portfolio-tag-overlay
-                                    p Some final thing
-                                img(src='/images/eF3.jpg')
+                            div.image-portfolio
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some Photo I took
+                                    img(src='/images/eF1.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p My Trip to Ghana
+                                    img(src='/images/eF2.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Do you see this picture
+                                    video(src='/images/videoExcellence1.mp4', controls)
+                                div
+                                    .portfolio-tag-overlay
+                                        p My time at the University of Sheffield
+                                    img(src='/images/eF4.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Throw back
+                                    img(src='/images/eF5.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Hmmm
+                                    img(src='/images/eF6.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Do you see what I see
+                                    img(src='/images/eF7.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Christ in me da hope of glory
+                                    img(src='/images/eF4.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p I have found IT!!
+                                    video(src='/images/excellenceVideo.mp4', controls)
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some other thing
+                                    img(src='/images/eF2.jpg')
+                                div
+                                    .portfolio-tag-overlay
+                                        p Some final thing
+                                    img(src='/images/eF3.jpg')
                     //
                         .account-fifth-side
                             h1 All Reviews

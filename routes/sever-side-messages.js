@@ -33,7 +33,7 @@ function server_io(io) {
     io.on('connection', socket=>{
         socket.on('join', userData => {
             // User join room
-
+            console.log('Socket io -Excellence Freelance connected')
             socket.join(userData.uniqueKey);
         })
 
