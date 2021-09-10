@@ -43,6 +43,7 @@ let sessionDB_name = 'ef_sessions';
 console.log('MongoStore Connection: ', process.env.remote_MongoURI);
 let sessionStore = MongoStore.create({
     mongoUrl: process.env.remote_MongoURI,
+    dbName: 'excellence_freelance',
     collectionName: sessionDB_name
 });
 
