@@ -38,11 +38,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
-let sessionDB_name = '/ef_sessions';
+let sessionDB_name = 'ef_sessions';
 
 let sessionStore = MongoStore.create({
     mongoUrl: process.env.remote_MongoURI,
-    collectionName: sessionDB_name,
+    dbName: 'excellence_freelance',
+    collectionName: sessionDB_name
 });
 
 app.use(
