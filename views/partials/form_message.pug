@@ -11,18 +11,6 @@ if(Object.keys(error_message).length !== 0)
     .single-login-form-error-message
         p.error-message #{error_message}
         p.join-error-message-delte-btn x
-//
-    - if(success_message !== ''){
-        p.success-message(style='text-align: center; color: green; font-weight: bold;') #{success_message}
-    -}
-
-    - if(error_message !== ''){
-        p.error_message(style='text-align: center; color: red; font-weight: bold;') #{error_message}
-    -}
-
-    - if(error !== ''){
-        p.error(style='font-weight: bold;') #{error}
-    -}
 
 script.
     $('.join-error-message-delte-btn').click(function (event) {

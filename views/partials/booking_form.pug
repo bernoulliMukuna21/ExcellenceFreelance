@@ -14,9 +14,6 @@ div.booking
                     // If the user is logged in, pull up the form to book freelancer
                     form(action='/service-booking', method='POST', id='service-booking-form')
                         select(name='dropDown', class='bookform-field')
-                            //
-                                each val in ['Software Developer' , 'Party Host' , 'Designer', 'Painter', 'Blogger']
-                                    option=val
 
                         input#service-booking-price.bookform-field.form-control(type='number', placeholder='Minimum price e.g. £100',
                             name='price', required='true')
