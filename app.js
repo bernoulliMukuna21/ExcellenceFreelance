@@ -10,7 +10,7 @@ var logger = require('morgan');
 var passport = require('passport');
 var flash = require('connect-flash');
 var session = require('express-session');
-var MongoStore = require("connect-mongo");
+var MongoStore = require("connect-mongo").default;
 var passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -38,10 +38,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
-let sessionDB_name = '/ef_session';
+let sessionDB_name = '/ef_sessions';
 
 let sessionStore = MongoStore.create({
-    mongoUrl: process.env.local_connectionURI+sessionDB_name
+    mongoUrl: process.env.remote_MongoURI,
+    collectionName: sessionDB_name,
 });
 
 app.use(
