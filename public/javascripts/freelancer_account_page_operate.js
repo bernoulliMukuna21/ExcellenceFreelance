@@ -10,17 +10,26 @@ let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes
 let freelancersectionNames = $('.account-profile-information ul li');
 
 $(document).ready(function(){
-    $(freelancersectionNames).click(function(){
-        accountsOperation.pageDispalyStyle(this, freelancersectionNames, freelancerProfileSections);
-    });
     $('.freelancer-update-infos').empty();
+    let freelancersectionNames_firstChild = $('.account-profile-information ul li:first-child');
+    let freelancersectionNames_lastChild = $('.account-profile-information ul li:last-child');
 
-    let freelancerMessage_pageToGo = $('.account-profile-information ul li:last-child')[0];
-    console.log('Freelancer page to go: ', freelancerMessage_pageToGo)
-    if(freelancerMessage_pageToGo.id === 'show-user-messages'){
-        accountsOperation.pageDispalyStyle(freelancerMessage_pageToGo, freelancersectionNames,
-            freelancerProfileSections);
+    if(freelancersectionNames_firstChild[0].innerText === 'Main Page'
+    && freelancersectionNames_lastChild[0].innerText === 'Main Page'){
+        freelancersectionNames_firstChild.hide();
+    }else{
+        $(freelancersectionNames).click(function(){
+            accountsOperation.pageDispalyStyle(this, freelancersectionNames, freelancerProfileSections);
+        });
+
+        let freelancerMessage_pageToGo = freelancersectionNames_lastChild[0];
+        if(freelancerMessage_pageToGo.id === 'show-user-messages'){
+            accountsOperation.pageDispalyStyle(freelancerMessage_pageToGo, freelancersectionNames,
+                freelancerProfileSections);
+        }
     }
+
+
 });
 $(document).click(function (event) {
     let elementClicked = event.target;
