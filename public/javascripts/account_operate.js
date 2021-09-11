@@ -479,6 +479,8 @@ function roomConversationsNavigation(roomToShow, roomsContainerHtml, loggedInUse
 
                     var messageBody = currentRoomContainer.childNodes[1];
                     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+
+                    $(currentRoomContainer)[0].childNodes[2].childNodes[0].focus();
                 },
                 error: function (error) {
                     console.log('Messages not uploaded - error: ', error)

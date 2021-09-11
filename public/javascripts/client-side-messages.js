@@ -1,6 +1,6 @@
 import * as accountsOperation from './account_operate.js';
 //let dev_URL = 'http://localhost:3000';
-let prod_URL = 'https://excellence-freelance.herokuapp.com/';//window.location.hostname
+let prod_URL = 'https://excellence-freelance.herokuapp.com/' || 'http://localhost:3000';//window.location.hostname
 var socket = io.connect(prod_URL);
 
 let receiver, pageToGo, pagesNames, pagesSections;
@@ -43,6 +43,7 @@ $( document ).ready(function() {
 $(document).on('click', '.message-single-room', function(currentRoom) {
 
     let freelancerToMessage = this.childNodes[1].childNodes[0].childNodes[1].value;
+    let roomIndex = Array.from(this.parentNode.children).indexOf(this)
     receiver = JSON.parse(freelancerToMessage);
     history.pushState(null, null, '/account/'+loggedInUser.type+'/'+
         loggedInUser.uniqueKey+'?receiverKey='+receiver.uniqueKey);
@@ -56,7 +57,7 @@ $(document).on('click', '.message-single-room', function(currentRoom) {
         $( this ).removeClass( "messageReceived" )
 
         roomsFromDB({requirement: 'update',
-            roomIndex: Array.from(this.parentNode.children).indexOf(this)});
+            roomIndex: roomIndex});
     }
 
     accountsOperation.roomConversationsNavigation(this,
@@ -111,6 +112,9 @@ $(document).on('click', '.message-container-typeBox i', function(event) {
 
     // Clear send form box
     $(".chat-typing-area").val('');
+
+    // Start typing again
+    $(".chat-typing-area").focus();
 })
 
 socket.on('Send Message', outputData => {
@@ -248,6 +252,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
 
                 let allMessageRooms = $('.user-messages-side')[0].childNodes;
+                let roomIdex;
                 if(receiver && sourceImage){
                     // This bit handles the loading of the chat when the button
                     // Message on the freelancer side is clicked
@@ -257,12 +262,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
                         accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
                         accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-
-                        $('.default-message-content').hide();
-                        accountsOperation.roomConversationsNavigation(
-                            allMessageRooms[0],
-                            '.all-different-conversations-container',
-                            loggedInUser.uniqueKey, receiver.uniqueKey);
+                        roomIdex = 0;
                     }else{
                         // There are already some messages going on. Now, we need to check if
                         // the two current users already have a conversation going on
@@ -272,7 +272,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                         for (var i = 0; i < allMessageRooms.length; ++i) {
                             if(allMessageRooms[i].classList[1] === receiver.uniqueKey){
                                 roomExists = true;
-                                roomToShow = allMessageRooms[i];
+                                roomIdex = i;
                                 break;
                             }
                         }
@@ -282,16 +282,14 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
                             accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
                             accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-
-                            roomToShow = allMessageRooms[0];
+                            roomIdex = 0;
                         }
-
-                        $('.default-message-content').hide();
-                        accountsOperation.roomConversationsNavigation(
-                            roomToShow,
-                            '.all-different-conversations-container',
-                            loggedInUser.uniqueKey, receiver.uniqueKey);
                     }
+                    $('.default-message-content').hide();
+                    accountsOperation.roomConversationsNavigation(
+                        allMessageRooms[roomIdex],
+                        '.all-different-conversations-container',
+                        loggedInUser.uniqueKey, receiver.uniqueKey);
                 }
 
             }else if(requirement === 'update'){
