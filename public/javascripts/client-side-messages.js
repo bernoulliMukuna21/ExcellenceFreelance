@@ -1,6 +1,6 @@
 import * as accountsOperation from './account_operate.js';
 //let dev_URL = 'http://localhost:3000';
-let prod_URL = 'https://excellence-freelance.herokuapp.com/' || 'http://localhost:3000';//window.location.hostname
+let prod_URL = 'https://excellence-freelance.herokuapp.com/'
 var socket = io.connect(prod_URL);
 
 let receiver, pageToGo, pagesNames, pagesSections;
@@ -137,6 +137,7 @@ socket.on('Send Message', outputData => {
                 1000);
             $(allRooms_senderSide[index]).parent().prepend(allRooms_senderSide[index]);
             $(eachRoom).parent().prepend(eachRoom);
+            $(eachRoom)[0].childNodes[2].childNodes[0].focus();
         }
     })
 })
@@ -235,7 +236,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                         let sourceImage = !eachData.userImageSrc ? '/images/userDefaultImage.png'
                             :eachData.userImageSrc;
                         let userData = eachData.userData;
-                        console.log(userData)
+
                          // Create a new room
                         if(!userData.roomIsClicked && userData.lastMessageSender !== loggedInUser.uniqueKey){
                             console.log('Coming here')
