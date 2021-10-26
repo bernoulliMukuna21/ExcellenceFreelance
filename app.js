@@ -43,7 +43,7 @@ let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // sessi
 let sessionDB_name = 'ef_sessions';
 
 let sessionStore = MongoStore.create({
-    mongoUrl: process.env.local_connectionURI,
+    mongoUrl: process.env.remote_MongoURI,
     dbName: 'excellence_freelance',
     collectionName: sessionDB_name
 });
