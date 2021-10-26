@@ -73,6 +73,33 @@
     font-size: 2rem;
     font-weight: bolder;
 }
+.freelancer-payment-buttons{
+    margin: 1rem;
+    display: grid;
+}
+.freelancer-payment-buttons form{
+    margin: .5rem 1rem; /** This line is to be deleted - Only for development purposes**/
+}
+.freelancer-payment-buttons button{
+    width: 100%;
+    padding: 1rem;
+    font-weight: bold;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: .5rem;
+}
+.freelancer-payment-buttons button:hover{
+    background-color: #308634;
+}
+.freelancer-payment-buttons .payment-details-update{
+    background-color: #8d2874;
+}
+.freelancer-payment-buttons .payment-details-update:hover{
+    background-color: #71205d;
+}
+
 .public-service-enquiry {
     margin: 0 1rem;
     display: flex;
@@ -211,6 +238,17 @@
 .freelancer_account_main_side{
     flex: 3;
     margin: 1rem 0 1rem 1rem;
+}
+.freelancer-page-blocked{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.freelancer-page-blocked h1{
+    border: .25rem dashed #213e53;
+    padding: 2rem;
+    color: #213e53;
 }
 
 /*~~~~~~~~~~~~~ First Side ~~~~~~~~~~~~~~~*/

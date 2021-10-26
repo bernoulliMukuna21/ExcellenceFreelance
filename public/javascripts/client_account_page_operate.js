@@ -31,7 +31,28 @@ $(document).click(function (event) {
         accountsOperation.pageDispalyStyle(pageToGo, clientsectionNames,
             clientProfileSections);
     }
+
+    /* Client Booking */
+    let bookingDescription;
+    if(elementClicked.parentNode.className === 'booking-main-details'){
+        bookingDescription = elementClicked.parentNode.parentNode
+            .childNodes[1];
+        $(bookingDescription).toggle();
+    }
+    else if(elementClicked.parentNode.className === 'single-client-booking'){
+        bookingDescription = elementClicked.parentNode
+            .childNodes[1];
+        $(bookingDescription).toggle();
+    }
+    else if(elementClicked.parentNode.parentNode.className
+        === 'booking-main-details'){
+        bookingDescription = elementClicked.parentNode.parentNode.
+            parentNode.childNodes[1];
+        $(bookingDescription).toggle();
+    }
 })
+
+
 
 /*
 * The following codes deal with the changes and display of the profile

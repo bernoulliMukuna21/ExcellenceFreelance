@@ -6,6 +6,8 @@ block content
     - let startYear = currentYear - 50;
     - let rangeOfYears = [];
     - for(let i=currentYear+6; i>=startYear; i--){ rangeOfYears.push(i)}
+    - console.log('freelancerUser', freelancerUser)
+    - console.log('loggedInUser', loggedInUser)
 
     .freelancer-page-main-container
         .freelancer-update-infos
@@ -16,24 +18,35 @@ block content
                         if !freelancerUser.profile_picture.data
                             .default-profile-image
                                 img(src='/images/userDefaultImage.png')
-                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                if (isLogged && (freelancerUser.email === loggedInUser.email))
                                     p.addProfilePicture + Add Profile Picture
                         else
                             img(src=loggedInUser_imageSrc)
                     p.account-profile-name #{freelancerUser.name + ' ' + freelancerUser.surname}
-                    if (isLogged && (emailEncode(freelancerUser.email) !== emailEncode(loggedInUser.email)))
+                    if (isLogged && (freelancerUser.email === loggedInUser.email))
+                        .freelancer-payment-buttons
+                            if freelancerSubscriptionStatus !== 'active'
+                                form(action='http://localhost:3000/payment/create-checkout-session/subscription' method='POST')
+                                    input(type='hidden' name='lookup_key' value='standard')
+                                    button.suscription-bttn(class='checkout-and-portal-button') Subscribe £1/Month
+                            else
+                                form(action='http://localhost:3000/payment/create-portal-session' method='POST')
+                                    input(type='hidden' id='session-id' name='session_id' value='')
+                                    button.payment-details-update Manage billing information
+
+                    if (isLogged && (freelancerUser.email !== loggedInUser.email))
                         div.public-service-enquiry
                             - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
                             button(class='book-btn') Book
                             a(id='freelance-mssg-btn')
                                 p Message
                                 i.far.fa-envelope
-                                input(style='display: none;' id='freelancerToMessage-unique-key' value=freelancerUser_Mssg)
+                                input(type='hidden' id='freelancerToMessage-unique-key' value=freelancerUser_Mssg)
 
                     div.freelancer-services
                         if freelancerUser.serviceAndPrice.length === 0
                             .freelancer-serviceAndPrice-empty
-                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                                if (isLogged && (freelancerUser.email === loggedInUser.email))
                                     p#addServiceAndPrice + Add Service and Price
                                 else
                                     p(style='font-weight: bold') Service and Prices Empty
@@ -46,198 +59,218 @@ block content
                     div.account-profile-information
                         ul
                             li.user-main-page(class='clicked') Main Page
-                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                            if (isLogged && (freelancerUser.email === loggedInUser.email))
                                 li.user-update-page Profile Update
                             //
                                 li.user-current-booking-page Bookings
-                            if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                            if (isLogged && (freelancerUser.email === loggedInUser.email))
                                 li.user-completed-booking-page(id=messageIdHTML)
                                     p Messages
                                     p.newMessageReceived(style='display:none;') new
+                            //
+                                li.freelancer-payment-page Payment
 
             .freelancer_account_main_side
-                .freelancer-main-page
-                    .account-first-side
-                        h1 About Me
-                        if !freelancerUser.description
-                            .default-description
-                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                                    p#addDescription + Add a Description about yourself
+                - let pageStatus = 'allowed';
+                if isLogged
+                    if ((freelancerUser.email !== loggedInUser.email) && (freelancerSubscriptionStatus !== 'active' || (freelancerSubscriptionStatus === 'trialing' && numberOfDays<300)))
+                        - pageStatus = 'blocked';
+                else
+                    if (freelancerSubscriptionStatus !== 'active' || (freelancerSubscriptionStatus === 'trialing' && numberOfDays<300))
+                        - pageStatus = 'blocked';
+
+                if pageStatus === 'blocked'
+                    .freelancer-page-blocked
+                        h1 PROFILE BLOCKED
+                else if pageStatus === 'allowed'
+                    .freelancer-page-allowed
+                        .freelancer-main-page
+                            .account-first-side
+                                h1 About Me
+                                if !freelancerUser.description
+                                    .default-description
+                                        if (isLogged && (freelancerUser.email === loggedInUser.email))
+                                            p#addDescription + Add a Description about yourself
+                                        else
+                                            p(style='font-weight: bold') Description Empty
                                 else
-                                    p(style='font-weight: bold') Description Empty
-                        else
-                            p #{freelancerUser.description}
-                    .account-second-side
-                        div.user-account-skills
-                            h1 Skills
-                            if freelancerUser.skill.length === 0
-                                section.default-skill
-                                    if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                                        p#addSkills + Add Your Skills
+                                    p #{freelancerUser.description}
+                            .account-second-side
+                                div.user-account-skills
+                                    h1 Skills
+                                    if freelancerUser.skill.length === 0
+                                        section.default-skill
+                                            if (isLogged && (freelancerUser.email === loggedInUser.email))
+                                                p#addSkills + Add Your Skills
+                                            else
+                                                p(style='font-weight: bold') Skill Empty
                                     else
-                                        p(style='font-weight: bold') Skill Empty
-                            else
-                                section
-                                    each freelancerSkill in freelancerUser.skill
-                                        p #{freelancerSkill}
-                    .account-third-side
-                        h1 Education
-                        if freelancerUser.education.length === 0
-                            section.each-education.default-education
-                                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                                    p#addEducation + Add Education
+                                        section
+                                            each freelancerSkill in freelancerUser.skill
+                                                p #{freelancerSkill}
+                            .account-third-side
+                                h1 Education
+                                if freelancerUser.education.length === 0
+                                    section.each-education.default-education
+                                        if (isLogged && (freelancerUser.email === loggedInUser.email))
+                                            p#addEducation + Add Education
+                                        else
+                                            p(style='font-weight: bold') Education Empty
                                 else
-                                    p(style='font-weight: bold') Education Empty
-                        else
-                            each freelancerEducation in freelancerUser.education
-                                section.each-education
-                                    p #{freelancerEducation.degreeAndCourse}
-                                    p #{freelancerEducation.institute}
-                                    p Year:#{' '+ freelancerEducation.educationYear}
+                                    each freelancerEducation in freelancerUser.education
+                                        section.each-education
+                                            p #{freelancerEducation.degreeAndCourse}
+                                            p #{freelancerEducation.institute}
+                                            p Year:#{' '+ freelancerEducation.educationYear}
 
-                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                    .freelancer-update-page(style='display: none;')
-                        - let updateOption = 'pointer-events: auto';
-                        - // The line of code right below checks whether the current logged in user is using either Google or Facebook strategy.
-                        - // if that is the case, then they are not allowd to update the email and password on this platform.
-                        - if(freelancerUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
+                        if (isLogged && (freelancerUser.email === loggedInUser.email))
+                            .freelancer-update-page(style='display: none;')
+                                - let updateOption = 'pointer-events: auto';
+                                - // The line of code right below checks whether the current logged in user is using either Google or Facebook strategy.
+                                - // if that is the case, then they are not allowd to update the email and password on this platform.
+                                - if(freelancerUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
 
-                        h1 Update Personal Information
-                        p Setup your general profile details.
+                                h1 Update Personal Information
+                                p Setup your general profile details.
 
-                        form.update-general-information(method='post', autocomplete="off")
-                            h3 Name and other General Information
-                            .user-general-information-one
-                                .general-information-section-one
-                                    label(for='name') Name: #[br]
-                                    input(id='name', type='text', placeholder='Enter Name', name='name',
-                                        value=typeof (freelancerUser.name) != 'undefined' ? freelancerUser.name: '', required)
+                                form.update-general-information(method='post', autocomplete="off")
+                                    h3 Name and other General Information
+                                    .user-general-information-one
+                                        .general-information-section-one
+                                            label(for='name') Name: #[br]
+                                            input(id='name', type='text', placeholder='Enter Name', name='name',
+                                                value=typeof (freelancerUser.name) != 'undefined' ? freelancerUser.name: '', required)
 
-                                    label(for='email') #[br] Email Address: #[br]
-                                    input(id='email', type='email', placeholder='Enter Email', name='email',
-                                        value=typeof (freelancerUser.email) != 'undefined' ? freelancerUser.email: '', style=updateOption,
-                                        required)
-                                .general-information-section-two
-                                    label(for='surname') Surname: #[br]
-                                    input(id='surname', type='text', placeholder='Enter Surname', name='surname',
-                                        value=typeof (freelancerUser.surname) != 'undefined' ? freelancerUser.surname: '', required)
+                                            label(for='email') #[br] Email Address: #[br]
+                                            input(id='email', type='email', placeholder='Enter Email', name='email',
+                                                value=typeof (freelancerUser.email) != 'undefined' ? freelancerUser.email: '', style=updateOption,
+                                                required)
+                                        .general-information-section-two
+                                            label(for='surname') Surname: #[br]
+                                            input(id='surname', type='text', placeholder='Enter Surname', name='surname',
+                                                value=typeof (freelancerUser.surname) != 'undefined' ? freelancerUser.surname: '', required)
 
-                                    label(for='phone-number') #[br] Phone Number: #[br]
-                                    input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
-                                        value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
-                                    input(type='text', style='display: none;')
-                                .general-information-section-three
-                                    label Profile Picture
-                                    .file-image-area
-                                        .file-image-upload
-                                            img(id='imagePreview', src=loggedInUser_imageSrc)
-                                        .file-image-upload-btn
-                                            span
-                                                i.fas.fa-cloud-upload-alt
-                                                p Upload Image
-                                            input#freelancer-profile-picture(type='file',
-                                                name='user_profile_picture')
+                                            label(for='phone-number') #[br] Phone Number: #[br]
+                                            input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
+                                                value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
+                                            input(type='text', style='display: none;')
+                                        .general-information-section-three
+                                            label Profile Picture
+                                            .file-image-area
+                                                .file-image-upload
+                                                    img(id='imagePreview', src=loggedInUser_imageSrc)
+                                                .file-image-upload-btn
+                                                    span
+                                                        i.fas.fa-cloud-upload-alt
+                                                        p Upload Image
+                                                    input#freelancer-profile-picture(type='file',
+                                                        name='user_profile_picture')
 
-                            .user-general-information-two
-                                h3 Change your Password
-                                .git-password-update-section
-                                    .git-old-password
-                                        label(for='old-password') Old Password #[br]
-                                        input(id='old-password', type='password', placeholder='Old Password',
-                                            name='old_password', style=updateOption, readonly)
-                                    .git-new-password
-                                        label(for='new-password') New Password #[br]
-                                        input(id='new-password', type='password', placeholder='New Password',
-                                            name='new_password', style=updateOption,
-                                            onfocus = "this.removeAttribute('readonly')", readonly)
-                                    .git-new-repeat-password
-                                        label(for='new-repeat-password') Confirm New Password #[br]
-                                        input(id='new-repeat-password', type='password', placeholder='Repeat New Password',
-                                            name='confirm_password', style=updateOption,
-                                            onfocus = "this.removeAttribute('readonly')", readonly)
+                                    .user-general-information-two
+                                        h3 Change your Password
+                                        .git-password-update-section
+                                            .git-old-password
+                                                label(for='old-password') Old Password #[br]
+                                                input(id='old-password', type='password', placeholder='Old Password',
+                                                    name='old_password', style=updateOption, readonly)
+                                            .git-new-password
+                                                label(for='new-password') New Password #[br]
+                                                input(id='new-password', type='password', placeholder='New Password',
+                                                    name='new_password', style=updateOption,
+                                                    onfocus = "this.removeAttribute('readonly')", readonly)
+                                            .git-new-repeat-password
+                                                label(for='new-repeat-password') Confirm New Password #[br]
+                                                input(id='new-repeat-password', type='password', placeholder='Repeat New Password',
+                                                    name='confirm_password', style=updateOption,
+                                                    onfocus = "this.removeAttribute('readonly')", readonly)
 
-                            .user-general-information-three
-                                h3 Education
-                                .eduction-container
-                                    .user-education
-                                        input#Schoolname.form-control(type='text', value='',
-                                            placeholder='University or College Name')
-                                        input#Major.form-control(type='text', value='',
-                                            placeholder='Degree Qualification (e.g. BSc, MSc, ...)')
-                                        input#Degree.form-control(type='text', value='',
-                                            placeholder='Degree Name (e.g. Business Management)')
-                                        .user-education-years
-                                            select#educationDateStart.form-control
-                                                option(value='') Year
-                                                each year in rangeOfYears
-                                                    option(value= year) #{year}
-                                            select#educationDateEnd.form-control
-                                                option(value='') Year
-                                                each year in rangeOfYears
-                                                    option(value= year) #{year}
-                                            button.education-input-btn: i.fas.fa-plus-square
-                                    .saved-education
-                                        each education in freelancerUser.education
-                                            .freelancer-single-education
-                                                .show-section
-                                                    h4 #{education.degreeAndCourse}
-                                                    p #{education.institute}
-                                                    p Year #{' '+education.educationYear}
-                                                    button.education-delete-btn x
-                                                .hide-section(style='display: none;')
-                                                    input(type='text', name='degree', value=education.degreeAndCourse,
-                                                        readonly=true)
-                                                    input(type='text', name='schoolName', value=education.institute,
-                                                        readonly=true)
-                                                    input(type='text', name='educationYear', value=education.educationYear)
+                                    .user-general-information-three
+                                        h3 Education
+                                        .eduction-container
+                                            .user-education
+                                                input#Schoolname.form-control(type='text', value='',
+                                                    placeholder='University or College Name')
+                                                input#Major.form-control(type='text', value='',
+                                                    placeholder='Degree Qualification (e.g. BSc, MSc, ...)')
+                                                input#Degree.form-control(type='text', value='',
+                                                    placeholder='Degree Name (e.g. Business Management)')
+                                                .user-education-years
+                                                    select#educationDateStart.form-control
+                                                        option(value='') Year
+                                                        each year in rangeOfYears
+                                                            option(value= year) #{year}
+                                                    select#educationDateEnd.form-control
+                                                        option(value='') Year
+                                                        each year in rangeOfYears
+                                                            option(value= year) #{year}
+                                                    button.education-input-btn: i.fas.fa-plus-square
+                                            .saved-education
+                                                each education in freelancerUser.education
+                                                    .freelancer-single-education
+                                                        .show-section
+                                                            h4 #{education.degreeAndCourse}
+                                                            p #{education.institute}
+                                                            p Year #{' '+education.educationYear}
+                                                            button.education-delete-btn x
+                                                        .hide-section(style='display: none;')
+                                                            input(type='text', name='degree', value=education.degreeAndCourse,
+                                                                readonly=true)
+                                                            input(type='text', name='schoolName', value=education.institute,
+                                                                readonly=true)
+                                                            input(type='text', name='educationYear', value=education.educationYear)
 
-                                    .user-service_and_price
-                                        h3 Service and Price
-                                        .user-servicePrice-container
-                                            section#userServiceField
-                                                label Service #[br]
-                                                input(type='text', name='service', id='service', value='',
-                                                        placeholder='Enter Services (e.g. Developer, Translator, ...)')
+                                            .user-service_and_price
+                                                h3 Service and Price
+                                                .user-servicePrice-container
+                                                    section#userServiceField
+                                                        label Service #[br]
+                                                        input(type='text', name='service', id='service', value='',
+                                                                placeholder='Enter Services (e.g. Developer, Translator, ...)')
 
-                                            section
-                                                label(for='price') Price #[br]
-                                                div#userServicesPriceField
-                                                    input(type='text', name='price', id='price', value='',
-                                                        placeholder='Enter Price (e.g. 8.90, 134)')
-                                                    button#servicePriceBttn: i.fas.fa-plus-square
-                                        .saved-serviceAndPrice
+                                                    section
+                                                        label(for='price') Price #[br]
+                                                        div#userServicesPriceField
+                                                            input(type='text', name='price', id='price', value='',
+                                                                placeholder='Enter Price (e.g. 8.90, 134)')
+                                                            button#servicePriceBttn: i.fas.fa-plus-square
+                                                .saved-serviceAndPrice
 
-                                    .user-bio-details
-                                        h3 Description and Other Necessary Information
-                                        .user-bio-details-container
-                                            .user-bio-one
-                                                section
-                                                    label(for='freelancer_description') Description (Maximum 600 characters) #[br]
-                                                    textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
-                                                        name='freelancer_description', maxlength="600")
-                                                        | #{typeof (freelancerUser.description) != 'undefined' ? freelancerUser.description : ''}
+                                            .user-bio-details
+                                                h3 Description and Other Necessary Information
+                                                .user-bio-details-container
+                                                    .user-bio-one
+                                                        section
+                                                            label(for='freelancer_description') Description (Maximum 600 characters) #[br]
+                                                            textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
+                                                                name='freelancer_description', maxlength="600")
+                                                                | #{typeof (freelancerUser.description) != 'undefined' ? freelancerUser.description : ''}
 
-                                                section
-                                                    label Skills #[br]
-                                                        .user-bio-container#userBioSkills
-                                                            input(type='text', value='',
-                                                                placeholder='Enter Skills (e.g. Microsoft Word, Java, ...)')
-                                                            button#add-skills-button: i.fas.fa-plus-square
-                                                        .saved-skill
-                                                            each uniqueSkill in freelancerUser.skill
-                                                                .single-skill
-                                                                    .show-skill
-                                                                        h4 #{uniqueSkill}
-                                                                        button.delete-aSkill-btn x
-                                                                    .hidden-skill(style='display:none;')
-                                                                        input(type='text', name='skills', value=uniqueSkill, readonly=true)
+                                                        section
+                                                            label Skills #[br]
+                                                                .user-bio-container#userBioSkills
+                                                                    input(type='text', value='',
+                                                                        placeholder='Enter Skills (e.g. Microsoft Word, Java, ...)')
+                                                                    button#add-skills-button: i.fas.fa-plus-square
+                                                                .saved-skill
+                                                                    each uniqueSkill in freelancerUser.skill
+                                                                        .single-skill
+                                                                            .show-skill
+                                                                                h4 #{uniqueSkill}
+                                                                                button.delete-aSkill-btn x
+                                                                            .hidden-skill(style='display:none;')
+                                                                                input(type='text', name='skills', value=uniqueSkill, readonly=true)
 
 
-                            .update-page-submit
-                                    input#update-page-submission(type='submit', value='Save Profile')
+                                    .update-page-submit
+                                            input#update-page-submission(type='submit', value='Save Profile')
 
-                if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                    .freelancer-message-page(style='display: none;')
-                        include ./partials/message
+                        if (isLogged && (freelancerUser.email === loggedInUser.email))
+                            .freelancer-message-page(style='display: none;')
+                                include ./partials/message
+
+                        //if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
+                            .freelancer-payment-section(style='display: none;')
+                                include ./partials/freelancer-specific-details/payment
 
     include ./partials/booking_form
+    include ./partials/freelancer-specific-details/payment-sub-infos

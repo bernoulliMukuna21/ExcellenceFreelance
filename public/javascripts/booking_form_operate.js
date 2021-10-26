@@ -1,3 +1,4 @@
+let allServicesPrices;
 function booking_form_show(title, allServicesPrices) {
 
     //First, clear the form of any input
@@ -14,7 +15,7 @@ function booking_form_show(title, allServicesPrices) {
     $('.booking-form div:nth-child(2)>section').append(formHeader);
 
     // Get and display all the services of the clicked freelancer
-
+    $('#service-booking-form select').append(new Option('Select Service', '')).attr('selected', true);
     allServicesPrices.forEach(service_price =>{
         let service = service_price.childNodes[0].innerHTML;
         $('#service-booking-form select').append(new Option(service, service));
@@ -27,6 +28,19 @@ function booking_form_show(title, allServicesPrices) {
     });
     $('.booking').show();
 }
+function priceToShow(targetService, allServicesPrices) {
+    let targetPrice;
+    for(let i=0; i<allServicesPrices.length; i++){
+        let currentServiceAndPrice = allServicesPrices[i];
+        if(currentServiceAndPrice.childNodes[0].innerHTML===targetService){
+            targetPrice = currentServiceAndPrice.childNodes[1].innerHTML;
+            break;
+        }
+    }
+
+    return targetPrice
+}
+
 
 $('.bottom-side>button').click(event => {
 
@@ -39,10 +53,10 @@ $('.bottom-side>button').click(event => {
     let currentPopTitle = 'Book Service with '+ currentFreelancerName;
 
     // Get the clicked freelancer services and their respective prices
-    let allServicesPrices = parentContainer.childNodes[1].childNodes[0].childNodes;
-
+    allServicesPrices = parentContainer.childNodes[1].childNodes[0].childNodes;
     // Show the dynamic booking form
     booking_form_show(currentPopTitle, allServicesPrices)
+    //priceToShow();
 })
 
 $('.public-service-enquiry .book-btn').click(event => {
@@ -53,10 +67,23 @@ $('.public-service-enquiry .book-btn').click(event => {
     // Create Booking Form Title
     let currentPopTitle = 'Book Service with '+ currentFreelancerName;
 
-    let allServicesPrices = parentContainer.childNodes[3].childNodes;
-    console.log(allServicesPrices)
+    allServicesPrices = parentContainer.childNodes[3].childNodes;
     booking_form_show(currentPopTitle, allServicesPrices)
 })
+
+$('#service-booking-form select').change(event => {
+    $('#service-booking-form select').css('border', '.1rem solid #213e53');
+    let price = priceToShow(event.target.value, allServicesPrices);
+    let bookBttnText;
+
+    if(price){
+        bookBttnText = 'Book '+ `(${price})`;
+    }else bookBttnText = 'Book ';
+
+    $('#service-booking-submit-bttn')[0].innerText = bookBttnText;
+    $('#service-booking-price').val(price);
+})
+
 
 $('.closebook-form').click(event => {
     $('.booking').hide();
@@ -65,7 +92,32 @@ $('.closebook-form').click(event => {
 $(window).click(function(event) {
     if(event.target.className === "booking") {
         event.target.style.display = "none";
+        $('#service-booking-form select').css('border-color', '#213e53');
+        // #213e53
     }
 });
 
-//console.log('The selector tag: ', $('.bookform-field'));
+/* ~~~~~~~~~~~~~~~~ Booking Form ~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+// Validation
+/*
+$(document).on('submit', '#service-booking-form', function(event) {
+    event.preventDefault();
+
+    console.log('Inside the book click button JQuery')
+    console.log($('#service-booking-form select').val().length);
+    if($('#service-booking-form select').val().length<1){
+        $('#service-booking-form select').css('border', '.1rem solid red');
+        $('#service-booking-form select').click();
+    }
+
+    $(this).submit();
+})*/
+
+$('#service-booking-form').submit(event=>{
+    if($('#service-booking-form select').val().length<1){
+        $('#service-booking-form select').css('border', '.1rem solid red');
+        $('#service-booking-form select').click();
+        event.preventDefault();
+    }
+})

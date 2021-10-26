@@ -41,7 +41,6 @@ let ConversationSchema = new mongoose.Schema({
     messages: [MessageSchema]
 });
 
-
 let MessageModel = DB_connection.EF_DB_conn.excellence_freelanceDB.model('MessageModel', MessageSchema);
 let ConversationModel = DB_connection.EF_DB_conn.excellence_freelanceDB.model('ConversationModel', ConversationSchema);
 module.exports = {ConversationModel, MessageModel};

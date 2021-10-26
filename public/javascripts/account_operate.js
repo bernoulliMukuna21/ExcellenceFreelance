@@ -13,6 +13,8 @@ function pageNavigation(pageToShow, name_of_pages, different_pages){
         if(div_element.innerText !== pageToShow.innerText){
             $(different_pages[index]).hide();
         }else{
+            console.log('Index of page to show: ', index)
+            console.log(different_pages)
             $(different_pages[index]).show();
         }
     });

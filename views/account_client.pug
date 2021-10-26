@@ -26,7 +26,32 @@ block content
             .client-account-middle
                 .client-current-bookings
                     h3 Client Bookings
-
+                    .client-bookings-header
+                        ul
+                            li Project Name
+                            li Freelancer
+                            li Due Date
+                            li Progress Status
+                            li Options
+                    .client-bookings-body
+                        each bookingDetail in allBookings
+                            .single-client-booking
+                                .booking-main-details
+                                    ul
+                                        li #{bookingDetail.service} - #{bookingDetail.projectName}
+                                        li #{bookingDetail.supplier.name}
+                                        li #{new Date(bookingDetail.dueDate).toLocaleString().split(',')[0]}
+                                        li
+                                            button#progressstatus #{bookingDetail.status}
+                                        li
+                                            i.far.fa-trash-alt
+                                .booking-description(style='display: none')
+                                    h4 Creation Date: #{new Date(bookingDetail.creationDate).toLocaleString().split(',')[0]}
+                                    div
+                                        h4 Description:
+                                        p #{bookingDetail.projectDescription}
+                                input(type='hidden' name='bookingid' class='singleBookingID'
+                                    value=bookingDetail.bookingID)
                 .client-profile-update(style='display:none;')
                     - let updateOption = 'pointer-events: auto';
                     - if(loggedInUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';};

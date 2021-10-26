@@ -50,6 +50,7 @@ block content
         .bottom-side
           button Book
           a(href='/account/freelancer/'+emailEncode(freelancer.email)): button View Profile
+        input(type='hidden', value=emailEncode(freelancer.email))
 
     include ./partials/booking_form
   include ./partials/footer

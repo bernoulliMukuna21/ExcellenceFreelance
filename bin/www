@@ -22,7 +22,9 @@ app.set('port', port);
 var server = http.createServer(app);
 var io = socketio(server);
 //app.set('socketio', io);
+
 require('../routes/sever-side-messages').server_io(io);
+require('../routes/payment').server_io(io);
 
 
 /**

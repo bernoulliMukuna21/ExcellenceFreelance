@@ -17,7 +17,9 @@ var usersRouter = require('./routes/users');
 var serviceRouter = require('./routes/services');// This path should not exist. It will go
 var aboutRouter = require('./routes/aboutUs');
 var accountRouter = require('./routes/account');
+var bookingRouter = require('./routes/booking');
 var messageRouter = require('./routes/sever-side-messages').router;
+var paymentRouter = require('./routes/payment').router;
 
 var app = express();
 
@@ -40,9 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
 let sessionDB_name = 'ef_sessions';
 
-console.log('MongoStore Connection: ', process.env.remote_MongoURI);
 let sessionStore = MongoStore.create({
-    mongoUrl: process.env.remote_MongoURI,
+    mongoUrl: process.env.local_connectionURI,
     dbName: 'excellence_freelance',
     collectionName: sessionDB_name
 });
@@ -81,7 +82,9 @@ app.use('/account', accountRouter);
 app.use('/join', indexRouter);// using the same route
 app.use('/login', indexRouter); //
 app.use('/about-us', aboutRouter);
+app.use('/booking', bookingRouter);
 app.use('/messages', messageRouter);
+app.use('/payment', paymentRouter);
 
 
 // catch 404 and forward to error handler

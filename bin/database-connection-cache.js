@@ -7,13 +7,13 @@ var EF_DB_conn = {};
 * */
 var mongoose = require('mongoose');
 
-let connection_URI = process.env.remote_MongoURI;// Remote mongoDB connection
+//let connection_URI = process.env.remote_MongoURI;// Remote mongoDB connection
 
 /* Local mongoDB connection*/
-/*
+
 let database_name = '/excellence_freelance';
 let connection_URI = process.env.local_connectionURI+database_name;
-*/
+
 
 let connection_Options = {
     useNewUrlParser: true,

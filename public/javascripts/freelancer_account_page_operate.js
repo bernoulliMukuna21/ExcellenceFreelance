@@ -7,6 +7,7 @@ import {ajaxFormMessage_generator} from "./account_operate.js";
 * */
 
 let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes;
+let freelancerAllowedPages = $('.freelancer-page-allowed')[0].childNodes;
 let freelancersectionNames = $('.account-profile-information ul li');
 
 $(document).ready(function(){
@@ -18,14 +19,17 @@ $(document).ready(function(){
     && freelancersectionNames_lastChild[0].innerText === 'Main Page'){
         freelancersectionNames_firstChild.hide();
     }else{
+        console.log('freelancer profile first: ', freelancersectionNames_firstChild);
+        console.log('freelancer profile first: ', freelancersectionNames_lastChild);
         $(freelancersectionNames).click(function(){
-            accountsOperation.pageDispalyStyle(this, freelancersectionNames, freelancerProfileSections);
+            console.log('Clicked page name: ', freelancersectionNames);
+            accountsOperation.pageDispalyStyle(this, freelancersectionNames, freelancerAllowedPages);
         });
 
         let freelancerMessage_pageToGo = freelancersectionNames_lastChild[0];
         if(freelancerMessage_pageToGo.id === 'show-user-messages'){
             accountsOperation.pageDispalyStyle(freelancerMessage_pageToGo, freelancersectionNames,
-                freelancerProfileSections);
+                freelancerAllowedPages);
         }
     }
 
@@ -361,7 +365,11 @@ $('#add-skills-button').click(function (event) {
 accountsOperation.deleteItem('.saved-skill',
     'delete-aSkill-btn');
 
-
+$(document).on('click', '.public-service-enquiry button', function(event) {
+    let freelancerEmail = event.target.parentNode.lastChild.lastChild.value;
+    $('#service-booking-form').get(0).setAttribute('action',
+        `http://localhost:3000/payment/create-checkout-session/booking-checkout?client_freelancer=${freelancerEmail}`); //this works
+})
 
 /*
 * Collect the Education, Skills and Services of the freelancer

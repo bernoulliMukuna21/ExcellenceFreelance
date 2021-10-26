@@ -1,0 +1,36 @@
+if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)) && freelancerSubscriptionStatus !== 'active')
+    div.subscription-payment(style='display: none')
+        .subscription-payment-container
+        div.subscription-payment-content
+            div.subscription-payment-information
+                if freelancerSubscriptionStatus === 'trialing'
+                    .trial-ending-message
+                        .trial-ending-title
+                            h3 Trial Ending in #{' '}
+                                span #{numberOfDays}
+                                | #{' '}  days
+                        .trial-ending-infos
+                            p Thank you for using #{' '}
+                                span Excellence.Freelance
+                                | .#{' '} We are delighted to have you as one of our freelancers.
+                                | Your subscription will end soon. Subscribe to remain
+                                | available for bookings after your trial period.
+
+                else if (freelancerSubscriptionStatus !== 'active' || freelancerSubscriptionStatus !== 'trialing')
+                    .trial-ended-message
+                        .trial-ending-title
+                            h3 Trial Ended
+                        .trial-ending-infos
+                            p Thank you for using #{' '}
+                                span Excellence.Freelance
+                                | .#{' '} We are delighted to have you as one of our freelancers.
+                                | Your subscription will end soon. To keep on being visible
+                                |  for booking, it is required to subscribe.
+
+                .trail-ending-options
+                    form(action='http://localhost:3000/payment/create-checkout-session/subscription' method='POST')
+                        input(type='hidden' name='lookup_key' value='standard')
+                        button.suscription-bttn(class='checkout-and-portal-button') Subscribe £1/Month
+
+                    button(class='cancel-subscription-popup') Reject
+

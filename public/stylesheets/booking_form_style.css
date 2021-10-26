@@ -1,4 +1,4 @@
-.booking {
+.booking{
     display: none;
     position: fixed;
     z-index: 8;
@@ -17,7 +17,7 @@
     width: 50%;
 }
 
-.booking-form {
+.booking-form{
     padding: 1rem 2.5rem  2.5rem 2.5rem;
     background: #eee;
 }
