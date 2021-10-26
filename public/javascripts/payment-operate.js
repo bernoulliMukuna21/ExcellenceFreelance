@@ -1,6 +1,6 @@
 let dev_URL = 'http://localhost:3000';
 let prod_URL = 'https://excellence-freelance.herokuapp.com/'
-var socket = io.connect(dev_URL);
+var socket = io.connect(prod_URL);
 
 $('.cancel-subscription-popup').click(event => {
     $('.subscription-payment').hide();

@@ -1,7 +1,7 @@
 import * as accountsOperation from './account_operate.js';
 let dev_URL = 'http://localhost:3000';
 let prod_URL = 'https://excellence-freelance.herokuapp.com/'
-var socket = io.connect(dev_URL);
+var socket = io.connect(prod_URL);
 
 let receiver, pageToGo, pagesNames, pagesSections;
 

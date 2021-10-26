@@ -5,7 +5,8 @@ var BookingModel = require('../models/BookingModel');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 
-let domain = 'http://localhost:3000';
+//let domain = 'http://localhost:3000';
+let domain = 'https://excellence-freelance.herokuapp.com';
 let price, projectName, projectDescription, projectDueDate, serviceName;
 
 /* GET home page. */

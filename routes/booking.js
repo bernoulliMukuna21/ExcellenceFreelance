@@ -4,7 +4,8 @@ var BookingModel = require('../models/BookingModel');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 
-let domain = 'http://localhost:3000';
+//let domain = 'http://localhost:3000';
+let domain = 'https://excellence-freelance.herokuapp.com';
 
 router.post('/service-booking/:client_freelancer', ensureAuthentication, (req, res)=>{
     let customer_client = emailEncode(req.user.email);
