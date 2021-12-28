@@ -17,7 +17,7 @@ var usersRouter = require('./routes/users');
 var serviceRouter = require('./routes/services');// This path should not exist. It will go
 var aboutRouter = require('./routes/aboutUs');
 var accountRouter = require('./routes/account');
-var bookingRouter = require('./routes/booking');
+var bookingRouter = require('./routes/booking').router;
 var messageRouter = require('./routes/sever-side-messages').router;
 var paymentRouter = require('./routes/payment').router;
 
@@ -33,6 +33,7 @@ app.set('view engine', 'pug');
 
 // Middlewares
 app.use(logger('dev'));
+app.use('/payment/webhook', express.raw({type: "*/*"})) // stripe payment middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -62,6 +63,7 @@ app.use(
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session()); // Keep track of the user session
+
 
 // Connect flash
 app.use(flash());

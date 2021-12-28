@@ -76,7 +76,7 @@ input:focus{
 .client-bookings-header ul, .single-client-booking ul{
     list-style: none;
     display: grid;
-    grid-template-columns: 35% 25% 15% 15% 10%;
+    grid-template-columns: 30% 25% 15% 20% 10%;
     justify-content: space-between;
     align-items: center;
     padding: .75rem 0;
@@ -96,11 +96,9 @@ input:focus{
 .client-bookings-header ul li:last-child{border: none;}
 
 .single-client-booking{
-    border: .1rem solid black;
     margin-bottom: 1rem;
     border-radius: .5rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    cursor: pointer;
+    box-shadow: .5rem .25rem .5rem .25rem rgba(0, 0, 0, 0.2) ;
 }
 
 .single-client-booking:last-child{
@@ -112,6 +110,7 @@ input:focus{
 .booking-description{
     border-top: .25rem solid black;
     padding: 1rem 0;
+    margin: 0 1rem;
 }
 
 .single-client-booking li, .single-client-booking i,
@@ -122,13 +121,11 @@ input:focus{
     margin-top: .5rem;
 }
 .single-client-booking ul li button{
-    border: none;
-    background-color: #308634;
     color: white;
-    border-radius: 1rem;
-    padding: .15rem 0;
+    border-radius: .5rem;
+    padding: .25rem 0;
     cursor: pointer;
-    width: 12rem;
+    width: 15rem;
 }
 .single-client-booking ul li:last-child{
     text-align: center;
@@ -143,12 +140,153 @@ input:focus{
 .booking-description h4{
     font-size: 1.3rem;
 }
-.booking-description>h4{
-    margin-bottom: 1rem;
-}
 .booking-description p{
     text-align: justify;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+}
+.project-details div:first-child{
+    margin: 1rem 0 3rem 0;
+}
+.project-details div:first-child div{
+    margin: 1.5rem 0;
+}
+.project-details div:last-child,
+.project-finish-update-options{
+    display: flex;
+    justify-content: center;
+}
+.project-details div:last-child button,
+.project-finish-update-options button{
+    border: none;
+    padding: 1rem 0;
+    margin: 0 1rem;
+    width: 12rem;
+    background-color: #308634;
+    color: white;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+.project-details div:last-child a{
+    border-radius: .5rem;
+    margin: 0 1rem;
+}
+.project-details div:last-child a button{
+    margin: 0;
+}
+
+.project-details div:last-child>button,
+.project-finish-update-options button:last-child{
+    background-color: #bf3524;
+}
+.project-details div:last-child button:hover,
+.project-finish-update-options button:first-child:hover{
+    background-color: #29722d;
+}
+.project-details div:last-child>button:hover,
+.project-finish-update-options button:last-child:hover{
+    background-color: #ad3122;
+}
+
+.project-finish-update-options button{
+    width: 15rem;
+}
+
+.project-finish-request p,
+.project-reject-request div p,
+.project-completion-confirmed div p,
+.project-completion-rejected p{
+    text-align: center;
+    margin: 2rem;
+}
+.project-finish-request p,
+.project-reject-request div p span,
+.project-completion-confirmed div p span,
+.project-completion-rejected p span{
+    font-weight: bold;
+}
+.project-finish-request p span:first-child{
+    color: #308634;
+    font-style: italic;
+}
+.project-finish-request p span:last-child{
+    font-weight: normal;
+    font-style: italic;
+    font-size: 1.2rem;
+}
+.project-reject-request div p span:first-child{
+    color: red;text-decoration: none;
+}
+#clientBookingEmpty{
+    font-size: 2rem;
+    font-weight: bolder;
+    text-align: center;
+    padding: 5rem;
+}
+/* Booking Modal */
+.client-account-modal{
+    position: fixed;
+    z-index: 8;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.6);
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.client-account-modal-content{
+    min-width: 30%;
+}
+
+.client-booking-completion{
+    padding: 2rem 2.5rem;
+    background: #eee;
+    border-radius: .5rem;
+}
+.client-booking-completion p{
+    text-align: center;
+    font-size: 1.3rem;
+}
+.client-booking-completion section{
+    text-align: center;
+    margin-top: 2rem;
+}
+.client-booking-completion section button:first-child{
+    margin-right: .75rem;
+}.client-booking-completion section button:last-child{
+    margin-left: .75rem;
+ }
+.client-bookingCompletion-continue, .client-bookingCompletion-cancel{
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    width: 10rem;
+    color: white;
+    cursor: pointer;
+}
+.client-bookingCompletion-continue{
+    background-color: #308634;
+    border-color: #308634;
+}
+.client-bookingCompletion-continue:hover{
+    background-color: #29722d;
+    border-color: #29722d;
+}
+.client-bookingCompletion-cancel{
+    background-color: red;
+    border-color: red;
+}
+.client-bookingCompletion-cancel:hover{
+    background-color: #ad3122;
+    border-color: #ad3122;
+}
+.client-booking-completion-rejection p span:last-child{
+    font-style: italic;
+    font-weight: bolder;
 }
 /*
 * Client Profile Update

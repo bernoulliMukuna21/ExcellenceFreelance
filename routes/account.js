@@ -72,15 +72,22 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
     // Booking setup
     let clientIdFromURL = req.params.this_user;
     if(emailEncode(loggedInUser.email) === clientIdFromURL){
-        // This client has made a booking
-        BookingModel.find({
-            $and: [
-                {customer: clientIdFromURL}
-            ]
-        }).sort({creationDate: -1}).then( allBookings => {
-
-            console.log(`Booking Details: ${allBookings}`);
-
+        BookingModel.aggregate([
+            { $match: {
+                    $and:
+                        [
+                            { 'customer.uuid': clientIdFromURL },
+                            { $or:
+                                    [
+                                        { paid: true },
+                                        { bookingType: 'request_booking' }
+                                    ]
+                            }
+                        ]
+                }
+            },
+            { $sort: { creationDate : 1} }
+        ]).then( allBookings => {
             res.render('account_client', {
                 loggedInUser,
                 isLogged: req.isAuthenticated(),
@@ -92,7 +99,6 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 userToMessage,
                 userToMessageImageSrc
             });
-
         }).catch (e => {
             res.send('An Error occurred!');
         })
@@ -103,9 +109,11 @@ router.get('/freelancer/:this_user', async function (req, res) {
     let loggedInUser, freelancerUser;
     let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
     let freelancerSubscriptionStatus;
+    let allBookingToFreelancer;
 
     let loggedInUser_imageSrc = '';
-    let currentFreelancerEmail = emailDecode(req.params.this_user);
+    let freelancerIdFromURL = req.params.this_user;
+    let currentFreelancerEmail = emailDecode(freelancerIdFromURL);
     let stripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
     let isLogged = req.isAuthenticated();
 
@@ -113,23 +121,55 @@ router.get('/freelancer/:this_user', async function (req, res) {
     if (isLogged) {
         loggedInUser = req.user;
 
-        userToMessageUniqueKey = req.query.receiverKey;
+        if(freelancerIdFromURL === emailEncode(loggedInUser.email)){
 
-
-        if (userToMessageUniqueKey) {
-            try{
-                userToMessage = await UserModel.find({
-                    email: emailDecode(userToMessageUniqueKey)}
-                );
-                if(userToMessage){
-                    userToMessage = userToMessage[0];
-                    userToMessageImageSrc = imageToDisplay(userToMessage);
-                    messageIdHTML = 'show-user-messages'
+            // Message Initiation setup
+            userToMessageUniqueKey = req.query.receiverKey;
+            if (userToMessageUniqueKey) {
+                try{
+                    userToMessage = await UserModel.find({
+                        email: emailDecode(userToMessageUniqueKey)}
+                    );
+                    if(userToMessage){
+                        userToMessage = userToMessage[0];
+                        userToMessageImageSrc = imageToDisplay(userToMessage);
+                        messageIdHTML = 'show-user-messages'
+                    }
+                }catch (e) {
+                    res.send('An Error occurred!');
                 }
+            }
+
+            // Booking Made to Freelancer retrieval
+            try{
+                ///allBookingToFreelancer = await BookingModel.find({'supplier.uuid': freelancerIdFromURL});
+                allBookingToFreelancer = await BookingModel.aggregate(
+                    [
+                        { $match:
+                                {
+                                    $and:
+                                        [
+                                            { 'supplier.uuid': freelancerIdFromURL },
+                                            { $or:
+                                                    [
+                                                        { paid: true },
+                                                        { bookingType: 'request_booking' }
+                                                    ]
+                                            }
+                                        ]
+                                }
+                        },
+                        { $sort: { dueDateTime : 1} }
+                    ]
+                )
             }catch (e) {
                 res.send('An Error occurred!');
             }
+
+            console.log(allBookingToFreelancer)
         }
+
+
     }
     try {
         freelancerUser = await UserModel.find({email: currentFreelancerEmail});
@@ -180,7 +220,8 @@ router.get('/freelancer/:this_user', async function (req, res) {
             userToMessage,
             userToMessageImageSrc,
             freelancerSubscriptionStatus,
-            numberOfDays
+            numberOfDays,
+            allBookingToFreelancer
         });
     }catch (e) {
         res.send('An Error occurred!');
@@ -237,6 +278,7 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
         *  */
 
         res.status(404).send(Object.values(updateInfos.updateErrors));
+
 
     }else{
         /*

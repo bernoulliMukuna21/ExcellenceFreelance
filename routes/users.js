@@ -238,7 +238,7 @@ router.post('/forgot', function (req, res, next) {
         function (token, user, done) {
             let reset_link = "http://"+ req.headers.host+"/users/reset/"+ token;
             let mailOptions = {
-                to: req.body.email,
+                to: 'mukunabernoulli@yahoo.com',//req.body.email,
                 from: 'mmbernoulli@gmail.com',
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',

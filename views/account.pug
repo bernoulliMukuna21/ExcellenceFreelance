@@ -6,8 +6,6 @@ block content
     - let startYear = currentYear - 50;
     - let rangeOfYears = [];
     - for(let i=currentYear+6; i>=startYear; i--){ rangeOfYears.push(i)}
-    - console.log('freelancerUser', freelancerUser)
-    - console.log('loggedInUser', loggedInUser)
 
     .freelancer-page-main-container
         .freelancer-update-infos
@@ -61,9 +59,7 @@ block content
                             li.user-main-page(class='clicked') Main Page
                             if (isLogged && (freelancerUser.email === loggedInUser.email))
                                 li.user-update-page Profile Update
-                            //
                                 li.user-current-booking-page Bookings
-                            if (isLogged && (freelancerUser.email === loggedInUser.email))
                                 li.user-completed-booking-page(id=messageIdHTML)
                                     p Messages
                                     p.newMessageReceived(style='display:none;') new
@@ -264,13 +260,11 @@ block content
                                     .update-page-submit
                                             input#update-page-submission(type='submit', value='Save Profile')
 
-                        if (isLogged && (freelancerUser.email === loggedInUser.email))
+                            .freelancer-booking-page(style='display: none;')
+                                include ./partials/freelancer-specific-details/freelancer-bookings-section
+
                             .freelancer-message-page(style='display: none;')
                                 include ./partials/message
-
-                        //if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.email)))
-                            .freelancer-payment-section(style='display: none;')
-                                include ./partials/freelancer-specific-details/payment
 
     include ./partials/booking_form
     include ./partials/freelancer-specific-details/payment-sub-infos

@@ -35,7 +35,7 @@ function server_io(io) {
             // User join room
             console.log('Socket io -Excellence Freelance connected')
             socket.join(userData.uniqueKey);
-        })
+        });
 
         socket.on('MessageInput', inputData => {
             let roomDB, potential_dbRoom1, potential_dbRoom2;
@@ -136,9 +136,7 @@ function server_io(io) {
             }]
         }).sort( { lastInsertionDate: 1 } ).then(async allConversationRooms => {
             if(requirement === 'update'){
-                console.log('Room requiring update: ')
                 let roomToUpdateIndex = req.query.roomIndex;
-                console.log('Room Number: ', roomToUpdateIndex)
                 let roomToUpdate = allConversationRooms.reverse()[roomToUpdateIndex];
                 roomToUpdate.roomIsClicked = true;
 
@@ -199,34 +197,3 @@ function server_io(io) {
 module.exports = {
     router, server_io, getUserProfile
 }
-
-
-
-
-
-
-
-/*Messages_MDB.ConversationModel.aggregate(
-    [
-        {$unwind: "$messages"},
-        {$match:
-                {
-                    $or: [{
-                        user1_id: loggedInUser
-                    }, {
-                        user2_id: loggedInUser
-                    }]
-                }
-        },{$sort:{'messages.messageInsertionDate': -1 }}
-    ]
-).then(allMessages => {
-    console.log('Messages Query')
-    console.log(allMessages);
-    res.send('Message retrieval success');
-}).catch(error => {
-    res.status(400).send('Error in retrieving message')
-})*/
-
-
-
-

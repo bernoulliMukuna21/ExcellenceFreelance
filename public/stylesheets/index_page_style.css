@@ -168,12 +168,12 @@ input:focus{
     border-radius: .5rem;
     padding: .5rem;
 }
-.bottom-side>button{
+.bottom-side button{
     background-color: #4CAF50;
     border-color: #4CAF50;
     margin-right: .5rem;
 }
-.bottom-side a button{
+.bottom-side button:last-child{
     background-color: #213e53;
     border-color: #213e53;
     margin-left: .5rem;

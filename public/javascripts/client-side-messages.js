@@ -1,8 +1,8 @@
 import * as accountsOperation from './account_operate.js';
-let dev_URL = 'http://localhost:3000';
-let prod_URL = 'https://excellence-freelance.herokuapp.com/'
-var socket = io.connect(prod_URL);
+import * as socketConnection from './socketio-connection-client-side.js'
 
+
+var socket = socketConnection.socket;
 let receiver, pageToGo, pagesNames, pagesSections;
 
 // Get sender identifier
@@ -302,5 +302,4 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
-
 

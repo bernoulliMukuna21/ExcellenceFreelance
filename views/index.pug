@@ -48,9 +48,13 @@ block content
                 p #{service_price.service}
                 p #{'£'+service_price.price}
         .bottom-side
-          button Book
-          a(href='/account/freelancer/'+emailEncode(freelancer.email)): button View Profile
+          button Instant Book
+          button Request
+
         input(type='hidden', value=emailEncode(freelancer.email))
 
     include ./partials/booking_form
   include ./partials/footer
+
+  //
+              a(href='/account/freelancer/'+emailEncode(freelancer.email)): button View Profile

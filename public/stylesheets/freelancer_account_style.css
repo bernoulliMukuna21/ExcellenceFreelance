@@ -974,11 +974,13 @@ button.like{
     color: #213e53;
 
 }
-.freelancer-projects-header, .freelancer-projects-top, .freelancer-one-project{
+.freelancer-projects-header, .freelancer-projects-top, .freelancer-one-project-top{
     display: grid;
-    grid-template-columns: 32.5% 17.5% 15% 10% 15% 10%;
+    grid-template-columns: 30% 20% 22% 22% 6%;
+    align-items: center;
+}
+.freelancer-projects-top-container, .freelancer-current-project-container{
     background-color: white;
-
 }
 .freelancer-projects-header{
     padding: 1rem 1rem 0.5rem 1rem;
@@ -986,19 +988,59 @@ button.like{
     border-top-right-radius: .5rem;
 }
 .freelancer-projects-header p{
+    font-size: 1.1rem;
     opacity: 50%;
 }
+.booking-section-container p{
+    text-align: center;
+}
+.freelancer-projects-header p:first-child,
+.freelancer-projects-top p:first-child,
+.freelancer-one-project-top p:first-child,
+.freelancer-projects-top-details p,
+.freelancer-one-project-details p{
+    text-align: left;
+}
+
+/*
 .freelancer-projects-header p:nth-child(4), .freelancer-projects-header p:nth-child(5), .freelancer-projects-header p:nth-child(6)
 {
     text-align: center;
-}
-.freelancer-projects-top, .freelancer-one-project{
+}*/
+.freelancer-projects-top, .freelancer-one-project-top{
     align-items: center;
     font-size: 1.3rem;
     font-weight: bold;
     padding: 1rem 1rem 2rem 1rem;
+}
+.freelancer-one-project{
     border-bottom-left-radius: .5rem;
     border-bottom-right-radius: .5rem;
+}
+.freelancer-one-project-top{
+    padding-left: 0;
+    padding-right: 0;
+}
+.freelancer-projects-top-details{
+    margin: 0 1rem;
+    padding: 1rem 0;
+    border-top: .2rem solid black;
+}
+.freelancer-one-project-details{
+    padding-top: 1rem;
+    border-top: .2rem solid black;
+}
+.freelancer-projects-top-details>div:first-child,
+.freelancer-one-project-details>div:first-child{
+    margin-bottom: 3rem;
+}
+.freelancer-projects-top-details div:first-child div,
+.freelancer-one-project-details div:first-child div{
+    margin: 1.5em 0;
+}
+.freelancer-projects-top-details h4, .freelancer-projects-top-details p,
+.freelancer-one-project-details h4, .freelancer-one-project-details p{
+    font-size: 1.3rem;
 }
 .freelancer-options, .freelancer-messages, .project-status{
     text-align: center;
@@ -1020,17 +1062,86 @@ button.like{
     font-size: 1.5rem;
     cursor: pointer;
 }
-.freelancer-options i:nth-child(1):hover{
+.freelancer-options i:hover{
     color: #ca1212;
 }
-.freelancer-options i:nth-child(2):hover{
-    color: green;
+.freelancer-projects-top-details>div:nth-child(2),
+.freelancer-one-project-details>div:nth-child(2){
+    display: flex;
+    justify-content: center;
 }
 
 .freelancer-one-project{
     padding: 3rem 4rem;
     border-bottom: .2rem solid #213e53;
-    cursor: pointer;
-}.freelancer-one-project:hover{
+}
+.freelancer-one-project:hover{
      background-color: #f1f1f1;
- }
+}
+.freelancer-one-project:first-child:hover{
+    border-top: .2rem solid #213e53;
+}
+.freelancer-one-project .project-status,
+.freelancer-projects-top .project-status{
+    margin: 0 1rem;
+    padding: .25rem 0;
+    color: white;
+    border-radius: .5rem;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.freelancer-projects-top-details>div:nth-child(2) button,
+.freelancer-one-project-details>div:nth-child(2) button{
+    border: none;
+    padding: 1rem 0;
+    margin: 0 1rem;
+    width: 15rem;
+    background-color: #308634;
+    color: white;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+.freelancer-projects-top-details>div:nth-child(2) button.freelancer-booking-finish-button,
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button{
+    background-color: #213e53;
+}
+.freelancer-projects-top-details>div:nth-child(2) button:last-child,
+.freelancer-one-project-details>div:nth-child(2) button:last-child{
+    background-color: #bf3524;
+}
+
+.freelancer-projects-top-details>div:nth-child(2) button:hover,
+.freelancer-projects-top-details>div:nth-child(2) button:hover{
+    background-color: #29722d;
+}
+.freelancer-projects-top-details>div:nth-child(2) button.freelancer-booking-finish-button:hover,
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button:hover{
+    background-color: #1a3040;
+}
+.freelancer-projects-top-details>div:nth-child(2) button:last-child:hover,
+.freelancer-projects-top-details>div:nth-child(2) button:last-child:hover{
+    background-color: #ad3122;
+}
+.freelancer-project-final-messages h4, .freelancer-project-final-messages p{
+    text-align: center;
+}
+.freelancer-project-final-messages h4{
+    font-size: 1.5rem;
+}
+.freelancer-project-completion-confirmed p, .freelancer-project-completion-rejection span{
+    font-style: italic;
+}
+.freelancer-project-completion-rejection span:first-child{
+    color: red;
+    font-style: normal;
+}
+.freelancer-project-completion-confirmed, .freelancer-project-completion-rejection{
+    padding: 2rem;
+}
+.emptyNextDueProject{
+
+    padding: 2rem;
+    font-size: 1.5rem;
+    color: black;
+}

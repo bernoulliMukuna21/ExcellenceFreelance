@@ -1,4 +1,5 @@
 import * as accountsOperation from './account_operate.js';
+import * as socketConnection from './socketio-connection-client-side.js'
 
 /*
 * The sections of the freelancer page will need to be hidden, and shown
@@ -22,6 +23,27 @@ $(document).ready(function(){
         accountsOperation.pageDispalyStyle(clientMessage_pageToGo, clientsectionNames,
             clientProfileSections);
     }
+
+    /* CLient Booking Communication */
+    let allClientBookings = $('.client-bookings-body')[0].childNodes;
+    if(allClientBookings.length>0){
+        allClientBookings.forEach(singleBooking => {
+            let statusHTML = singleBooking.firstChild.firstChild.childNodes[3];
+            let bookingOptionHTLM = singleBooking.childNodes[1].firstChild;
+            console.log('Client single each booking: ', singleBooking)
+            if(statusHTML.innerText === 'awaiting acceptance'){
+                let payButtonHTML = bookingOptionHTLM.lastChild.firstChild
+                $(payButtonHTML).attr('disabled' , true);
+                $(payButtonHTML.firstChild).css('cursor' , 'not-allowed');
+                $(payButtonHTML).css('opacity' , '50%');
+            }
+            /*if(statusHTML.innerText === 'project ongoing'){
+                $(bookingOptionHTLM.firstChild).remove();
+            }*/
+        })
+    }
+
+
 })
 $(document).click(function (event) {
     let elementClicked = event.target;
@@ -50,14 +72,89 @@ $(document).click(function (event) {
             parentNode.childNodes[1];
         $(bookingDescription).toggle();
     }
+    else if(elementClicked.id === 'progressstatus'){
+        bookingDescription = elementClicked.parentNode.parentNode.
+            parentNode.parentNode.childNodes[1];
+        $(bookingDescription).toggle();
+    }
+    else if(elementClicked.className === 'far fa-trash-alt' &&
+        (elementClicked.parentNode.parentNode.parentNode
+            .className === 'booking-main-details')){
+        bookingDescription = elementClicked.parentNode.parentNode.
+            parentNode.parentNode.childNodes[1];
+        $(bookingDescription).toggle();
+    }
+
+    // Booking Modal Hide
+    if(event.target.className === "client-account-modal") {
+        event.target.style.display = "none";
+    }
+})
+
+/*** Booking ***/
+$(document).on('click', '#projectCompleted', function(event) {
+    let bookingDescriptionHTML = event.target.parentNode.parentNode.
+        parentNode.parentNode;
+    let clientSide_modal = bookingDescriptionHTML.parentNode.parentNode.
+        parentNode.parentNode.nextSibling;
+
+    console.log('confirmed ID: ', bookingDescriptionHTML.nextSibling.value)
+
+    $(clientSide_modal).show();
+    $(clientSide_modal.firstChild.firstChild.firstChild).show();
+    $(clientSide_modal.firstChild.firstChild.childNodes[1]).hide();
+    $(clientSide_modal.firstChild.firstChild.childNodes[2])
+        .val(bookingDescriptionHTML.nextSibling.value);
+})
+
+$(document).on('click', '#projectIncomplete', function(event) {
+    let bookingDescriptionHTML = event.target.parentNode.parentNode.
+        parentNode.parentNode;
+    let clientSide_modal = bookingDescriptionHTML.parentNode.parentNode.
+        parentNode.parentNode.nextSibling;
+
+    console.log('conflict ID: ', bookingDescriptionHTML.nextSibling.value)
+    $(clientSide_modal).show();
+    $(clientSide_modal.firstChild.firstChild.childNodes[1]).show();
+    $(clientSide_modal.firstChild.firstChild.firstChild).hide();
+    $(clientSide_modal.firstChild.firstChild.childNodes[2])
+        .val(bookingDescriptionHTML.nextSibling.value);
+})
+
+$(document).on('click', '.client-booking-completion-confirmation .client-bookingCompletion-continue', function(event) {
+    // Booking Completion confirmed
+    let bookingCompletionConfirmedID = event.target.parentNode.parentNode.nextSibling.nextSibling.value;
+    socketConnection.socket.emit('Completion Confirmed', {bookingCompletionConfirmedID})
+})
+$(document).on('click', '.client-booking-completion-rejection .client-bookingCompletion-continue', function(event) {
+    // Booking Completion Conflict
+    let bookingCompletionConflictID = event.target.parentNode.parentNode.nextSibling.value;
+    socketConnection.socket.emit('Completion Conflict', {bookingCompletionConflictID})
+})
+
+$(document).on('click', '.client-booking-completion .client-bookingCompletion-cancel', function(event) {
+    $(event.target.parentNode.parentNode.parentNode.parentNode.parentNode).hide();
+})
+
+$(document).on('click', '.delete-booking-bttn', function(event) {
+    let deleteBttnHTML = event.target;
+    let projectDetails = deleteBttnHTML.parentNode.parentNode.
+        parentNode;
+    let bookingToDeleteID = projectDetails.nextSibling.value;
+    let freelancerBooked = bookingToDeleteID.split(':')[1];
+    let projectStatus = projectDetails.previousSibling.firstChild.childNodes[3].innerText;
+
+    if(projectStatus === 'booking ongoing'){
+        socketConnection.socket.emit('Booking ongoing Delete - Client Request',
+            {bookingToDeleteID, freelancerBooked, status: projectStatus});
+    }else{
+        socketConnection.socket.emit('Booking Delete - Client Request',
+            {bookingToDeleteID, freelancerBooked, status: projectStatus});
+    }
 })
 
 
-
-/*
-* The following codes deal with the changes and display of the profile
-* of the client
-* */
+/*** The following codes deal with the changes and display of the profile of the client ***/
 accountsOperation.profileImageChange("#client-profile-picture",
     '#client-imagePreview')
 accountsOperation.profileImageEmpty('#client-imagePreview')
@@ -108,8 +205,7 @@ $('#client-profile-update-form').submit(function (event) {
     })
 })
 
-export function parameters() {
-    return $('.client-account-middle')[0].childNodes;
-}
+
+/* Bookings */
 
 

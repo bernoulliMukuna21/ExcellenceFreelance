@@ -1,6 +1,6 @@
-let dev_URL = 'http://localhost:3000';
-let prod_URL = 'https://excellence-freelance.herokuapp.com/'
-var socket = io.connect(prod_URL);
+import * as accountsOperation from './account_operate.js';
+import * as socketConnection from './socketio-connection-client-side.js'
+
 
 $('.cancel-subscription-popup').click(event => {
     $('.subscription-payment').hide();
@@ -27,7 +27,5 @@ $(document).ready(function () {
         $(".subscription-payment").hide();
     }
 })
+//
 
-socket.on('taskRequest', data => {
-    console.log(data);
-})

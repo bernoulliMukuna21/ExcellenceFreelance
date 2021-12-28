@@ -3,8 +3,12 @@ var DB_connection = require('../bin/database-connection-cache');
 
 let BookingSchema = new mongoose.Schema({
     bookingID: String,
+    bookingType: {
+      type: String
+    },
     customer: {
-        type: String
+        uuid: String,
+        name: String
     },
     supplier: {
         uuid: String,
@@ -21,17 +25,27 @@ let BookingSchema = new mongoose.Schema({
     },
     creationDate:{
         type: Date,
-        default: Date.now()
     },
-    dueDate: {
+    dueDateTime: {
         type: Date
     },
     price: {
         type: String
     },
+    requestedPrice:{
+        type: String
+    },
     status: {
         type: String,
-        default: 'pending'
+        default: 'awaiting acceptance'
+    },
+    completion: {
+        status: String,
+        date: Date
+    },
+    paid:{
+        type: Boolean,
+        default: false
     }
 });
 

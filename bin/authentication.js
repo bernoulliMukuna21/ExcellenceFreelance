@@ -1,3 +1,4 @@
+var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 module.exports = {
     ensureAuthentication: function (req, res, next) {
         if(req.isAuthenticated()){
@@ -10,6 +11,7 @@ module.exports = {
         if(!req.isAuthenticated()){
             return next();
         }
-        res.redirect('/account');
+        console.log(req.user)
+        res.redirect(`/account/${req.user.user_stature}/${emailEncode(req.user.email)}`);
     }
 }

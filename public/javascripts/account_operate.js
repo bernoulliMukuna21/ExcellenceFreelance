@@ -13,8 +13,6 @@ function pageNavigation(pageToShow, name_of_pages, different_pages){
         if(div_element.innerText !== pageToShow.innerText){
             $(different_pages[index]).hide();
         }else{
-            console.log('Index of page to show: ', index)
-            console.log(different_pages)
             $(different_pages[index]).show();
         }
     });
@@ -34,7 +32,6 @@ function pageDispalyStyle(page, name_of_pages, different_pages){
 
     pageNavigation(page, name_of_pages, different_pages);
     $(page).addClass("clicked");
-    console.log('Page clicked: ', page)
     if(page.childNodes[0].innerText === 'Messages'){
         $('.newMessageReceived').hide();
     }
@@ -117,8 +114,7 @@ function dataCollection(formHtml){
     * collected. Not all of the data are collected because
     * some of them need a different way of collection.
     *       Params:
-    *           - formHtml: the class or id of the form for
-    *               profile update.
+    *           - formHtml: the class or id of the form
     * */
 
     let form_data = new FormData();
@@ -336,16 +332,13 @@ function ajaxUpdateMessage_creation(message, label, htmlContainer){
 }
 
 function ajaxFormMessage_generator(dataJSON, htmlContainer){
-    console.log('Check this out: ', $(htmlContainer));
     dataJSON.forEach(data=>{
         ajaxUpdateMessage_creation(data[0].message, data[0].label, htmlContainer);
     });
     deleteItem('.single-update-container', 'update-delete-btn');
 }
 
-/*
-* Message Helper Functions
-* */
+/**** Message Helper Functions ****/
 
 function createNewRoom(receiverData, sourceImage) {
     let roomContainer = document.createElement('div');
@@ -512,10 +505,215 @@ function createMessageHTML(messageData, containerHTML, conversationRoomHTML) {
     //$('.message-container-main').append(messageContainer);
 }
 
+/********************** Booking Helper Functions **********************/
 
-export{pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
+function createBookingHTML(bookingContentsHTML,singleBookingContainer, allBookingsContainer,
+                           insertion) {
+
+    let singleBookingContainerHTML;
+
+    /*** Create Single Project Booking ***/
+    if(typeof singleBookingContainer === 'string'){
+        singleBookingContainerHTML = document.createElement('div');
+        singleBookingContainerHTML.classList.add(singleBookingContainer);
+    }else if (typeof singleBookingContainer === 'object'){
+        singleBookingContainerHTML = singleBookingContainer;
+    }
+
+    singleBookingContainerHTML.append(bookingContentsHTML[0]);
+    singleBookingContainerHTML.append(bookingContentsHTML[1]);
+    singleBookingContainerHTML.append(bookingContentsHTML[2]);
+
+    if(!insertion && allBookingsContainer){
+        allBookingsContainer.append(singleBookingContainerHTML);
+    }else if(insertion && allBookingsContainer){
+        if(insertion.place === 'before'){
+            $(insertion.HTML).before(singleBookingContainerHTML);
+        }else if(insertion.place === 'after'){
+            $(insertion.HTML).after(singleBookingContainerHTML);
+        }else if(insertion.place === 'first'){
+            allBookingsContainer.prepend(singleBookingContainerHTML);
+        }
+    }
+}
+
+function createBookingTopHTML(bookingData, projectHTML, projectDetailsHTML) {
+    /* This function is used to create a booking
+     on the freelancer account*/
+
+    /** Project **/
+    let projectContainer = document.createElement('div');
+    projectContainer.classList.add(projectHTML);
+
+    let projectName = document.createElement('p');
+    projectName.innerText = bookingData.service+' - '+bookingData.projectName;
+
+    let ClientName = document.createElement('p');
+    ClientName.innerText = bookingData.customer.name;
+
+    let dueDate = document.createElement('p');
+    dueDate.innerText = (new Date(bookingData.dueDateTime)).toLocaleString();
+
+    let status = document.createElement('p');
+    status.classList.add('project-status');
+    if(bookingData.status === 'booking ongoing'){
+        status.innerText = 'booking ongoing';
+        $(status).css({'border': '.1rem solid #A37A00', 'background-color':'#A37A00'})
+    }else if(bookingData.status === 'awaiting payment'){
+        status.innerText = 'awaiting payment';
+        $(status).css({'border': '.1rem solid #8d2874', 'background-color':'#8d2874'})
+    }else if(bookingData.status === 'awaiting acceptance'){
+        status.innerText = 'awaiting acceptance';
+        $(status).css({'border': '.1rem solid #213e53', 'background-color':'#213e53'})
+    }
+
+
+
+    /*project options*/
+    let optionsDIV = document.createElement('div');
+    optionsDIV.classList.add('freelancer-options');
+
+    let trashIcon = document.createElement("i");
+    $(trashIcon).attr("class", "far fa-trash-alt");
+
+    optionsDIV.appendChild(trashIcon);
+
+    /*append contents*/
+    projectContainer.appendChild(projectName);
+    projectContainer.appendChild(ClientName);
+    projectContainer.appendChild(dueDate);
+    projectContainer.appendChild(status);
+    projectContainer.appendChild(optionsDIV);
+
+    return [projectContainer, createBookingToggleDetails(bookingData, projectDetailsHTML),
+        createBookingIdInput(bookingData)];
+}
+
+function createBookingToggleDetails(bookingData, projectDetailsHTML) {
+    let projectDetailsContainer = document.createElement('div');
+    projectDetailsContainer.classList.add(projectDetailsHTML);
+    $(projectDetailsContainer).attr("style", "display: none;")
+
+    /* Details Description */
+    let detailsDIV = document.createElement('div');
+
+    let creationDate = document.createElement("h4");
+    console.log(bookingData.creationDate)
+    creationDate.innerText = `Creation Date: ${new Date(bookingData.creationDate).toLocaleString()}`;
+
+    let descriptionDIV = document.createElement('div');
+    let descriptionTitle = document.createElement("h4");
+    descriptionTitle.innerText = 'Description:';
+    let projectDescription = document.createElement("p");
+    projectDescription.innerText = bookingData.projectDescription;
+    descriptionDIV.appendChild(descriptionTitle);
+    descriptionDIV.appendChild(projectDescription);
+
+    let price = document.createElement("h4");
+    if(bookingData.bookingType === 'instant_booking'){
+        price.innerText = `Price: £${bookingData.price}`;
+    }else if(bookingData.bookingType === 'request_booking'){
+        price.innerText = `Price: £${bookingData.requestedPrice}`;
+    }
+
+
+    detailsDIV.appendChild(creationDate);
+    detailsDIV.appendChild(descriptionDIV);
+    detailsDIV.appendChild(price);
+
+    /* Details Options */
+    let detailsOptionsDIV = document.createElement('div');
+
+    let projectAccept = document.createElement("button");
+    projectAccept.classList.add('freelancer-booking-accept-button');
+    projectAccept.innerText = 'Accept';
+    if(bookingData.status !== 'awaiting acceptance'){
+        $(projectAccept).attr("style", "display: none;")
+    }
+
+    let projectFinish = document.createElement("button");
+    projectFinish.classList.add('freelancer-booking-finish-button');
+    projectFinish.innerText = 'Finish';
+    if(bookingData.status !== 'booking ongoing'){
+        $(projectFinish).attr("style", "display: none;")
+    }
+
+
+    let projectReject = document.createElement("button");
+    projectReject.classList.add('freelancer-booking-delete-button');
+    projectReject.innerText = 'Reject';
+
+    detailsOptionsDIV.appendChild(projectAccept);
+    detailsOptionsDIV.appendChild(projectFinish);
+    detailsOptionsDIV.appendChild(projectReject);
+
+    projectDetailsContainer.appendChild(detailsDIV);
+    projectDetailsContainer.appendChild(detailsOptionsDIV);
+    projectDetailsContainer.appendChild(createBookingFinalMessages(bookingData));
+
+    return projectDetailsContainer
+}
+function createBookingFinalMessages(bookingData) {
+    let projectFinalMessagesContainer = document.createElement('div');
+    projectFinalMessagesContainer.classList.add('freelancer-project-final-messages');
+    $(projectFinalMessagesContainer).attr("style", "display: none;")
+
+    /* Completion Confirmed*/
+    let projectCompletionConfirmed = document.createElement('div');
+    projectCompletionConfirmed.classList.add('freelancer-project-completion-confirmed');
+    let projectEarning = document.createElement("h4");
+    projectEarning.innerText = `Earning: £${bookingData.price - ((bookingData.price/100)*5)}`;
+    let messageInfos_success = document.createElement("p");
+    messageInfos_success.innerText = '(contact us on unilance-management@google.co.uk for enquiries)';
+
+    projectCompletionConfirmed.appendChild(projectEarning);
+    projectCompletionConfirmed.appendChild(messageInfos_success);
+
+    /* Completion rejected*/
+    let projectCompletionRejected = document.createElement('div');
+    projectCompletionRejected.classList.add('freelancer-project-completion-rejection');
+    let messageInfos_failure = document.createElement("p");
+    messageInfos_failure.innerHTML = `${bookingData.customer.name} has decided to `+"<span> cancel </span>"
+        +" the project. The management has been informed and will take appropriate actions. Thank you"
+        +"<br/><span>(contact us on unilance-management@google.co.uk for enquiries)</span>";
+
+    projectCompletionRejected.appendChild(messageInfos_failure);
+
+    projectFinalMessagesContainer.appendChild(projectCompletionConfirmed);
+    projectFinalMessagesContainer.appendChild(projectCompletionRejected);
+
+    return projectFinalMessagesContainer
+}
+
+function createBookingIdInput(bookingData) {
+    let projectIdHTML = document.createElement("input");
+    $(projectIdHTML).attr('type', 'hidden').attr('bookingid');
+    projectIdHTML.classList.add('singleBookingID');
+    $(projectIdHTML).val(bookingData.bookingID);
+
+    return projectIdHTML
+}
+
+function moveProjectBooking(nextDueProjectHTML, bookingID, projectTopContainer, projectDetailsContainer) {
+    let projectTopContainerHTML = document.createElement('div');
+    projectTopContainerHTML.classList.add(projectTopContainer);
+    $(nextDueProjectHTML.firstChild).children().clone().appendTo(projectTopContainerHTML);
+
+    let projectDetailsContainerHTML = document.createElement('div');
+    projectDetailsContainerHTML.classList.add(projectDetailsContainer);
+    $(projectDetailsContainerHTML).attr("style", "display: none;")
+    $(nextDueProjectHTML.childNodes[1]).children().clone().appendTo(projectDetailsContainerHTML);
+
+    $('.freelancer-booking-finish-button').attr('type', 'hidden')
+
+    return [projectTopContainerHTML, projectDetailsContainerHTML, createBookingIdInput(bookingID)]
+}
+
+
+export{ pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
     dataCollection, showNames, showServicesAndPrices, showSkills,
     emptySkills, countServices, showDescription, emptyDescription, showPrice,
     showEducations, emptyEducation, deleteItem, keyBoardAction,
     ajaxFormMessage_generator, createNewRoom, createNewConversationContainer,
-    roomConversationsNavigation, createMessageHTML}
+    roomConversationsNavigation, createMessageHTML, createBookingHTML,
+    createBookingTopHTML, moveProjectBooking }

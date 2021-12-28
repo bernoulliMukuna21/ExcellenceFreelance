@@ -2,6 +2,9 @@ extends layout
 
 block content
     - let message_content = 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo'
+
+    include partials/form_message
+
     .client-account
         .client-update-errors
         .client-account-main
@@ -34,24 +37,90 @@ block content
                             li Progress Status
                             li Options
                     .client-bookings-body
-                        each bookingDetail in allBookings
-                            .single-client-booking
-                                .booking-main-details
-                                    ul
-                                        li #{bookingDetail.service} - #{bookingDetail.projectName}
-                                        li #{bookingDetail.supplier.name}
-                                        li #{new Date(bookingDetail.dueDate).toLocaleString().split(',')[0]}
-                                        li
-                                            button#progressstatus #{bookingDetail.status}
-                                        li
-                                            i.far.fa-trash-alt
-                                .booking-description(style='display: none')
-                                    h4 Creation Date: #{new Date(bookingDetail.creationDate).toLocaleString().split(',')[0]}
-                                    div
-                                        h4 Description:
-                                        p #{bookingDetail.projectDescription}
-                                input(type='hidden' name='bookingid' class='singleBookingID'
-                                    value=bookingDetail.bookingID)
+                        if allBookings.length ===0
+                            h4#clientBookingEmpty No Bookings
+                        else
+                            each bookingDetail in allBookings
+                                .single-client-booking
+                                    .booking-main-details
+                                        ul
+                                            li #{bookingDetail.service} - #{bookingDetail.projectName}
+                                            li #{bookingDetail.supplier.name}
+                                            li #{bookingDetail.dueDateTime.toLocaleString()}
+                                            li
+                                                if(bookingDetail.status === 'booking ongoing')
+                                                    button#progressstatus(style='border: .1rem solid #A37A00; background-color: #A37A00')
+                                                        | booking ongoing
+                                                if(bookingDetail.status === 'awaiting payment')
+                                                    button#progressstatus(style='border: .1rem solid #8d2874; background-color: #8d2874')
+                                                        | awaiting payment
+                                                if(bookingDetail.status === 'awaiting acceptance')
+                                                    button#progressstatus(style='border: .1rem solid #213e53; background-color: #213e53')
+                                                        | awaiting acceptance
+                                                if(bookingDetail.status === 'complete')
+                                                    button#progressstatus(style='border-: .1rem solid #308634; background-color: #308634')
+                                                        | completed
+                                            li
+                                                i.far.fa-trash-alt
+                                    .booking-description(style='display: none')
+                                        .project-details
+                                            div
+                                                h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                div
+                                                    h4 Description:
+                                                    p #{bookingDetail.projectDescription}
+                                                if bookingDetail.bookingType === 'request_booking'
+                                                    h4 Cost: £#{bookingDetail.requestedPrice}
+                                                else if bookingDetail.bookingType === 'instant_booking'
+                                                    h4 Cost: £#{bookingDetail.price}
+                                            div
+                                                - let domain = 'http://localhost:3000';
+                                                if bookingDetail.status !== 'booking ongoing'
+                                                    a(href=`${domain}/payment/create-checkout-session/booking-checkout?bookingID=${bookingDetail.bookingID}`): button Pay
+                                                button.delete-booking-bttn Delete
+                                        .project-completion-options(style='display: none')
+                                            - let freelanceName = 'Jason Sterling'
+                                            - let serviceName = 'Birthday Catering'
+                                            - let projectName = 'Jonathan anniversary'
+                                            - let dateOfCompletion = '13/03/2022'
+                                            - let freelanceEmail = 'jason-terling@something.com'
+                                            .project-finish-request
+                                                div
+                                                    p
+                                                        | #{freelanceName} has informed us that  #{'"'+serviceName+' - '+projectName+'"'} is
+                                                        span  completed
+                                                        |. Please use the options below to update us.#[br]
+                                                        span (Note: If there is no response after 3 days, the project will
+                                                            |  be assumed completed and #{freelanceName} will be paid!)#[br]
+                                                    p Date of Completion: #{dateOfCompletion}
+                                                .project-finish-update-options
+                                                    button#projectCompleted Yes, I confirm
+                                                    button#projectIncomplete No, I cannot confirm
+                                            .project-reject-request(style='display: none')
+                                                div
+                                                    p
+                                                        | Unfortunately, #{freelanceName} has
+                                                        span  cancelled
+                                                        |  on #{'"'+serviceName+' - '+projectName+'"'}. Please contact  us directly on
+                                                        span  07000000000
+                                                        |  or email us on
+                                                        span  unilance-management@google.co.uk
+                                                        |  for any emergency bookings.
+                                            .project-final-messages(style='display: none')
+                                                div
+                                                    .project-completion-confirmed
+                                                        div
+                                                            p Thank you for using our services, we woud love to hear your feeback.
+                                                                |  Please email us your feeback using
+                                                                span  unilance-management@google.co.uk.
+                                                    .project-completion-rejected(style='display: none')
+                                                        p The management team has been informed. Please do check your
+                                                            |  #{freelanceEmail} inbox regularly as you will
+                                                            | be contacted soon.
+                                                            | You can also contact us on:
+                                                            span  unilance-management@google.co.uk
+                                    input(type='hidden' name='bookingid' class='singleBookingID'
+                                        value=bookingDetail.bookingID)
                 .client-profile-update(style='display:none;')
                     - let updateOption = 'pointer-events: auto';
                     - if(loggedInUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';};
@@ -95,7 +164,7 @@ block content
                             .pasword-infos
                                 label(for='old-password') #[br]Old Password #[br]
                                 input(id='old-password', type='password', placeholder='Old Password',
-                                    name='old_password',style=updateOption, readonly)
+                                    name='old_password', style=updateOption, readonly)
 
                             .pasword-infos
                                 label(for='new-password') #[br]New Password #[br]
@@ -114,3 +183,23 @@ block content
 
                 .client-profile-message(style='display:none;')
                     include ./partials/message
+
+            .client-account-modal(style='display:none')
+                .client-account-modal-content
+                    .client-booking-completion
+                        .client-booking-completion-confirmation
+                            p Do you confirm the completion of your project?
+                            section
+                                button.client-bookingCompletion-continue Confirm
+                                button.client-bookingCompletion-cancel Cancel
+                        .client-booking-completion-rejection(style='display:none')
+                            p
+                                | Are you sure that the work has
+                                span(style='font-weight: bolder') #{' '}NOT#{' '}
+                                | been completed?#[br]
+                                span (Before 'Continue', please check that the work#{' '}
+                                    | has not been sent in any of your contacts (e.g. email))
+                            section
+                                button.client-bookingCompletion-continue Continue
+                                button.client-bookingCompletion-cancel Cancel
+                        input(type='hidden' name='bookingid' class='singleBookingID')
