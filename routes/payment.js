@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var { stripe } = require('../bin/stripe-config');
 var BookingModel = require('../models/BookingModel');
+var mailer = require('../bin/mailer');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { bookingUpdate } = require('../bin/general-helper-functions');
@@ -68,7 +69,7 @@ function server_io(io) {
                         product_data: {
                             name: booking.service+' - '+booking.projectName,
                         },
-                        unit_amount: Math.round(parseFloat(price.substr(1))*100)
+                        unit_amount: Math.round(parseFloat(price*100))
                     },
                     quantity: 1,
                 };
@@ -113,12 +114,62 @@ function server_io(io) {
                     try{
                         let bookingUpdated = await bookingUpdate(bookingID, BookingModel,
                             {status: 'booking ongoing', paid: true});
-                        console.log('New Booking status: ', bookingUpdated)
+                        let freelancerBooked = bookingID.split(':')[1];
+
+                        let successPayMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking</h1>'+
+                            '<p>Hello '+bookingUpdated.customer.name.split(' ')[0]+',</p><p>This is a confirmation' +
+                            ' of the successful pay for your new booking ('+bookingUpdated.service+' - '
+                            +bookingUpdated.projectName+'). Please note the unique identification of your project: '+
+                            bookingUpdated._id+'</p>'+'<p>Thank you,<br>The NxtDue Team' +
+                            '<br>07448804768</p>';
+
+                        let successPayMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Paid</h1>'+
+                            '<p>Hello '+bookingUpdated.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
+                            ' the following booking ('+ bookingUpdated.service+' - ' +bookingUpdated.projectName +') has' +
+                            ' now been paid. Please <a target="_blank" style="text-decoration: underline;' +
+                            ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                            ' to your account to access the details of this booking and, possibly beginning working on it.</p>'+
+                            '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+
+                        let successPayMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Payment Successful</h1>'+
+                            '<p>Hello,</p>'+'<p> The following booking has now been paid for: </p>'+
+                            '<ul style="list-style-type:none;">' +
+                            `<li>Project ID: ${bookingUpdated._id}</li>`+
+                            '<li>Project Name: '+bookingUpdated.service+' - '+bookingUpdated.projectName+' </li>' +
+                            '<li>Client Name: '+bookingUpdated.customer.name+' </li>' +
+                            '<li>Freelancer Name: '+bookingUpdated.supplier.name+' </li>' +
+                            '<li>Creation Date: '+bookingUpdated.creationDate.toLocaleString()+' </li>' +
+                            '<li>Due Date: '+bookingUpdated.dueDateTime.toLocaleString()+' </li>' +
+                            '<li>Description: '+bookingUpdated.projectDescription+' </li>' +
+                            '</ul>'+
+                            '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';
+
                         bookingUpdated.save(err => {
                             if(err){
                                 throw err;
                             }
-                            let freelancerBooked = bookingID.split(':')[1];
+
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                'Client Booking Payment Successful', successPayMessageToAdminHTML), function (err) {
+                                if(err){console.log(err)}
+                                else{
+                                    console.log('Client success payment Message has been sent to Admin')
+                                    // emailDecode(bookingDetailUpdate.customer.uuid)
+                                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        'Client Booking Payment Successful', successPayMessageToFreelancerHTML), function (err) {
+                                        if(err){console.log(err)}
+                                        else{
+                                            console.log('Client success payment Message has been sent to Freelancer');
+                                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                                'Booking Payment Successful', successPayMessageToClientHTML), function (err) {
+                                                if(err){console.log(err)}
+                                                else{console.log('Client success payment Message has been sent to Client')}
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
                             io.sockets.to(freelancerBooked).emit('Successful Payment - send to Freelancer',
                                 bookingUpdated);
                         })

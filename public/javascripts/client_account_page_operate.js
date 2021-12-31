@@ -37,13 +37,47 @@ $(document).ready(function(){
                 $(payButtonHTML.firstChild).css('cursor' , 'not-allowed');
                 $(payButtonHTML).css('opacity' , '50%');
             }
-            /*if(statusHTML.innerText === 'project ongoing'){
-                $(bookingOptionHTLM.firstChild).remove();
-            }*/
+            if(statusHTML.innerText === 'confirm / reject'){
+                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
+                $(bookingDescription.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1]).show();
+            }
+            if(statusHTML.innerText === 'confirmed'){
+                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
+                $(bookingDescription.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1]).show();
+                $(bookingDescription.childNodes[1].childNodes[0]).hide();
+                $(bookingDescription.childNodes[1].childNodes[1]).hide();
+                $(bookingDescription.childNodes[1].childNodes[2]).show();
+            }
+            if(statusHTML.innerText === 'awaiting resolution'){
+                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
+                $(bookingDescription.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1]).show();
+                $(bookingDescription.childNodes[1].childNodes[0]).hide();
+                $(bookingDescription.childNodes[1].childNodes[1]).hide();
+                $(bookingDescription.childNodes[1].childNodes[2]).show();
+                $(bookingDescription.childNodes[1].childNodes[2].firstChild.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1].childNodes[2].firstChild.childNodes[1]).show();
+            }
+            if(statusHTML.innerText === 'cancelled'){
+                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
+                $(bookingDescription.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1]).show();
+                $(bookingDescription.childNodes[1].childNodes[0]).hide();
+                $(bookingDescription.childNodes[1].childNodes[1]).show();
+                $(bookingDescription.childNodes[1].childNodes[2]).hide();
+            }
+            if(statusHTML.innerText === 'you cancelled'){
+                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
+                $(bookingDescription.childNodes[0]).hide();
+                $(bookingDescription.childNodes[1]).show();
+                $(bookingDescription.childNodes[1].childNodes[0]).hide();
+                $(bookingDescription.childNodes[1].childNodes[1]).hide();
+                $(bookingDescription.childNodes[1].childNodes[2]).show();
+            }
         })
     }
-
-
 })
 $(document).click(function (event) {
     let elementClicked = event.target;
@@ -204,8 +238,4 @@ $('#client-profile-update-form').submit(function (event) {
         }
     })
 })
-
-
-/* Bookings */
-
 

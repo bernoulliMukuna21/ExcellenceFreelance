@@ -562,8 +562,8 @@ function createBookingTopHTML(bookingData, projectHTML, projectDetailsHTML) {
     }else if(bookingData.status === 'awaiting payment'){
         status.innerText = 'awaiting payment';
         $(status).css({'border': '.1rem solid #8d2874', 'background-color':'#8d2874'})
-    }else if(bookingData.status === 'awaiting acceptance'){
-        status.innerText = 'awaiting acceptance';
+    }else if(bookingData.status === 'accept / reject'){
+        status.innerText = 'accept / reject';
         $(status).css({'border': '.1rem solid #213e53', 'background-color':'#213e53'})
     }
 
@@ -627,7 +627,7 @@ function createBookingToggleDetails(bookingData, projectDetailsHTML) {
     let projectAccept = document.createElement("button");
     projectAccept.classList.add('freelancer-booking-accept-button');
     projectAccept.innerText = 'Accept';
-    if(bookingData.status !== 'awaiting acceptance'){
+    if(bookingData.status !== 'accept / reject'){
         $(projectAccept).attr("style", "display: none;")
     }
 
@@ -663,14 +663,22 @@ function createBookingFinalMessages(bookingData) {
     projectCompletionConfirmed.classList.add('freelancer-project-completion-confirmed');
     let projectEarning = document.createElement("h4");
     projectEarning.innerText = `Earning: £${bookingData.price - ((bookingData.price/100)*5)}`;
-    let messageInfos_success = document.createElement("p");
-    messageInfos_success.innerText = '(contact us on unilance-management@google.co.uk for enquiries)';
+    let failureInfos = document.createElement("p");
+    $(failureInfos).css({'font-style': 'normal'});
+    failureInfos.innerText = ` Unfortunately, ${bookingData.customer.name} has informed us that `+
+        `the project has not been delivered. The management team has been informed and will be in `+
+        `contact soon. Please do keep an eye on your inbox. Thank you!`;
+
+    let contactInfos = document.createElement("p");
+    contactInfos.innerText = '(contact us on unilance-management@google.co.uk for enquiries)';
 
     projectCompletionConfirmed.appendChild(projectEarning);
-    projectCompletionConfirmed.appendChild(messageInfos_success);
+    projectCompletionConfirmed.appendChild(failureInfos);
+    projectCompletionConfirmed.appendChild(contactInfos);
 
     /* Completion rejected*/
     let projectCompletionRejected = document.createElement('div');
+    $(projectCompletionRejected).attr("style", "display: none;")
     projectCompletionRejected.classList.add('freelancer-project-completion-rejection');
     let messageInfos_failure = document.createElement("p");
     messageInfos_failure.innerHTML = `${bookingData.customer.name} has decided to `+"<span> cancel </span>"

@@ -78,26 +78,71 @@
         if orderedProjects.length !== 0
             each bookingToFreelancer in orderedProjects
                 .freelancer-one-project
+                    - let bookingInfosDisplay = '';
+                    - let bookingInfosBttnDisplay = '';
+                    - let bookingMssgDisplay = 'display: none';
+                    - let bookingCompletionConfirmedMssgDisplay = '';
+                    - let bookingCompletionConflictMssgDisplay = 'none';
+                    - let bookingCompletionCancelMssgDisplay = 'display: none';
                     .freelancer-one-project-top
                         p #{bookingToFreelancer.service+' - '+bookingToFreelancer.projectName}
                         p #{bookingToFreelancer.customer.name}
                         p #{bookingToFreelancer.dueDateTime.toLocaleString()}
                         if(bookingToFreelancer.status === 'booking ongoing')
+                            - bookingInfosDisplay = '';
+                            - bookingInfosBttnDisplay = '';
+                            - bookingMssgDisplay = 'display: none';
                             p.project-status(style='border: .1rem solid #A37A00; background-color: #A37A00')
                                 | booking ongoing
                         if(bookingToFreelancer.status === 'awaiting payment')
+                            - bookingInfosDisplay = '';
+                            - bookingInfosBttnDisplay = '';
+                            - bookingMssgDisplay = 'display: none';
                             p.project-status(style='border: .1rem solid #8d2874; background-color: #8d2874')
                                 | awaiting payment
                         if(bookingToFreelancer.status === 'awaiting acceptance')
+                            - bookingInfosDisplay = '';
+                            - bookingInfosBttnDisplay = '';
+                            - bookingMssgDisplay = 'display: none';
                             p.project-status(style='border: .1rem solid #213e53; background-color: #213e53')
-                                | awaiting acceptance
-                        if(bookingToFreelancer.status === 'completed')
-                            p.project-status(style='border-: .1rem solid #308634; background-color: #308634')
-                                | completed
+                                | accept / reject
+                        if(bookingToFreelancer.status === 'complete')
+                            - bookingInfosDisplay = 'display: none';
+                            - bookingInfosBttnDisplay = 'display: none';
+                            - bookingMssgDisplay = '';
+                            if(bookingToFreelancer.completion.status === 'awaiting confirmation')
+                                - bookingCompletionConfirmedMssgDisplay = ''
+                                - bookingCompletionConflictMssgDisplay = 'none';
+                                - bookingCompletionCancelMssgDisplay = 'display: none';
+                                p.project-status(style='border-: .1rem solid #308634; background-color: #308634')
+                                    | awaiting confirmation
+                            if(bookingToFreelancer.completion.status === 'confirmed')
+                                - bookingCompletionConfirmedMssgDisplay = ''
+                                - bookingCompletionConflictMssgDisplay = 'none';
+                                - bookingCompletionCancelMssgDisplay = 'display: none';
+                                p.project-status(style='border-: .1rem solid #308634; background-color: #308634')
+                                    | confirmed, well done!
+                            if(bookingToFreelancer.completion.status === 'awaiting resolution')
+                                - bookingCompletionConfirmedMssgDisplay = ''
+                                - bookingCompletionConflictMssgDisplay = 'block';
+                                - bookingCompletionCancelMssgDisplay = 'display: none';
+                                p.project-status(style='border-: .1rem solid #FF0000; background-color: #FF0000')
+                                    | awaiting resolution
+                            if(bookingToFreelancer.completion.status === 'freelancer-cancelled')
+                                - bookingInfosDisplay = '';
+                                - bookingInfosBttnDisplay = 'display: none';
+                                - bookingMssgDisplay = 'display: none';
+                                p.project-status(style='border-: .1rem solid #FF0000; background-color: #FF0000')
+                                    | you cancelled
+                            if(bookingToFreelancer.completion.status === 'client-cancelled')
+                                - bookingCompletionConfirmedMssgDisplay = 'display: none';
+                                - bookingCompletionCancelMssgDisplay = '';
+                                p.project-status(style='border-: .1rem solid #FF0000; background-color: #FF0000')
+                                    | cancelled
                         .freelancer-options
                             i.far.fa-trash-alt
                     .freelancer-one-project-details(style='display: none')
-                        div
+                        div(style=bookingInfosDisplay)
                             h4 Creation Date: #{bookingToFreelancer.creationDate.toLocaleString()}
                             div
                                 h4 Description:
@@ -106,7 +151,7 @@
                                 h4 Price: £#{bookingToFreelancer.requestedPrice}
                             else if bookingToFreelancer.bookingType === 'instant_booking'
                                 h4 Price: £#{bookingToFreelancer.price}
-                        div
+                        div(style=bookingInfosBttnDisplay)
                             - let bookingCancel = 'Reject'
                             if bookingToFreelancer.status === 'awaiting acceptance'
                                 button.freelancer-booking-accept-button Accept
@@ -114,17 +159,18 @@
                                 - bookingCancel = 'Cancel'
                                 button.freelancer-booking-finish-button Finish
                             button.freelancer-booking-delete-button #{bookingCancel}
-                        .freelancer-project-final-messages(style='display: none')
+                        .freelancer-project-final-messages(style=bookingMssgDisplay)
                             - let amount = (bookingToFreelancer.price - ((5/ 100) * bookingToFreelancer.price)).toFixed(2);
                             - let clientname = bookingToFreelancer.customer.name;
-                            .freelancer-project-completion-confirmed
+                            .freelancer-project-completion-confirmed(style=bookingCompletionConfirmedMssgDisplay)
                                 h4 Earning: £#{amount}
-                                p(style='font-style: normal') Unfortunately, #{clientname} has informed us that the
+                                p(style=`font-style: normal; display: ${bookingCompletionConflictMssgDisplay}`)
+                                    |Unfortunately, #{clientname} has informed us that the
                                     | #{' '}project has not been delivered.
-                                    | #{' '}The management team has been informed and will be contact soon. Please do
-                                    | #{' '}keep an eye to your inbox. Thank you!
+                                    | #{' '}The management team has been informed and will be contact in soon. Please do
+                                    | #{' '}keep an eye on your inbox. Thank you!
                                 p (contact us on unilance-management@google.co.uk for enquiries)
-                            .freelancer-project-completion-rejection(style='display: none')
+                            .freelancer-project-completion-rejection(style=bookingCompletionCancelMssgDisplay)
                                 p #{clientname} has decided to#{' '}
                                     span cancel
                                     | #{' '}the project. The management

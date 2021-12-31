@@ -571,7 +571,7 @@ $(document).on('click', '.freelancer-booking-delete-button', function(event) {
         projectCompletionShow(event)
     }else{
         console.log('Please go ahead and delete project');
-        socketConnection.socket.emit('Delete project',
+        socketConnection.socket.emit('Delete project - Freelancer Request',
             {projectToCancelID, clientThatBooked, status: projectStatus});
     }
 })
@@ -631,6 +631,6 @@ $(document).on('click', '.project-cancellation-continue', function(event) {
 
     if( deletionReason.length >= minimumLength ){
         socketConnection.socket.emit('Ongoing Project Cancel - Freelancer',
-            {projectToCancelID, clientThatBooked});
+            {projectToCancelID, clientThatBooked, deletionReason});
     }
 })

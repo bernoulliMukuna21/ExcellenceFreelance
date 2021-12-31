@@ -6,8 +6,8 @@ export default class BookingInsertionIndex {
     * same place in the following order:
     *       - booking ongoing
     *       - awaiting payment
-    *       - awaiting acceptance
-    *       - completed
+    *       - accept/reject
+    *       - awaiting confirmation, awaiting resolution and cancelled
     * */
 
     constructor(listOfProjects, target, newProjectDueDateTime) {
@@ -76,6 +76,12 @@ export default class BookingInsertionIndex {
         let firstStatusOccurence = this.findFirstIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
         let lastStatusOccurence = this.findEndIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
 
+        console.log('All projects: ', listOfProjects);
+        console.log('First and Last Index: ', this.firstIndex, this.sizeOfList);
+        console.log('Status: ', status);
+        console.log('First Occurrence: ', firstStatusOccurence);
+        console.log('Last Occurrence: ', lastStatusOccurence);
+
         if(firstStatusOccurence === -1 || lastStatusOccurence === -1){
             /* There no project in the list of all the projects that has the same
             status as the new project. The bext step becomes to be find the current
@@ -88,7 +94,7 @@ export default class BookingInsertionIndex {
                 insertIndex = {place: 'before', index: 0};
 
             }else{
-                /* For projects with status 'awaiting acceptance' or 'awaiting payment', the
+                /* For projects with status 'accept / reject' or 'awaiting payment', the
                 * function below is called to find the correct index of insertion. */
 
                 insertIndex = this.correctInsertionIndex(listOfProjects, 0, this.sizeOfList, status);
@@ -159,21 +165,24 @@ export default class BookingInsertionIndex {
                 }
                 return this.correctInsertionIndex(list, cutter+1, last, target);
             }else if(middleElem === 'awaiting payment'){
-                if (cutter === 0 && target === 'awaiting acceptance'){
+                if (cutter === 0 && target === 'accept / reject'){
                     return {place: 'after', index: last - 1};
                 }
                 return this.correctInsertionIndex(list, cutter+1, last, target);
-            }else if(middleElem === 'awaiting acceptance'){
+            }else if(middleElem === 'accept / reject'){
                 if (cutter === 0 && target === 'awaiting payment'){
                     return {place: 'before', index: cutter};
-                }else if(this.getProjectStatus(list[cutter-1]) !== 'awaiting acceptance'){
+                }else if(this.getProjectStatus(list[cutter-1]) !== 'accept / reject'){
                     return {place: 'before', index: cutter};
                 }
                 return this.correctInsertionIndex(list, first, cutter - 1, target);
-            }else if(middleElem === 'completed'){
+            }else if(middleElem === 'awaiting confirmation' || middleElem === 'awaiting resolution'
+                || middleElem === 'cancelled'){
+                //awaiting confirmation, awaiting resolution and cancelled
                 if (cutter === 0){
                     return {place: 'before', index: cutter};
-                }else if(this.getProjectStatus(list[cutter-1]) !== 'completed'){
+                }else if(this.getProjectStatus(list[cutter-1]) === 'booking ongoing' ||
+                    this.getProjectStatus(list[cutter-1]) === 'awaiting payment'){
                     return {place: 'before', index: cutter};
                 }else{
                     return this.correctInsertionIndex(list, first, cutter - 1, target);
@@ -183,7 +192,9 @@ export default class BookingInsertionIndex {
             if( last !== 0 ){
                 middleElem = this.getProjectStatus(list[cutter - 1]);
             }
-            if(middleElem === 'completed' || middleElem === 'awaiting acceptance'){
+            if(middleElem === 'awaiting confirmation' || middleElem === 'awaiting resolution'
+                || middleElem === 'cancelled' || middleElem === 'accept / reject'){
+                //awaiting confirmation, awaiting resolution and cancelled
                 return {place: 'before', index: first};
             }
             return {place: 'after', index: last-1};
@@ -203,14 +214,20 @@ export default class BookingInsertionIndex {
                     return this.findFirstIndex(list, first, cutter-1 , target);
                 }
             }else{
-                if(target === 'awaiting acceptance'){
-                    if(this.getProjectStatus(list[cutter]) === 'completed'){
+                if(target === 'accept / reject'){
+                    if(this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
+                        this.getProjectStatus(list[cutter]) === 'cancelled'){
+                        //awaiting confirmation, awaiting resolution and cancelled
                         return this.findFirstIndex(list, first, cutter-1, target);
                     }
                     return this.findFirstIndex(list, cutter + 1, last, target);
                 }else if(target === 'awaiting payment'){
-                    if(this.getProjectStatus(list[cutter]) === 'awaiting acceptance' ||
-                        this.getProjectStatus(list[cutter]) === 'completed'){
+                    if(this.getProjectStatus(list[cutter]) === 'accept / reject' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
+                        this.getProjectStatus(list[cutter]) === 'cancelled'){
+                        //awaiting confirmation, awaiting resolution and cancelled
                         return this.findFirstIndex(list, first, cutter - 1, target);
                     }
                     return this.findFirstIndex(list, cutter + 1, last, target);
@@ -242,14 +259,21 @@ export default class BookingInsertionIndex {
                     return this.findEndIndex(list, cutter+1, last, target);
                 }
             }else{
-                if(target === 'awaiting acceptance'){
-                    if(this.getProjectStatus(list[cutter]) === 'completed'){
+                if(target === 'accept / reject'){
+                    if(this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
+                        this.getProjectStatus(list[cutter]) === 'cancelled'
+                    ){
+                        //awaiting confirmation, awaiting resolution and cancelled
                         return this.findEndIndex(list, first, cutter-1, target);
                     }
                     return this.findEndIndex(list, cutter + 1, last, target);
                 }else if(target === 'awaiting payment'){
-                    if(this.getProjectStatus(list[cutter]) === 'awaiting acceptance' ||
-                        this.getProjectStatus(list[cutter]) === 'completed'){
+                    if(this.getProjectStatus(list[cutter]) === 'accept / reject' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
+                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
+                        this.getProjectStatus(list[cutter]) === 'cancelled'){
+                        //awaiting confirmation, awaiting resolution and cancelled
                         return this.findEndIndex(list, first, cutter - 1, target);
                     }
                     return this.findEndIndex(list, cutter + 1, last, target);

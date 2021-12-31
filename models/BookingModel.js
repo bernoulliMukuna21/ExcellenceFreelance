@@ -41,7 +41,8 @@ let BookingSchema = new mongoose.Schema({
     },
     completion: {
         status: String,
-        date: Date
+        date: Date,
+        deletionReason: String
     },
     paid:{
         type: Boolean,

@@ -1,3 +1,4 @@
+/*
 function registrationShowAndHide(container, indexToShow, IndexToHide) {
     $(container)[0].childNodes[indexToShow].classList.add('fadeInRight');
     $(container)[0].childNodes[IndexToHide].classList.add('fadeOutLeft');
@@ -22,3 +23,4 @@ $(window).click(function(event) {
         event.target.style.display = "none";
     }
 });
+*/
