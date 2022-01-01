@@ -370,6 +370,9 @@ socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
 
     if(freelancerAllProjectsBooking.length === 0){
         // There are no projects left in the list of all the projects
+
+        $('.freelancer-all-projects').empty();
+        $(updatedProject.childNodes[1].childNodes[1].firstChild).remove();
         accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
             'freelancer-one-project', $('.freelancer-all-projects'));
     }else{
@@ -384,10 +387,6 @@ socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
 
         // remove element from frontend before putting it in its new position
         (freelancerAllProjectsBooking[AcceptData.projectIndex]).remove();
-
-        // Insert Element in its position
-        console.log('Updated Project: ', updatedProject);
-        console.log('all projects: ', freelancerAllProjectsBooking);
 
         $(updatedProject.childNodes[1].childNodes[1].firstChild).remove();
         accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
