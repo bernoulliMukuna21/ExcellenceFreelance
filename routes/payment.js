@@ -76,7 +76,7 @@ function server_io(io) {
                 console.log(e)
             }
         }
-
+        console.log('Creating Payment Now');
         const session = await stripe.checkout.sessions.create({
             billing_address_collection: 'auto',
             payment_method_types: ['card'],
