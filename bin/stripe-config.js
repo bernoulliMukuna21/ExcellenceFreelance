@@ -1,5 +1,5 @@
 var stripe = require('stripe')(process.env.stripe_secretLiveKey)
-console.log('Stripe: ', process.env.stripe_secretLiveKey)
+console.log('Stripe Secret Key: ', process.env.stripe_secretLiveKey)
 const stripeFindCustomerByEmail = async (email) => {
     try {
         const customer = await stripe.customers.list( {
