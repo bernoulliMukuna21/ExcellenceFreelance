@@ -348,6 +348,8 @@ socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
     freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
 
     let updatedProject = freelancerAllProjectsBooking[AcceptData.projectIndex];
+
+    console.log('Updated Project: ', updatedProject);
     BookingInsertionIndex.prototype.updateProjectStatus(updatedProject, AcceptData.status);
     let updateProjectDueTime = BookingInsertionIndex.prototype.getProjectDueTime(updatedProject);
     updateProjectDueTime = BookingInsertionIndex.prototype.getDueDateMilliseconds(
@@ -384,6 +386,9 @@ socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
         (freelancerAllProjectsBooking[AcceptData.projectIndex]).remove();
 
         // Insert Element in its position
+        console.log('Updated Project: ', updatedProject);
+        console.log('all projects: ', freelancerAllProjectsBooking);
+
         $(updatedProject.childNodes[1].childNodes[1].firstChild).remove();
         accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
             'freelancer-one-project', $('.freelancer-all-projects'), {place:place,
