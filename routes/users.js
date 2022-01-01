@@ -142,7 +142,7 @@ router.post('/login', (req, res, next)=>{
         .then(user=>{
             passport.authenticate('local', (err, user, info)=>{
                 if(typeof info === 'undefined'){
-                    let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logge in!'
+                    let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
                     loginSystem(req, res, user, user.user_stature, flash_message);
                 }
                 else{
@@ -238,7 +238,7 @@ router.post('/forgot', function (req, res, next) {
         function (token, user, done) {
             let reset_link = "http://"+ req.headers.host+"/users/reset/"+ token;
             let mailOptions = {
-                to: 'mukunabernoulli@yahoo.com',//req.body.email,
+                to: req.body.email,
                 from: 'mmbernoulli@gmail.com',
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',

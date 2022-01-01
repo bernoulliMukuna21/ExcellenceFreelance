@@ -3,6 +3,9 @@ import * as socketConnection from './socketio-connection-client-side.js'
 import {createBookingHTML, moveProjectBooking} from "./account_operate.js";
 import BookingInsertionIndex from './BookingInsertionIndex.js'
 
+let domainName = 'https://excellence-freelance.herokuapp.com';
+//let domainName = 'http://localhost:3000';
+
 let allServicesPrices;
 function emptyForm() {
     // Clear input value
@@ -214,7 +217,7 @@ $(document).on('submit', '#service-booking-form', function(event) {
             let regex = /^\d*\.?\d{0,2}$/;
             if(regex.test(bookingDataJSON.projectenquiryprice)){
                 $(this).get(0).setAttribute('action',
-                    `http://localhost:3000/booking/service-booking/request_booking/${JSON.parse(bookingDataJSON.projectsupplier).freelancerEmail}`);
+                    `${domainName}/booking/service-booking/request_booking/${JSON.parse(bookingDataJSON.projectsupplier).freelancerEmail}`);
                 event.currentTarget.submit();
             }else{
                 $('.project-enquiry-price').css('border', '.1rem solid red');

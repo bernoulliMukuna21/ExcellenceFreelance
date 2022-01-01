@@ -108,13 +108,13 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
 router.get('/freelancer/:this_user', async function (req, res) {
     let loggedInUser, freelancerUser;
     let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
-    let freelancerSubscriptionStatus;
+    //let freelancerSubscriptionStatus;
     let allBookingToFreelancer;
 
     let loggedInUser_imageSrc = '';
     let freelancerIdFromURL = req.params.this_user;
     let currentFreelancerEmail = emailDecode(freelancerIdFromURL);
-    let stripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
+    //let stripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
     let isLogged = req.isAuthenticated();
 
 
@@ -165,11 +165,7 @@ router.get('/freelancer/:this_user', async function (req, res) {
             }catch (e) {
                 res.send('An Error occurred!');
             }
-
-            console.log(allBookingToFreelancer)
         }
-
-
     }
     try {
         freelancerUser = await UserModel.find({email: currentFreelancerEmail});
@@ -177,15 +173,18 @@ router.get('/freelancer/:this_user', async function (req, res) {
 
         loggedInUser_imageSrc = imageToDisplay(freelancerUser);
 
+        // The following commented out codes are for handling the subscription status
+        // Ignore it for now as we are dealing with it yet
+        /*
         let numberOfDays = numberOfDaysSince(freelancerUser.date, new Date());
         if(!stripeCustomer){
-            /* The freelancer has never made a booking nor subscribed
+            * The freelancer has never made a booking nor subscribed
              In this case, we keep track of the number of days that
-             they have been on the site. */
+             they have been on the site. *
             if(numberOfDays <= 3000){
-                /* Although they are yet to make any payment on the website.
+                * Although they are yet to make any payment on the website.
                 As a freelancer, they have a 30 days free trial before they
-                are start being charged for being on the website. */
+                are start being charged for being on the website. *
                 freelancerSubscriptionStatus = 'trialing';
             }
         }else{
@@ -193,20 +192,20 @@ router.get('/freelancer/:this_user', async function (req, res) {
             let stripeCustomerSub = await stripeCustomerSubscription(stripeCustomer.id);
 
             if(!stripeCustomerSub){
-                /* The freelancer has made a booking on the website before
+                * The freelancer has made a booking on the website before
                 * but is yet to subscribe. Similarly, even though the users
-                * are yet to subscribe, they have a 30 days trial period. */
+                * are yet to subscribe, they have a 30 days trial period. *
 
                 if(numberOfDays <= 3000){
                     freelancerSubscriptionStatus = 'trialing';
                 }
             }
             else{
-                /* The freelancer is subscribed to the website. Now, we need
-                * to check what is their subscription status. */
+                * The freelancer is subscribed to the website. Now, we need
+                * to check what is their subscription status. *
                 freelancerSubscriptionStatus = stripeCustomerSub.data[0].status;
             }
-        }
+        }*/
 
         res.render('account', {
             isLogged, // The user accessing this page is logged in?
@@ -219,8 +218,8 @@ router.get('/freelancer/:this_user', async function (req, res) {
             messageIdHTML,
             userToMessage,
             userToMessageImageSrc,
-            freelancerSubscriptionStatus,
-            numberOfDays,
+            //freelancerSubscriptionStatus,
+            //numberOfDays,
             allBookingToFreelancer
         });
     }catch (e) {

@@ -7,13 +7,11 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { bookingUpdate } = require('../bin/general-helper-functions');
 
+//let domainName = 'http://localhost:3000';
+let domainName = 'https://excellence-freelance.herokuapp.com';
+let nxtDueLoginURL=`${domainName}/users/login`;
 
-
-
-let domain = 'http://localhost:3000';
-//let domain = 'https://excellence-freelance.herokuapp.com';
-
-const endpointSecret = "whsec_WiGL956JT1kUPRKkucfFIPSYQXxr5WTj";
+const endpointSecret = process.env.stripe_webhookEndpointLive;
 
 let price, projectName, projectDescription, projectDueDate, serviceName;
 
@@ -51,7 +49,7 @@ function server_io(io) {
                 },
                 quantity: 1,
             };
-            successURL = `${domain}/payment/success/${paymentType}`;
+            successURL = `${domainName}/payment/success/${paymentType}`;
 
         }
         else if(paymentType === 'booking-checkout'){
@@ -73,7 +71,7 @@ function server_io(io) {
                     },
                     quantity: 1,
                 };
-                successURL = `${domain}/payment/success/${paymentType}?bookingID=${bookingID}`;
+                successURL = `${domainName}/payment/success/${paymentType}?bookingID=${bookingID}`;
             }catch (e) {
                 console.log(e)
             }
@@ -87,7 +85,7 @@ function server_io(io) {
             mode: mode,
             subscription_data: subscription_data,
             success_url: successURL,
-            cancel_url: 'http://localhost:3000/payment/failure',
+            cancel_url: `${domainName}/payment/failure`,
             metadata: {bookingID, paymentType}
         });
         res.redirect(303, session.url)
@@ -127,7 +125,7 @@ function server_io(io) {
                             '<p>Hello '+bookingUpdated.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
                             ' the following booking ('+ bookingUpdated.service+' - ' +bookingUpdated.projectName +') has' +
                             ' now been paid. Please <a target="_blank" style="text-decoration: underline;' +
-                            ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                            ' color: #0645AD; cursor: pointer" href='+nxtDueLoginURL+'> login </a>' +
                             ' to your account to access the details of this booking and, possibly beginning working on it.</p>'+
                             '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
@@ -181,7 +179,6 @@ function server_io(io) {
             default:
                 console.log(`Unhandled event type ${event.type}`);
         }
-
         // Return a response to acknowledge receipt of the event
         res.status(200).send('Payment successful');
     });
@@ -194,14 +191,14 @@ function server_io(io) {
         let bookingID = req.query.bookingID;
 
         req.flash('success_message', 'Successful Payment');
-        res.redirect(`${domain}/account/${user_stature}/${userUUID}`);
+        res.redirect(`${domainName}/account/${user_stature}/${userUUID}`);
     })
 
     router.get('/failure', ensureAuthentication, function(req, res, next) {
         let user_stature = req.user.user_stature;
         let userUUID = emailEncode(req.user.email);
         req.flash('error_message', 'Payment Failure!');
-        res.redirect(`${domain}/account/${user_stature}/${userUUID}`);
+        res.redirect(`${domainName}/account/${user_stature}/${userUUID}`);
     });
 
 

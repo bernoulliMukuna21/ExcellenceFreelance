@@ -28,7 +28,8 @@ if (isLogged && (emailEncode(freelancerUser.email) === emailEncode(loggedInUser.
                                 |  for booking, it is required to subscribe.
 
                 .trail-ending-options
-                    form(action='http://localhost:3000/payment/create-checkout-session/subscription' method='POST')
+                    - let domainName = 'https://excellence-freelance.herokuapp.com'; //'http://localhost:3000'
+                    form(action=`${domainName}/payment/create-checkout-session/subscription` method='POST')
                         input(type='hidden' name='lookup_key' value='standard')
                         button.suscription-bttn(class='checkout-and-portal-button') Subscribe £1/Month
 

@@ -136,7 +136,7 @@ module.exports = function(passport) {
     passport.use(new GoogleStrategy({
         clientID: process.env.google_clientID,
         clientSecret: process.env.google_secretID,
-        callbackURL: 'http://localhost:3000/users/google-authentication/callback'
+        callbackURL: 'https://excellence-freelance.herokuapp.com/users/google-authentication/callback' // 'http://localhost:3000/users/google-authentication/callback'
         },
         function (accessToken, refreshToken, profile, done) {
             profile.idName = 'google';

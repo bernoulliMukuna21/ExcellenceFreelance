@@ -6,8 +6,9 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { convertTimeTo24Hours } = require('../bin/general-helper-functions');
 
-let domain = 'http://localhost:3000';
-//let domain = 'https://excellence-freelance.herokuapp.com';
+//let domainName = 'http://localhost:3000';
+let domainName = 'https://excellence-freelance.herokuapp.com';
+let nxtDueLoginURL=`${domainName}/users/login`;
 
 function server_io(io) {
     io.on('connection', socket=>{
@@ -23,7 +24,7 @@ function server_io(io) {
                         'your booking ('+bookingDetailUpdate.service+' - ' +bookingDetailUpdate.projectName+'). I am please to inform you that '+
                         bookingDetailUpdate.supplier.name+' has accepted your booking and is now waiting for the payment to begin' +
                         'the work. Please <a target="_blank" style="text-decoration: underline; color: #0645AD; cursor: pointer" ' +
-                        'href="http://localhost:3000/users/login"> login </a> to your account to make the payment</p>'+
+                        'href='+ nxtDueLoginURL +'> login </a> to your account to make the payment</p>'+
                         '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
                     let bookingAcceptanceMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
@@ -32,7 +33,7 @@ function server_io(io) {
                         ' It is advised to wait for the payment to be made before starting the work as the client can still cancel.' +
                         ' Once the client has paid, you will be informed to begin the work. So, please check your inbox and' +
                         ' <a target="_blank" style="text-decoration: underline;' +
-                        ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                        ' color: #0645AD; cursor: pointer" href='+ nxtDueLoginURL +'> login </a>' +
                         ' regularly to your account for updates.</p>'+
                         '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
@@ -59,13 +60,12 @@ function server_io(io) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Freelancer booking acceptance Message has been sent to Admin')
-                                // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                     'Booking Accepted', bookingAcceptanceMessageToClientHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Freelancer booking acceptance Message has been sent to Freelancer');
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                             "You've accepted a booking", bookingAcceptanceMessageToFreelancerHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Freelancer booking acceptance Message has been sent to Client')}
@@ -101,7 +101,7 @@ function server_io(io) {
                         bookingDetailUpdate.service+' - '+ bookingDetailUpdate.projectName+') is completed. We are now waiting for' +
                         ' a confirmation from '+ bookingDetailUpdate.customer.name +' before we proceed with the payment.' +
                         ' So, please check your inbox and <a target="_blank" style="text-decoration: underline; color: #0645AD; ' +
-                        'cursor: pointer" href="http://localhost:3000/users/login"> login </a> regularly to your account for updates.</p>'+
+                        'cursor: pointer" href='+ nxtDueLoginURL +'> login </a> regularly to your account for updates.</p>'+
                         '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
                     let completionRequestMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Completed</h1>'+
@@ -112,7 +112,7 @@ function server_io(io) {
                         ' in the next three days, we will assume that the project has been successfully delivered.'+
                         ' This will also mean that we get to pay '+ bookingDetailUpdate.supplier.name +' for the work.'+
                         ' Please <a target="_blank" style="text-decoration: underline;'+
-                        'color: #0645AD; cursor: pointer" '+ 'href="http://localhost:3000/users/login">'+
+                        'color: #0645AD; cursor: pointer" '+ 'href='+ nxtDueLoginURL +'>'+
                         'login'+ '</a> to your account to update us on this information.</p>'+
                         '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
@@ -122,12 +122,14 @@ function server_io(io) {
                             throw err;
                         }
 
-                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                        //emailDecode(bookingDetailUpdate.supplier.uuid)
+                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                             'Booking Completed', completionRequestMessageToClientHTML), function (err) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Freelancer booking completed Message has been sent to client');
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                     "You've completed a booking", completionRequestMessageToFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{console.log('Freelancer booking completed Message has been sent to Freelancer')}
@@ -180,18 +182,20 @@ function server_io(io) {
                             throw err;
                         }
 
+                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                        //emailDecode(bookingDetailUpdate.supplier.uuid)
                         mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                             'Booking Completion Confirmation', confirmationMessagetoAdminHTML), function (err) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Confirmation Message has been sent to Admin');
                                 // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                     'Client confirmation', confirmationMessagetoFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Confirmation Message has been sent to Freelancer')
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                             'Delivery Confirmed', confirmationMessagetoClientHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Confirmation Message has been sent to Client')}
@@ -247,18 +251,20 @@ function server_io(io) {
                             throw err;
                         }
 
+                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                        //emailDecode(bookingDetailUpdate.supplier.uuid)
                         mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                             'Booking Completion Awaiting Resolution', conflictMessagetoAdminHTML), function (err) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Conflict Message has been sent to Admin')
                                 // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                     'Confirmation Awaiting Resolution', conflictMessagetoFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Conflict Message has been sent to Freelancer')
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                             'Booking Confirmation Denied', conflictMessagetoClientHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Conflict Message has been sent to Client')}
@@ -304,18 +310,20 @@ function server_io(io) {
                         '</ul>'+
                         '<p>Thank you</p><p>The NxtDue Team</p><p>07448804768</p>';
 
+                    // emailDecode(bookingDetailUpdate.customer.uuid)
+                    //emailDecode(bookingDetailUpdate.supplier.uuid)
                     mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                         'Freelancer Cancelled Project', deleteMessagetoAdminHTML), function (err) {
                         if(err){console.log(err)}
                         else{
                             console.log('Freelancer cancelled Message has been sent to Admin')
                             // emailDecode(bookingDetailUpdate.customer.uuid)
-                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                 'Cancellation Confirmed', deleteMessagetoFreelancerHTML), function (err) {
                                 if(err){console.log(err)}
                                 else{
                                     console.log('Freelancer cancelled Message has been sent to Freelancer');
-                                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                    mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                         'Booking Cancelled', deleteMessagetoClientHTML), function (err) {
                                         if(err){console.log(err)}
                                         else{console.log('Freelancer cancelled Message has been sent to Client')}
@@ -376,18 +384,20 @@ function server_io(io) {
                             throw err;
                         }
 
+                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                        //emailDecode(bookingDetailUpdate.supplier.uuid)
                         mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                             'Freelancer Cancelled Project', cancelMessagetoAdminHTML), function (err) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Freelancer cancelled Message has been sent to Admin')
                                 // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                     'Cancellation Confirmed', cancelMessagetoFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Freelancer cancelled Message has been sent to Freelancer');
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                             'Booking Cancelled', cancelMessagetoClientHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Freelancer cancelled Message has been sent to Client')}
@@ -444,18 +454,20 @@ function server_io(io) {
                             throw err;
                         }
 
+                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                        //emailDecode(bookingDetailUpdate.supplier.uuid)
                         mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                             'Client Cancelled Project', cancelMessagetoAdminHTML), function (err) {
                             if(err){console.log(err)}
                             else{
                                 console.log('Client cancelled Message has been sent to Admin')
                                 // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                     'Booking Cancelled by Client', cancelMessagetoFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Client cancelled Message has been sent to Freelancer');
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                             'Cancellation Confirmed', cancelMessagetoClientHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Client cancelled Message has been sent to Client')}
@@ -502,18 +514,20 @@ function server_io(io) {
                         '</ul>'+
                         '<p>Thank you</p><p>The NxtDue Team</p><p>07448804768</p>';
 
+                    // emailDecode(bookingDetailUpdate.customer.uuid)
+                    //emailDecode(bookingDetailUpdate.supplier.uuid)
                     mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                         'Client Cancelled Project', deleteMessagetoAdminHTML), function (err) {
                         if(err){console.log(err)}
                         else{
                             console.log('Client cancelled Message has been sent to Admin')
                             // emailDecode(bookingDetailUpdate.customer.uuid)
-                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                 'Booking Cancelled by Client', deleteMessagetoFreelancerHTML), function (err) {
                                 if(err){console.log(err)}
                                 else{
                                     console.log('Client cancelled Message has been sent to Freelancer');
-                                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                    mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                         'Cancellation Confirmed', deleteMessagetoClientHTML), function (err) {
                                         if(err){console.log(err)}
                                         else{console.log('Client cancelled Message has been sent to Client')}
@@ -597,7 +611,7 @@ function server_io(io) {
                 ' email that your booking enquiry ('+ newServiceBooking.service+' - ' +newServiceBooking.projectName
                 +') has successfully been sent to '+ newServiceBooking.supplier.name +'. Please do keep a close' +
                 ' eye on your emails and <a target="_blank" style="text-decoration: underline; color: #0645AD;' +
-                ' cursor: pointer" href="http://localhost:3000/users/login"> login </a> regulary to check for updates' +
+                ' cursor: pointer" href='+ nxtDueLoginURL +'> login </a> regulary to check for updates' +
                 ' on your booking (booking ID: '+ newServiceBooking._id +') </p>'+'<p>Thank you,<br>The NxtDue Team' +
                 '<br>07448804768</p>';
 
@@ -605,7 +619,7 @@ function server_io(io) {
                 '<p>Hello '+newServiceBooking.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
                 ' you have a new booking on your NxtDue account. The booking ID is: '+ newServiceBooking._id +' .' +
                 ' Please <a target="_blank" style="text-decoration: underline;' +
-                ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                ' color: #0645AD; cursor: pointer" href='+ nxtDueLoginURL +'> login </a>' +
                 ' to your account to access the details of this booking and accept or reject it.</p>'+
                 '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
@@ -627,7 +641,7 @@ function server_io(io) {
                 else{
                     if(bookingType === 'instant_booking'){
                         // go to payment
-                        let paymentRoute = `${domain}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
+                        let paymentRoute = `${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
                         res.status(200).json({paymentRoute: paymentRoute})
 
                     }else if (bookingType === 'request_booking'){
@@ -639,12 +653,12 @@ function server_io(io) {
                             else{
                                 console.log('Client new booking Message has been sent to Admin')
                                 // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(freelancerToBook),
                                     'Client Booking Made', newBookingMessageToFreelancerHTML), function (err) {
                                     if(err){console.log(err)}
                                     else{
                                         console.log('Client new booking Message has been sent to Freelancer');
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(req.user.email,
                                             'Booking Successfully Made', newBookingMessageToClientHTML), function (err) {
                                             if(err){console.log(err)}
                                             else{console.log('Client new booking Message has been sent to Client')}
@@ -655,7 +669,7 @@ function server_io(io) {
                         });
 
                         io.sockets.to(freelancerToBook).emit('Booking Data to Freelancer', newServiceInfos);
-                        res.redirect(`${domain}/account/${req.user.user_stature}/${customer}`);
+                        res.redirect(`${domainName}/account/${req.user.user_stature}/${customer}`);
                     }
                 }
             })

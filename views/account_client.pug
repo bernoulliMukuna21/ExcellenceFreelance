@@ -87,9 +87,9 @@ block content
                                                 else if bookingDetail.bookingType === 'instant_booking'
                                                     h4 Cost: £#{bookingDetail.price}
                                             div
-                                                - let domain = 'http://localhost:3000';
+                                                - let domainName = 'https://excellence-freelance.herokuapp.com'; // 'http://localhost:3000'
                                                 if bookingDetail.status !== 'booking ongoing'
-                                                    a(href=`${domain}/payment/create-checkout-session/booking-checkout?bookingID=${bookingDetail.bookingID}`): button Pay
+                                                    a(href=`${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingDetail.bookingID}`): button Pay
                                                 button.delete-booking-bttn Delete
                                         .project-completion-options(style='display: none')
                                             - let freelanceName = bookingDetail.supplier.name
