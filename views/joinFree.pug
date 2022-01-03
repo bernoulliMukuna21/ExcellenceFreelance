@@ -60,8 +60,22 @@ block content
                                    name='password2', value='', required)
 
                        div(data-role='fieldcontain')
-                           input(type='submit', value='Sign Up', data-transition='fade',
+                           input.web-submission(type='submit', value='Sign Up', data-transition='fade',
                                data-theme='c', id='submit-button')
+                           if userType === 'client'
+                               input.mobile-submission(type='submit', value='Sign Up as Client', data-transition='fade',
+                                   data-theme='c', id='submit-button')
+                           else if userType === 'freelancer'
+                               input.mobile-submission(type='submit', value='Sign Up as Freelancer', data-transition='fade',
+                                   data-theme='c', id='submit-button')
+                   p.mobile-signup-oroperator or
+                   .mobilefreelancerAndclientBottom
+                       if userType === 'client'
+                           .mobile-client-bottom
+                               a(href='/users/join/client') JOIN as CLIENT
+                       else if userType === 'freelancer'
+                           .mobile-client-bottom
+                               a(href='/users/join/freelancer') JOIN as FREELANCER
 
                    div.join-form-left
                        //
