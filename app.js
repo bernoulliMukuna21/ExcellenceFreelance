@@ -91,7 +91,7 @@ app.use('/booking', bookingRouter);
 app.use('/messages', messageRouter);
 app.use('/payment', paymentRouter);
 
-self.app.all(/.*/, function(req, res, next) {
+app.all(/.*/, function(req, res, next) {
     var host = req.header("host");
     console.log("Host(Please check this out): ", host);
     if (host.match(/^herokuapp\..*/i)) {
