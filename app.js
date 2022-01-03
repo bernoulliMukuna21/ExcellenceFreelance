@@ -42,6 +42,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
+self.app.all(/.*/, function(req, res, next) {
+    var host = req.header("host");
+    if (host.match(/^herokuapp\..*/i)) {
+        res.redirect(301, "http://www." + host + req.url);
+    } else {
+        next();
+    }
+});
+
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
 let sessionDB_name = 'ef_sessions';
