@@ -58,6 +58,7 @@ header ul{
   min-width: 10rem;
 }
 #user-account-nameSurname{
+  border: none;
   border-bottom: 0.1rem solid #213e53;
 }
 
