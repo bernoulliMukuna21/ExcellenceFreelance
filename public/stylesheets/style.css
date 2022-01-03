@@ -55,6 +55,7 @@ header ul{
   border: 0.1rem solid #213e53;
   background-color: white;
   color: #213e53;
+  min-width: 10rem;
 }
 #client-account-nameSurname, #freelancer-account-nameSurname{
   border: none;
