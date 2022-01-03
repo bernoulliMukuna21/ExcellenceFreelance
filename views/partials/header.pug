@@ -10,7 +10,7 @@ header
                     //
                         a(href='/account/switch/'+emailEncode(loggedInUser.email))
                             button(class='nav-btn', id='be-freelancer') Be a Freelancer
-                    a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                    a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn', id='user-account-nameSurname') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                     a(href='/users/logout'): button(class='nav-btn') Logout
 
                 else if(loggedInUser.user_stature === 'freelancer')

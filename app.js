@@ -85,6 +85,8 @@ app.use(function (req, res, next) {
 app.all(/.*/, function(req, res, next) {
     var host = req.header("host");
     console.log("Host(Please check this out): ", host);
+    console.log('Url contains heroku inside: ', host.match(/^herokuapp\..*/i));
+    console.log('Request URL: ', req.url);
     if (host.match(/^herokuapp\..*/i)) {
         res.redirect(301, "http://www." + host + req.url);
     } else {

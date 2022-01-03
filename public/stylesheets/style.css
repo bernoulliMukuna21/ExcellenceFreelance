@@ -57,6 +57,9 @@ header ul{
   color: #213e53;
   min-width: 10rem;
 }
+#user-account-nameSurname{
+  border-bottom: 0.1rem solid #213e53;
+}
 
 .top-navbar button:hover{
   color: white;
