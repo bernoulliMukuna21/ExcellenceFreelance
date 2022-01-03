@@ -35,7 +35,6 @@ router.get('/', async function (req, res, next) {
         }
 
         res.render('index', {
-            title: 'Excellence.Freelance',
             allFreelancers,
             loggedInUser,
             loggedInUser_imageSrc,

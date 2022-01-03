@@ -76,12 +76,6 @@ export default class BookingInsertionIndex {
         let firstStatusOccurence = this.findFirstIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
         let lastStatusOccurence = this.findEndIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
 
-        console.log('All projects: ', listOfProjects);
-        console.log('First and Last Index: ', this.firstIndex, this.sizeOfList);
-        console.log('Status: ', status);
-        console.log('First Occurrence: ', firstStatusOccurence);
-        console.log('Last Occurrence: ', lastStatusOccurence);
-
         if(firstStatusOccurence === -1 || lastStatusOccurence === -1){
             /* There no project in the list of all the projects that has the same
             status as the new project. The bext step becomes to be find the current
@@ -105,12 +99,11 @@ export default class BookingInsertionIndex {
 
             // Get only projects with the same status as the new project.
             let listOfProjectsWithCurrentStatus = listOfProjects.slice(firstStatusOccurence, lastStatusOccurence+1);
-            console.log('List of projects(status): ', listOfProjectsWithCurrentStatus);
+
             // For all the proejcts of the same status as the new one, compare the time in ascending order to find
             // insertion index for the new project.
             insertIndex = this.earliestDueTimeIndex(listOfProjectsWithCurrentStatus, this.firstIndex,
                 listOfProjectsWithCurrentStatus.length, insertTime, firstStatusOccurence);
-            console.log(insertIndex);
         }
 
         return insertIndex;

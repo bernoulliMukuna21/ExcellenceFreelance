@@ -12,6 +12,8 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var MongoStore = require("connect-mongo");
 var passport = require('passport');
+var favicon = require('serve-favicon');
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var serviceRouter = require('./routes/services');// This path should not exist. It will go
@@ -38,6 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
@@ -87,7 +90,6 @@ app.use('/about-us', aboutRouter);
 app.use('/booking', bookingRouter);
 app.use('/messages', messageRouter);
 app.use('/payment', paymentRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

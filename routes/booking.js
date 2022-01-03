@@ -7,7 +7,7 @@ var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { convertTimeTo24Hours } = require('../bin/general-helper-functions');
 
 //let domainName = 'http://localhost:3000';
-let domainName = 'https://excellence-freelance.herokuapp.com';
+let domainName = 'https://www.nxtdue.com';
 let nxtDueLoginURL=`${domainName}/users/login`;
 
 function server_io(io) {

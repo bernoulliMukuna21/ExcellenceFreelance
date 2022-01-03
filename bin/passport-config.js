@@ -2,11 +2,13 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
-var twitterStrategy = require('passport-twitter').Strategy;
-var linkedinStrategy = require('passport-linkedin').Strategy;
+/*var twitterStrategy = require('passport-twitter').Strategy;
+var linkedinStrategy = require('passport-linkedin').Strategy;*/
 var bcrypt = require('bcryptjs');
 var ObjectId = require('mongodb').ObjectID;
 var UserModel = require('../models/UserModel');
+
+let domainName = 'https://www.nxtdue.com'; // 'http://localhost:3000'
 
 module.exports = function(passport) {
 
@@ -117,7 +119,7 @@ module.exports = function(passport) {
     }
 
     // FacebookStrategy Passport Authentication
-    passport.use(new FacebookStrategy({
+    /*passport.use(new FacebookStrategy({
             clientID: process.env.facebook_clientID,
             clientSecret: process.env.facebook_secretID,
             callbackURL: 'https://excellence-freelance.herokuapp.com/users/facebook-authentication/callback', //'http://localhost:3000/users/facebook-authentication/callback',
@@ -130,13 +132,13 @@ module.exports = function(passport) {
             profile.photos[0].value = profilePicture;
             profileValidation(profile, done);
         })
-    );
+    );*/
 
     //GoogleStrategy Passport Authentication
     passport.use(new GoogleStrategy({
         clientID: process.env.google_clientID,
         clientSecret: process.env.google_secretID,
-        callbackURL: 'https://excellence-freelance.herokuapp.com/users/google-authentication/callback' // 'http://localhost:3000/users/google-authentication/callback'
+        callbackURL: `${domainName}/users/google-authentication/callback` // 'http://localhost:3000/users/google-authentication/callback'
         },
         function (accessToken, refreshToken, profile, done) {
             profile.idName = 'google';
@@ -159,118 +161,3 @@ module.exports = function(passport) {
         });
     });
 };
-
-
-
-
-
-
-
-/*
-    if (profile.emails == undefined){
-        // in case the user does not want to provide email
-        // will return an error that will rerequest it
-
-        done('email-required');
-        return;
-    }
-
-    UserModel.findOne({
-        $or: [{
-            email: profile.emails[0].value
-        }, {
-            facebook_id: profile.id
-        }]
-    }).then(user=>{
-        if(user == null){
-            // user facebook not registered yet
-
-            // create an abject for saving the user facebook picture
-            let facebookPicture = {
-                name: 'facebook_picture',
-                data_OAUTH: profile.photos[0].value
-            }
-
-            user = new UserModel({
-                name: displayName[0],
-                surname: displayName[1],
-                email: profile.emails[0].value,
-                profile_picture: facebookPicture,
-                facebook_id: profile.id,
-                user_stature: 'client'
-            });
-
-            user.save(function (err) {
-                if(err){
-                    done(err)
-                }
-                else{
-                    done(null, user);
-                }
-            });
-            }
-            else if(user.email && user.facebook_id){
-                // user's Facebook is register, so login
-                return done(null, user)
-            }
-
-            else if(user.email){
-                // user email is taken, so can log in
-                return done('email-in-use');
-            }
-        }).catch(err=>{
-            done(err)
-        })*/
-
-
-/*
-            let name = profile.name;
-            if(!name.familyName){
-                name.familyName = ''
-            }
-
-            UserModel.findOne({
-                $or: [{
-                    email: profile.emails[0].value
-                }, {
-                    google_id: profile.id
-                }]
-            })
-            .then(user=>{
-
-                let googlePicture = {
-                    name: 'google_picture',
-                    data_OAUTH: profile.picture
-                }
-
-                if (user == null){
-                    // user is not in the database, register them
-                    user = new UserModel({
-                        name: name.givenName,
-                        surname: name.familyName,
-                        email: profile.emails[0].value,
-                        profile_picture: googlePicture,
-                        google_id: profile.id,
-                        user_stature: 'client'
-                    });
-
-                    user.save((err)=>{
-                        if(err){
-                            console.log(err);
-                        }
-                        else{
-                            done(null, user);
-                        }
-                    })
-                }
-
-                else if(user.email && user.google_id){
-                    // user's details already registered
-                    return done(null, user);
-                }
-
-                else if(user.email){
-                    // email has already been registerd, user can sign in
-                    return done('email-in-use');
-                }
-            }).catch(err=>{console.log(err)})*/

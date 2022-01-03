@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
     res.redirect('/users/login');
 });
 
-// ~~~~~~~~~~~~~~~~~ Excellence Freelancer users helper functions  ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ NxtDue users helper functions  ~~~~~~~~~~~~~~~~~~~
 
 // The variable will be used to track if a user is signing up as client or freelancer
 let userType_Oauth = {};
@@ -46,7 +46,7 @@ function loginSystem(req, res, user, userType, flash_message){
         else{
             if(userType==='client'){
                 // if sign up as a client, then direct to the homepage
-                //'Welcome to Excellence.Freelancer.' +
+                //'Welcome to NxtDue.' +
                 //                     ' Thank you for joining us!'
                 req.flash('success_message', flash_message);
                 res.redirect('/');
@@ -58,7 +58,7 @@ function loginSystem(req, res, user, userType, flash_message){
     });
 }
 
-// ~~~~~~~~~~~~~~~~~ Joining Excellence Freelance gets and posts ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ Joining NxtDue gets and posts ~~~~~~~~~~~~~~~~~~~
 
 // get the join view page
 router.get('/join', forwardAuthentication, function(req, res, next) {
@@ -118,7 +118,7 @@ router.post('/join/:userType', function (req, res) {
                             res.send(err)
                         }
                         else{
-                            let flash_message = `Welcome to Excellence.Freelancer, ${newUser.name} ${newUser.surname}.` +
+                            let flash_message = `Welcome to NxtDue.com, ${newUser.name} ${newUser.surname}.` +
                                 ' Thank you for joining us!'
                             loginSystem(req, res, newUser, userType, flash_message);
                         }
@@ -242,7 +242,7 @@ router.post('/forgot', function (req, res, next) {
                 from: 'mmbernoulli@gmail.com',
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',
-                html: '<h1 style="color: #213e53; font-size: 1.1rem">Excellence.Freelance Password Reset</h1>'+
+                html: '<h1 style="color: #213e53; font-size: 1.1rem">NxtDue Password Reset</h1>'+
                     '<p> Your are receiving this email because you (or someone else) have' +
                     ' requested to reset the password of your account.<br><i> Please click the ' +
                     'following, or paste this into your browser to complete this process.</i>' +
@@ -387,7 +387,7 @@ function passportUser(req, res, user, info, current_user){
                 res.send(err)
             }
             else{
-                let flash_message = `Welcome to Excellence.Freelancer, ${newUser.name} ${newUser.surname}.` +
+                let flash_message = `Welcome to NxtDue, ${newUser.name} ${newUser.surname}.` +
                     ' Thank you for joining us!';
                 loginSystem(req, res, newUser, current_user, flash_message);
             }
@@ -400,7 +400,7 @@ function passportUser(req, res, user, info, current_user){
             * The user account is already signed as social Network account
             * so, login
             * */
-            let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logge in!'
+            let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
 
             loginSystem(req, res, user, current_user, flash_message);
         }
@@ -432,6 +432,8 @@ function passportUser(req, res, user, info, current_user){
         }
     }
 }
+
+/*
 //facebook authentication
 router.get('/facebook-authentication', function(req, res, next){
     passport.authenticate(
@@ -455,7 +457,7 @@ router.get('/facebook-authentication/rerequest',
             scope: ['email'],
             authType: 'rerequest'
     })
-);
+);*/
 
 // Google authentication
 router.get('/google-authentication', passport.authenticate('google', {
@@ -474,112 +476,3 @@ router.get('/google-authentication/callback', (req, res, next)=>{
 });
 
 module.exports = router;
-
-
-
-/*
-res.redirect(url.format({
-                    pathname: '/',
-                    query: {
-                        this_user: user.name+'.'+user.surname
-                    }
-                }))
-*/
-/*
-        console.log('Inside callback authenticate')
-        if (err) {
-            if(err == 'email-required') res.redirect('/users/facebook-authentication/rerequest');
-            else if(err == 'email-in-use'){
-                let fields_errors = [{label:'facebook', message:'Facebook signup FAILED - ' +
-                        'Email is already being used. PLease Login!'}]
-                res.render('login', {fields_errors})
-            }
-            else{
-                let fields_errors = [{label:'facebook', message:'Facebook signup Failed. ' +
-                        'Please try again!'}]
-                res.render('joinFree', {fields_errors})
-            }
-            return;
-        }
-        if (!user) {
-            req.flash('error_message', 'Error Occurred! Please try again');
-            return res.redirect('back');
-        }
-        else{
-
-              If there are not any errors and the user is correctly returned,
-             the next thing before logging them is to check if they will rather
-             sign in as a freelancer. This behave is obtained from the url
-             clicked to trigger this facebook authentication. The variable
-             'current_user' contains this information
-
-             /*if(current_user === 'freelancer' && !user.user_stature){
-                user.user_stature = 'freelancer';
-                user.save(function (err) {
-                    if(err) throw err;
-                })
-            }
-}
-    req.logIn(user, function(err) {
-        if (err) { next(err); }
-        else if(current_user === 'client'){
-            req.flash('success_message', 'Welcome to Excellence.Freelancer.' +
-                ' Thank you for joining us!');
-            res.redirect(url.format({
-                pathname: '/',
-                query: {
-                    this_user: user.name+'.'+user.surname
-                }
-            }))
-        }
-        else if(current_user === 'freelancer'){
-            res.redirect('/account/freelancer/'+user.name+'.'+user.surname)
-        }
-    });
-}*/
-
-/* if(err){
-     if(err=='email-in-use'){
-         let fields_errors = [{label:'facebook', message:'Google signup FAILED - ' +
-                 'Email is already being used. PLease Login!'}]
-         res.render('login', {fields_errors})
-     }
-     else{
-         let fields_errors = [{label:'facebook', message:'Facebook signup Failed. ' +
-                 'Please try again!'}]
-         res.render('joinFree', {fields_errors})
-     }
-     return;
- }
-
- if (!user) {
-     req.flash('error_message', 'Error Occurred! Please try again');
-     return res.redirect('back');
- }
-
- else{
-
-     if(current_user === 'freelancer' && !user.user_stature){
-         user.user_stature = 'freelancer';
-         user.save(function (err) {
-             if(err) throw err;
-         })
-     }
-
-     req.logIn(user, function(err) {
-         if (err) { return next(err); }
-         else if(current_user === 'client'){
-             req.flash('success_message', 'Welcome to Excellence.Freelancer.' +
-                 ' Thank you for joining us!');
-             res.redirect(url.format({
-                 pathname: '/',
-                 query: {
-                     this_user: user.name+'.'+user.surname
-                 }
-             }))
-         }
-         else if(current_user === 'freelancer'){
-             res.redirect('/account/freelancer/'+user.name+'.'+user.surname)
-         }
-     });
- }*/

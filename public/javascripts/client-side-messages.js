@@ -7,7 +7,6 @@ let receiver, pageToGo, pagesNames, pagesSections;
 
 // Get sender identifier
 let loggedInUser = JSON.parse($('#sender-unique-key').val());
-console.log('Logged in user: ', loggedInUser)
 socket.emit('join', loggedInUser);
 
 /********************* First: find Receiver and right room of conversation ***********************/

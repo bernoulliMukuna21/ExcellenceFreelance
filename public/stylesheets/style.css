@@ -46,15 +46,16 @@ header ul{
 }
 
 .top-navbar button{
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bolder;
   padding: .5rem;
   margin-left: 1rem;
   cursor: pointer;
   border: none;
-  border-bottom: 0.1rem solid #213e53;
+  border: 0.1rem solid #213e53;
   background-color: white;
   color: #213e53;
+  width: 10rem;
 }
 
 .top-navbar button:hover{
@@ -97,13 +98,19 @@ header ul{
 .freelancer-top h1{
   margin: 15%;
 }
+.freelancer-middle h1, .client-top h1{
+  font-size: 1.5rem;
+  font-weight: bolder;
+  text-transform: uppercase;
+  font-style: italic;
+  color: white;
+}
 .freelancer-middle h1{
   margin-top: 5%;
-  font-size: 3rem;
 }
 .fas.fa-arrow-circle-right{
   font-size: 5rem;
-  margin-top: 1rem;
+  margin: 1rem 0;
 }
 .freelancer-bottom{
   display: flex;
@@ -113,8 +120,7 @@ header ul{
 }
 .freelancer-bottom p{
   text-align: justify;
-  font-size: 1.5rem;
-  font-weight: bolder;
+  font-size: 1.3rem;
   padding: 1rem;
 }
 #joinAsClient{
@@ -127,10 +133,6 @@ header ul{
   text-align: center;
   justify-content: center;
   height: 100%;
-}
-
-.client-top h1{
-  font-size: 3rem;
 }
 
 .client-middle{
@@ -159,16 +161,14 @@ h2:after{
 .client-bottom a, #joinAsClient{
   font-size: 2rem;
   font-weight: bolder;
-  color: #213e53;
-  background-color: white;
-  border: .1rem solid white;
+  color: white;
+  background-color: #8d2874;
+  border: .1rem solid #8d2874;
   padding: 1rem;
   cursor: pointer;
 }
 .client-bottom a:hover, #joinAsClient:hover{
-  background-color: #8d2874;
-  color: white;
-  border-color: #8d2874;
+  box-shadow: .05rem .1rem #8d2874;
 }
 .freelancer-join-bottom{
   margin-bottom: 5rem;
@@ -208,7 +208,7 @@ h2:after{
 }
 
 .join-form-container label{
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .join-right-container input{
@@ -217,7 +217,7 @@ h2:after{
   background-color: white;
   border: .1rem solid #ccc;
   border-radius: .4rem;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   padding: 1rem;
 }
 .join-right-container input:focus{
@@ -238,7 +238,7 @@ h2:after{
 
 .join-form-left p, .join-form-left a{
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 .join-form-left a{
   color: cornflowerblue;

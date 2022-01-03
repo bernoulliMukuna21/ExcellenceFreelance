@@ -8,7 +8,7 @@ var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { bookingUpdate } = require('../bin/general-helper-functions');
 
 //let domainName = 'http://localhost:3000';
-let domainName = 'https://excellence-freelance.herokuapp.com';
+let domainName = 'https://www.nxtdue.com';
 let nxtDueLoginURL=`${domainName}/users/login`;
 
 const endpointSecret = process.env.stripe_webhookEndpointLive;

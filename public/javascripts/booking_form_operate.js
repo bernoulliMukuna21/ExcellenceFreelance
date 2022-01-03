@@ -3,7 +3,7 @@ import * as socketConnection from './socketio-connection-client-side.js'
 import {createBookingHTML, moveProjectBooking} from "./account_operate.js";
 import BookingInsertionIndex from './BookingInsertionIndex.js'
 
-let domainName = 'https://excellence-freelance.herokuapp.com';
+let domainName = 'https://www.nxtdue.com';
 //let domainName = 'http://localhost:3000';
 
 let allServicesPrices;
