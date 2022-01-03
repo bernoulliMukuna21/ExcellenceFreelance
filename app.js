@@ -83,13 +83,16 @@ app.use(function (req, res, next) {
 
 
 app.all(/.*/, function(req, res, next) {
-    var host = req.header("host");
-    console.log("Host(Please check this out): ", host);
-    console.log('Url contains heroku inside: ', host.match(/^herokuapp\..*/i));
-    console.log('Request URL: ', req.url);
-    if (host.match(/^herokuapp\..*/i)) {
-        res.redirect(301, "http://www." + host + req.url);
-    } else {
+    let host = req.header("host");
+    let domainName = host.split('/')[2];
+    domainName = domainName.split('.');
+    domainName.shift();
+    let endOfDomainName = domainName.join('.');
+
+    if(endOfDomainName === 'herokuapp.com'){
+        res.redirect(301, "http://www.nxtdue.com" + req.url);
+    }
+    else {
         next();
     }
 });
