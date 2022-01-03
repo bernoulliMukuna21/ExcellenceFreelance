@@ -81,15 +81,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', indexRouter); 
-app.use('/users', usersRouter);
-app.use('/account', accountRouter);
-app.use('/join', indexRouter);// using the same route
-app.use('/login', indexRouter); //
-app.use('/about-us', aboutRouter);
-app.use('/booking', bookingRouter);
-app.use('/messages', messageRouter);
-app.use('/payment', paymentRouter);
 
 app.all(/.*/, function(req, res, next) {
     var host = req.header("host");
@@ -100,6 +91,17 @@ app.all(/.*/, function(req, res, next) {
         next();
     }
 });
+
+app.use('/', indexRouter); 
+app.use('/users', usersRouter);
+app.use('/account', accountRouter);
+app.use('/join', indexRouter);// using the same route
+app.use('/login', indexRouter); //
+app.use('/about-us', aboutRouter);
+app.use('/booking', bookingRouter);
+app.use('/messages', messageRouter);
+app.use('/payment', paymentRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

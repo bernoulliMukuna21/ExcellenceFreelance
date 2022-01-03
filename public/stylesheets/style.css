@@ -55,7 +55,7 @@ header ul{
   border: 0.1rem solid #213e53;
   background-color: white;
   color: #213e53;
-  width: 10rem;
+  min-width: 10rem;
 }
 
 .top-navbar button:hover{
