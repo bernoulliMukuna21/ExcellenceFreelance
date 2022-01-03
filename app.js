@@ -42,15 +42,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
-self.app.all(/.*/, function(req, res, next) {
-    var host = req.header("host");
-    if (host.match(/^herokuapp\..*/i)) {
-        res.redirect(301, "http://www." + host + req.url);
-    } else {
-        next();
-    }
-});
-
 // Express Session Settings
 let cookieExpirationTime = parseInt(process.env.cookie_expressionTime); // session expires after 90 days
 let sessionDB_name = 'ef_sessions';
@@ -99,6 +90,16 @@ app.use('/about-us', aboutRouter);
 app.use('/booking', bookingRouter);
 app.use('/messages', messageRouter);
 app.use('/payment', paymentRouter);
+
+self.app.all(/.*/, function(req, res, next) {
+    var host = req.header("host");
+    console.log("Host(Please check this out): ", host);
+    if (host.match(/^herokuapp\..*/i)) {
+        res.redirect(301, "http://www." + host + req.url);
+    } else {
+        next();
+    }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
