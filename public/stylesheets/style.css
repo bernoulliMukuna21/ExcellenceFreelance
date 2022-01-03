@@ -57,9 +57,10 @@ header ul{
   color: #213e53;
   min-width: 10rem;
 }
-#user-account-nameSurname{
+#client-account-nameSurname, #freelancer-account-nameSurname{
   border: none;
   border-bottom: 0.1rem solid #213e53;
+  min-width: 10rem;
 }
 
 .top-navbar button:hover{

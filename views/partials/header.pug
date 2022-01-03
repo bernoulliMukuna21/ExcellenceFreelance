@@ -10,14 +10,14 @@ header
                     //
                         a(href='/account/switch/'+emailEncode(loggedInUser.email))
                             button(class='nav-btn', id='be-freelancer') Be a Freelancer
-                    a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn', id='user-account-nameSurname') My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                    a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn', id='client-account-nameSurname') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                     a(href='/users/logout'): button(class='nav-btn') Logout
 
                 else if(loggedInUser.user_stature === 'freelancer')
                     //
                         a(href='/account/switch/' + emailEncode(loggedInUser.email))
                             button(class='nav-btn', id='be-freelancer') Switch to Client
-                    a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                    a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn', class='freelancer-account-nameSurname') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                     a(href='/users/logout'): button(class='nav-btn') Logout
                 - let loggedinUser_Mssg = {type: loggedInUser.user_stature, uniqueKey: emailEncode(loggedInUser.email)}
                 input(style='display: none;' id='sender-unique-key' value=JSON.stringify(loggedinUser_Mssg))
