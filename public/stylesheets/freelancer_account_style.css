@@ -43,7 +43,7 @@
     position: absolute;
 }*/
 .default-profile-image p{
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bolder;
     border: .1rem dashed #0d3349;
     color:  #0d3349;
@@ -70,7 +70,7 @@
 .account-profile-name{
     text-align: center;
     margin: 1rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bolder;
 }
 .freelancer-payment-buttons{
@@ -107,12 +107,13 @@
 }
 .public-service-enquiry button, .public-service-enquiry a{
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bolder;
     margin: 1rem 0.25rem 2rem 0.25rem;
     border-radius: .5rem;
     padding: 1rem 0;
     cursor: pointer;
+    min-width: 11rem;
 }
 .book-btn{
     background-color: #4CAF50;
@@ -200,7 +201,7 @@
 }
 
 .account-profile-information li{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     border-bottom: .1rem solid #213e53;
     padding: 1rem;
 }
@@ -263,6 +264,7 @@
     padding-bottom: .25rem;
     color: #213e53;
     border-bottom: .25rem solid #213e53;
+    font-size: 1.5rem;
 }
 .account-first-side .default-description{
     border: .1rem dashed black;
@@ -274,7 +276,7 @@
 }
 
 .account-first-side .default-description p{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: 1rem;
 }
 .account-first-side .default-description #addDescription:hover{
@@ -282,7 +284,7 @@
     cursor: pointer;
 }
 .account-first-side p{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     text-justify: inter-word;
     -ms-text-justify: inter-word;
     margin: 1rem;
@@ -332,7 +334,7 @@
     margin-top: 1rem;
 }
 .each-education p{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 .each-education p:first-child{
     font-weight: bolder;
@@ -355,6 +357,7 @@
 .account-fourth-side h1{
     margin-bottom: 1rem;
 }
+/*
 .image-portfolio{
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -397,8 +400,8 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    /*border: .1rem solid #23425a ;*/
 }
+*/
 /*
 *************** Portfolio Update Popup ******************
 */
@@ -470,7 +473,7 @@
     padding-top: 1rem;
     margin: 10rem 25% 1rem 1rem;
 }
-
+/*
 .default-written-review{
     padding: 1rem;
     border-bottom: .2rem solid #213e53;
@@ -610,7 +613,7 @@ button.like{
 .review-submit-section button:hover{
     background-color: #213e53;
     color: white;
-}
+}*/
 
 /************************************************************************************************************************
 ************************************************************************************************************************
@@ -632,7 +635,7 @@ button.like{
     color: white;
 }
 .freelancer-update-page label{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 .update-general-information{
@@ -653,7 +656,7 @@ button.like{
     background-color: white;
     border: .1rem solid #ccc;
     border-radius: .5rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     padding: 1rem;
 }
 
@@ -750,7 +753,7 @@ button.like{
 }
 .user-education input, .user-education-years select, .user-education-years button{
     padding: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: .5rem 0 1.5rem 0;
     border-radius: .5rem;
 }
@@ -776,7 +779,7 @@ button.like{
     display: grid;
     grid-template-columns: 40% 25% 15% 20%;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     padding: .5rem;
 }
 .freelancer-single-education .show-section p{
@@ -840,7 +843,7 @@ button.like{
 }
 
 .single-serviceAndPrice .show-serviceAndPrice h4, .shown-service h4, .single-skill .show-skill h4{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: white;
 }
 .single-serviceAndPrice .show-serviceAndPrice h4{
@@ -862,7 +865,7 @@ button.like{
 }
 .freelancer-serviceAndPrice-empty p{
     padding: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 /*Bio: description and skills*/
@@ -886,6 +889,7 @@ button.like{
     padding: 1rem;
     margin-top: .5rem;
     font-family: "Times New Roman", Times, serif;
+    font-size: 1.3rem;
     border-radius: .5rem;
 }
 .user-bio-container{
@@ -896,6 +900,7 @@ button.like{
 .user-bio-container input{
     padding: 1rem;
     margin: 0;
+    font-size: 1.3rem;
 }
 
 .saved-skill{
@@ -938,7 +943,7 @@ button.like{
     align-items: center;
     text-align: center;
     margin-bottom: .5rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: white;
     background-color: #ca1212;
     font-weight: bolder;
@@ -1059,7 +1064,7 @@ button.like{
 }
 .freelancer-options i{
     margin: 0 1rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     cursor: pointer;
 }
 .freelancer-options i:hover{
@@ -1140,7 +1145,6 @@ button.like{
     padding: 2rem;
 }
 .emptyNextDueProject{
-
     padding: 2rem;
     font-size: 1.5rem;
     color: black;
