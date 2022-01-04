@@ -44,12 +44,3 @@
     color: white;
 }
 
-/* This is for smaller screens like mobile and tablet*/
-@media (max-width:800px) {
-    .top-container{
-        display: none;
-    }
-    .top-mobilenavcontainer{
-        display: block;
-    }
-}
