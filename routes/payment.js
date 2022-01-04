@@ -7,9 +7,6 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { bookingUpdate } = require('../bin/general-helper-functions');
 
-
-
-
 let domain = 'http://localhost:3000';
 //let domain = 'https://excellence-freelance.herokuapp.com';
 

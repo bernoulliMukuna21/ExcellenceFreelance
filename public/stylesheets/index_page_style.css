@@ -161,7 +161,7 @@ input:focus{
     padding: 1rem 0 .5rem 0;
 }
 .bottom-side button{
-    width: 10rem;
+    min-width: 10rem;
     color: white;
     cursor: pointer;
     font-weight: bolder;

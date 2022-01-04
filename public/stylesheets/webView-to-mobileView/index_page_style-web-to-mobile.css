@@ -1,5 +1,12 @@
 /* This is for smaller screens like mobile and tablet*/
 
+@media (max-width:1100px) {
+    .index-page-three{
+        margin: 2rem 2rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-gap: 1rem;
+    }
+}
 @media (max-width:800px) {
     .index-page-one{
         display: block;

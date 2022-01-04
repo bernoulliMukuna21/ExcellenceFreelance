@@ -6,17 +6,16 @@
         margin: auto;
         border: none;
     }
+
     .join-form-container{
         display: block;
         margin: 0;
         padding: 0;
     }
-    .join-form-container label{
-        display: none;
-    }
-    .join-left-container{
-        display: none;
-    }
+
+   .join-left-container{
+       display: none;
+   }
 
     .join-form-right{
         border-right: none;

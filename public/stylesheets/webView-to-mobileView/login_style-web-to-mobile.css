@@ -1,11 +1,20 @@
 /* This is for smaller screens like mobile and tablet*/
-
-@media (max-width:500px) {
+@media (max-width:1100px) {
     .login-page-container{
-        width: 35rem;
+        width: 80rem;
+    }
+}
+@media (max-width:800px) {
+    .login-page-container{
+        width: 60rem;
         display: block;
         padding: 1.5rem;
+        top: 40%;
     }
+    .login input{
+        font-size: 1.8rem;
+    }
+
     .login section a{
         /*margin-bottom: .5rem;*/
         color: white;
@@ -15,6 +24,7 @@
         display: flex;
         flex-direction: row;
         color: white;
+        padding: 2rem 0;
     }
     .login-orSeparator .center-element{
         padding-right: 1rem;
@@ -27,10 +37,16 @@
 
     .login::before {
         left: 2%;
-        bottom: -50%;
+        bottom: -60%;
+        width: 100%;
     }
     .login::after {
         left: 1%;
-        bottom: -45%;
+        bottom: -55%;
+    }
+}
+@media (max-width:630px) {
+    .login-page-container{
+        width: 50rem;
     }
 }
