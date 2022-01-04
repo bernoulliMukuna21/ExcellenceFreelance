@@ -27,22 +27,19 @@ header
         .mobileweb-title
             a(href='/') NxtDue
         div.mobiletop-navbar
-            - console.log('Client Page Login Status: ', userType)
             if (!isLogged)
                 .mobileheaderLinks
                     a(href='/users/join') Join For Free
                     a(href='/users/login') Login
             else
-                if(user.user_stature === 'client')
+                if(loggedInUser.user_stature === 'client')
                     .mobileheaderLinks
-                        a(href='/account/client/' + userEmail_encoded) My Account, #{user.name} #{user.surname}
-                        a(href='/') Home
-                        a(href='/users/logout') Logout
-                else if(user.user_stature === 'freelancer')
+                        a(href='/account/client/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                else if(loggedInUser.user_stature === 'freelancer')
                     .mobileheaderLinks
-                        a(href='/account/freelancer/' + userEmail_encoded) My Account, #{user.name} #{user.surname}
-                        a(href='/') Home
-                        a(href='/users/logout') Logout
+                        a(href='/account/freelancer/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                a(href='/') Home
+                a(href='/users/logout') Logout
 
             a.headerburger-icon(href='javascript:void(0)')
                 i.fa.fa-bars
