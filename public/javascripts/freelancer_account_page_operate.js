@@ -1,6 +1,7 @@
 import * as accountsOperation from './account_operate.js';
 import {ajaxFormMessage_generator} from "./account_operate.js";
 import * as socketConnection from './socketio-connection-client-side.js'
+import BookingInsertionIndex from './BookingInsertionIndex.js'
 
 /*
 * The sections of the freelancer page will need to be hidden, and shown
@@ -545,16 +546,103 @@ $('.update-general-information').submit(function (event) {
 // Accept Booking
 $(document).on('click', '.freelancer-booking-accept-button', function(event) {
     let freelancerAcceptBttnHTML = event.target;
-    let singleProjectContainer =  freelancerAcceptBttnHTML.parentNode.parentNode;
-    let bookingToAcceptID = singleProjectContainer.parentNode.lastChild.value;
+    let singleProjectDetails =  freelancerAcceptBttnHTML.parentNode.parentNode;
+    let projectTopInformation = singleProjectDetails.previousSibling;
+    let projectStatus = projectTopInformation.childNodes[3].innerText;
+
+    if (projectStatus === 'accept / modify'){
+        let bookingToAcceptID = singleProjectDetails.nextSibling.value;
+        let clientThatBooked = bookingToAcceptID.split(':')[0];
+        let projectIndex = Array.from(singleProjectDetails.parentNode.parentNode.childNodes)
+            .findIndex(singleProject => singleProject.lastChild.value === bookingToAcceptID)
+
+        socketConnection.socket.emit('Accept project',
+            {projectIndex, bookingToAcceptID, clientThatBooked});
+
+    }else if(projectStatus === 'awaiting response'){
+        console.log('Project Status is awaiting response');
+        let buttonsContainer = freelancerAcceptBttnHTML.parentNode;
+        let projectBasicInformation = buttonsContainer.previousSibling;
+        let projectAllInformationContainer = projectBasicInformation.parentNode.previousSibling;
+        let dueDateToAccept = projectAllInformationContainer.childNodes[2].innerText;
+        let originalBooking = projectBasicInformation.childNodes[0].childNodes[1];
+        let descriptionToAccept = originalBooking.childNodes[1].childNodes[1].innerText;
+        let priceToAccept = originalBooking.childNodes[2].childNodes[1].innerText;
+
+        projectCompletionShow(event,
+            {dueDateToAccept, descriptionToAccept, priceToAccept});
+    }
+
+})
+$(document).on('click', '#booking-modificationAcceptance-submit-bttn', function(event) {
+    console.log('Booking Modification: ')
+    event.preventDefault();
+    let acceptanceDetailsContainer = event.target.parentNode.parentNode.parentNode;
+    let bookingToAcceptID =  acceptanceDetailsContainer.nextSibling.value;
+    let allFreelancerProjects = acceptanceDetailsContainer.parentNode.parentNode.
+        parentNode.previousSibling.childNodes[1].childNodes;
+
+    let projectIndex = Array.from(allFreelancerProjects).findIndex(singleProject =>
+        singleProject.lastChild.value === bookingToAcceptID)
     let clientThatBooked = bookingToAcceptID.split(':')[0];
-    let projectIndex = Array.from(singleProjectContainer.parentNode.parentNode.childNodes)
-        .findIndex(singleProject => singleProject.lastChild.value === bookingToAcceptID)
 
     socketConnection.socket.emit('Accept project',
-        {projectIndex, bookingToAcceptID, clientThatBooked});
+        {projectIndex, bookingToAcceptID, clientThatBooked, fromStatus: 'awaiting response'});
 })
 
+// Modify Booking
+const formatAMPM = (time) => {
+    console.log('time: ', time)
+    time = time.split(':')
+    let hours = time[0];
+    let minutes = time[1];
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    hours = hours>=10 ? hours : '0'+hours;
+    console.log('minutes: ', minutes)
+    minutes = minutes.toString().padStart(2, '0');
+
+    return [`${hours}`, minutes, ampm];
+}
+
+
+$(document).on('click', '.freelancer-booking-modify-button', function(event) {
+    $('.freelancer-booking-modification>p').hide();
+    let modifyButton = event.target;
+    let buttonsContainer = modifyButton.parentNode;
+    let projectBasicInformation = buttonsContainer.previousSibling;
+    let projectAllInformationContainer = projectBasicInformation.parentNode.previousSibling;
+    let currentProjectStatus = projectAllInformationContainer.childNodes[3].innerText;
+
+    let currentProjectDueDateTime;
+    let currentProjectDescription;
+    let currentProjectPrice;
+
+    if(currentProjectStatus === 'accept / modify'){
+        currentProjectDueDateTime = projectAllInformationContainer.childNodes[2].innerText;
+        currentProjectDescription = projectBasicInformation.childNodes[0].
+            childNodes[1].childNodes[1].innerText;
+        currentProjectPrice = projectBasicInformation.childNodes[0].
+            childNodes[2].innerText.split(':')[1].slice(2);
+    }else if(currentProjectStatus === 'awaiting response' ||
+        currentProjectStatus === 'please respond'){
+        let proposalInfos = projectBasicInformation.childNodes[1].childNodes[1];
+        currentProjectDueDateTime = proposalInfos.childNodes[0].childNodes[1].innerText;
+        currentProjectDescription = proposalInfos.childNodes[1].childNodes[1].innerText;
+        currentProjectPrice = proposalInfos.childNodes[2].childNodes[1].innerText.slice(1);
+    }
+
+    projectCompletionShow(event,
+        {
+            modifyDueDate: currentProjectDueDateTime.split(',')[0],
+            modifyDueTime: formatAMPM(currentProjectDueDateTime.split(' ')[1]),
+            modifyDescription: currentProjectDescription,
+            modifyPrice: currentProjectPrice,
+        });
+})
+
+// Finish Booking
 $(document).on('click', '.freelancer-booking-finish-button', function(event) {
     projectCompletionShow(event);
 })
@@ -576,8 +664,7 @@ $(document).on('click', '.freelancer-booking-delete-button', function(event) {
     }
 })
 
-
-function projectCompletionShow(event) {
+function projectCompletionShow(event, data) {
     let buttonHTML = event.target;
     let singleProjectHTML = buttonHTML.parentNode.parentNode.parentNode;
     let allBookingsContainerHTML = singleProjectHTML.parentNode.parentNode;
@@ -594,19 +681,68 @@ function projectCompletionShow(event) {
     bookingCompletionHTML = bookingCompletionHTML.firstChild.firstChild;
     let indexToShow, indexToHide;
     if(buttonHTML.className === 'freelancer-booking-finish-button'){
-        indexToShow = 1;
-        indexToHide = 0;
+        $(bookingCompletionHTML.childNodes[0]).show();
+        $(bookingCompletionHTML.childNodes[1]).hide();
+        $(bookingCompletionHTML.childNodes[2]).hide();
+        $(bookingCompletionHTML.childNodes[3]).hide();
     }else if(buttonHTML.className === 'freelancer-booking-delete-button'){
-        indexToShow = 0;
-        indexToHide = 1;
+        $(bookingCompletionHTML.childNodes[0]).hide();
+        $(bookingCompletionHTML.childNodes[1]).show();
+        $(bookingCompletionHTML.childNodes[2]).hide();
+        $(bookingCompletionHTML.childNodes[3]).hide();
+    } else if(buttonHTML.className === 'freelancer-booking-modify-button'){
+        $(bookingCompletionHTML.childNodes[0]).hide();
+        $(bookingCompletionHTML.childNodes[1]).hide();
+        $(bookingCompletionHTML.childNodes[2]).show();
+        $(bookingCompletionHTML.childNodes[3]).hide();
+
+        // Fill in the modification form with the data to possibly modify
+        let modificationForm = bookingCompletionHTML.childNodes[2].childNodes[2];
+        let modificationDateTime = modificationForm.childNodes[0].firstChild.childNodes;
+        let modificationDate = modificationDateTime[0];
+        let modificationTime = modificationDateTime[1].childNodes[1].childNodes;
+
+        // Date
+        $(modificationDate.childNodes[1]).val(data.modifyDueDate);
+        $(modificationDate.childNodes[1]).attr('placeholder', data.modifyDueDate);
+
+        // Time
+        //$("div.id_100 > select > option[value=" + value + "]").prop("selected",true);
+        $(modificationTime[0]).val(data.modifyDueTime[0]).change();
+        $(modificationTime[2]).val(data.modifyDueTime[1]).change();
+        $(modificationTime[3]).val(data.modifyDueTime[2]).change();
+
+        // Description
+        $(modificationForm.childNodes[1].childNodes[1]).val(data.modifyDescription);
+
+        // price
+        $(modificationForm.childNodes[2].childNodes[1].childNodes[1]).val(data.modifyPrice);
+        $(modificationForm.childNodes[2].childNodes[1].childNodes[1]).attr('placeholder', data.modifyPrice);
+
+        // All Modify Data
+        $(modificationForm.childNodes[3].childNodes[0]).val(JSON.stringify(data));
+    }else if(buttonHTML.className === 'freelancer-booking-accept-button'){
+        $(bookingCompletionHTML.childNodes[0]).hide();
+        $(bookingCompletionHTML.childNodes[1]).hide();
+        $(bookingCompletionHTML.childNodes[2]).hide();
+        $(bookingCompletionHTML.childNodes[3]).show();
+
+        let acceptanceForm = bookingCompletionHTML.childNodes[3].childNodes[2];
+
+        $(acceptanceForm.childNodes[0].childNodes[1]).val(data.dueDateToAccept);
+        acceptanceForm.childNodes[1].childNodes[1].innerText = data.descriptionToAccept;
+        $(acceptanceForm.childNodes[1].childNodes[2]).val(data.descriptionToAccept);
+        $(acceptanceForm.childNodes[2].childNodes[1]).val(data.priceToAccept);
     }
-    $(bookingCompletionHTML.childNodes[indexToShow]).hide();
-    $(bookingCompletionHTML.childNodes[indexToHide]).show();
 }
 
 
 // Cancel the process
 $(document).on('click', '.project-finish-cancel', function(event) {
+    $('.freelancer-booking-completion-rejection').hide();
+})
+$(document).on('click', '#booking-modificationReject-submit-bttn', function(event) {
+    event.preventDefault();
     $('.freelancer-booking-completion-rejection').hide();
 })
 

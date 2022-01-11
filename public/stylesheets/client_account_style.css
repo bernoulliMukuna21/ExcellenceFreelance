@@ -144,13 +144,16 @@ input:focus{
     text-align: justify;
     font-size: 1.3rem;
 }
-.project-details div:first-child{
-    margin: 1rem 0 3rem 0;
+.project-details>div:first-child{
+    margin-bottom: 3rem;
 }
-.project-details div:first-child div{
-    margin: 1.5rem 0;
+.project-details>div:first-child>h4:first-child{
+    margin-top: .5rem;
 }
-.project-details div:last-child,
+.client-booking-descrption-details{
+    margin: 1rem 0;
+}
+.project-details>div:last-child,
 .project-finish-update-options{
     display: flex;
     justify-content: center;
@@ -185,6 +188,31 @@ input:focus{
 .project-details div:last-child>button:hover,
 .project-finish-update-options button:last-child:hover{
     background-color: #ad3122;
+}
+
+.client-booking-modification-container{
+    display: flex;
+}
+.client-side-modificationBooking{
+    color: #8d2874;
+}
+
+.client-side-originalBooking, .client-side-modificationBooking{
+    width: 100%;
+}
+.client-side-originalBooking{
+    border-right: .1rem solid black;
+}
+.client-side-modificationBooking{
+    border-left: .1rem solid black;
+}
+.client-side-originalBooking>div:first-child, .client-side-modificationBooking>div:first-child{
+    border-bottom: .1rem solid black;
+    text-align: center;
+}
+.client-side-originalBooking>div:nth-child(2), .client-side-modificationBooking>div:nth-child(2){
+    padding-left: 1rem;
+    padding-top: 1rem;
 }
 
 .project-finish-update-options button{

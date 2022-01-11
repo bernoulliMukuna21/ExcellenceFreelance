@@ -56,8 +56,49 @@ export default class BookingInsertionIndex {
         if(time.includes(',')){
             time = time.split(',');
             time = time[0].trim().split("/").reverse().join("-")+'T'+time[1].trim()+'Z';
+            console.log(time)
         }
         return Date.parse(time);
+    }
+
+    statusToInteger(status) {
+        if (status === 'booking ongoing') {
+            return 0;
+        }
+        if (status === 'awaiting payment') {
+            return 1;
+        }
+        if (status === 'accept / modify') {
+            return 2;
+        }
+        if (status === 'awaiting response') {
+            return 3;
+        }
+        if (status === 'please respond') {
+            return 4;
+        }
+        if (status === 'completed') {
+            return 5;
+        }
+        if (status === 'processing payout...') {
+            return 6;
+        }
+        if (status === 'awaiting resolution') {
+            return 7;
+        }
+        if (status === 'paid') {
+            return 8;
+        }
+        if (status === 'cancelled') {
+            return 9;
+        }
+    }
+
+    listOfProjectsToListOfIndexes(listOfProjects){
+        let listOfIndexes = listOfProjects.map(singleProject => {
+            return this.statusToInteger(this.getProjectStatus(singleProject));
+        });
+        return listOfIndexes;
     }
 
     findProjectInsertionIndex(listOfProjects, status, insertTime) {
@@ -70,15 +111,18 @@ export default class BookingInsertionIndex {
         * */
 
         let insertIndex;
+        let listOfProjectsStatusesIndexes = this.listOfProjectsToListOfIndexes(listOfProjects);
 
         /* Find the first and last occurrence of the new project status in the list of
         all the projects.*/
-        let firstStatusOccurence = this.findFirstIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
-        let lastStatusOccurence = this.findEndIndex(listOfProjects, this.firstIndex, this.sizeOfList, status);
+        let firstStatusOccurence = this.findFirstIndex(listOfProjectsStatusesIndexes,
+            this.firstIndex, this.sizeOfList, this.statusToInteger(status));
+        let lastStatusOccurence = this.findEndIndex(listOfProjectsStatusesIndexes,
+            this.firstIndex, this.sizeOfList, this.statusToInteger(status));
 
-        console.log('All projects: ', listOfProjects);
-        console.log('First and Last Index: ', this.firstIndex, this.sizeOfList);
+        console.log('All projects: ', listOfProjectsStatusesIndexes);
         console.log('Status: ', status);
+        console.log('First and Last Index: ', this.firstIndex, this.sizeOfList);
         console.log('First Occurrence: ', firstStatusOccurence);
         console.log('Last Occurrence: ', lastStatusOccurence);
 
@@ -88,28 +132,19 @@ export default class BookingInsertionIndex {
              index to insert it, based on the order the projects are expected to
              appear*/
 
-            if(status === 'booking ongoing'){
-                /* It is known that 'booking ongoing' are always first in the list.
-                So, this project must be pushed on the top of the list. */
-                insertIndex = {place: 'before', index: 0};
-
-            }else{
-                /* For projects with status 'accept / reject' or 'awaiting payment', the
-                * function below is called to find the correct index of insertion. */
-
-                insertIndex = this.correctInsertionIndex(listOfProjects, 0, this.sizeOfList, status);
-            }
+            insertIndex = this.correctInsertionIndex(listOfProjectsStatusesIndexes,
+                this.statusToInteger(status));
         }else{
             /* Now, if there are projects in the list of projects with the same status with the new
             * projects. The next step is to find the right index of insertion based on the due date & time. */
 
             // Get only projects with the same status as the new project.
-            let listOfProjectsWithCurrentStatus = listOfProjects.slice(firstStatusOccurence, lastStatusOccurence+1);
-            console.log('List of projects(status): ', listOfProjectsWithCurrentStatus);
+            let listOfProjectsWithCurrentStatuses = listOfProjects.slice(firstStatusOccurence, lastStatusOccurence+1);
+            console.log('List of projects(status): ', listOfProjectsWithCurrentStatuses);
             // For all the proejcts of the same status as the new one, compare the time in ascending order to find
             // insertion index for the new project.
-            insertIndex = this.earliestDueTimeIndex(listOfProjectsWithCurrentStatus, this.firstIndex,
-                listOfProjectsWithCurrentStatus.length, insertTime, firstStatusOccurence);
+            insertIndex = this.earliestDueTimeIndex(listOfProjectsWithCurrentStatuses, this.firstIndex,
+                listOfProjectsWithCurrentStatuses.length, insertTime, firstStatusOccurence);
             console.log(insertIndex);
         }
 
@@ -152,143 +187,60 @@ export default class BookingInsertionIndex {
         }
     }
 
-    correctInsertionIndex(list, first, last, target) {
-        let middleElem;
-        let cutter = Math.floor(first + (last - first)/2);
+    correctInsertionIndex(list, insertionTarget) {
+        let size = list.length - 1;
+        let newArray = list.concat(insertionTarget);
+        newArray.sort((a, b) => a - b);
+        let insertionIndex = newArray.indexOf(insertionTarget);
 
-        if(first < last){
-            middleElem = this.getProjectStatus(list[cutter]);
-
-            if(middleElem === 'booking ongoing'){
-                if (cutter === 0){
-                    return {place: 'after', index: last - 1};
-                }
-                return this.correctInsertionIndex(list, cutter+1, last, target);
-            }else if(middleElem === 'awaiting payment'){
-                if (cutter === 0 && target === 'accept / reject'){
-                    return {place: 'after', index: last - 1};
-                }
-                return this.correctInsertionIndex(list, cutter+1, last, target);
-            }else if(middleElem === 'accept / reject'){
-                if (cutter === 0 && target === 'awaiting payment'){
-                    return {place: 'before', index: cutter};
-                }else if(this.getProjectStatus(list[cutter-1]) !== 'accept / reject'){
-                    return {place: 'before', index: cutter};
-                }
-                return this.correctInsertionIndex(list, first, cutter - 1, target);
-            }else if(middleElem === 'awaiting confirmation' || middleElem === 'awaiting resolution'
-                || middleElem === 'cancelled'){
-                //awaiting confirmation, awaiting resolution and cancelled
-                if (cutter === 0){
-                    return {place: 'before', index: cutter};
-                }else if(this.getProjectStatus(list[cutter-1]) === 'booking ongoing' ||
-                    this.getProjectStatus(list[cutter-1]) === 'awaiting payment'){
-                    return {place: 'before', index: cutter};
-                }else{
-                    return this.correctInsertionIndex(list, first, cutter - 1, target);
-                }
-            }
-        }else if(first === last){
-            if( last !== 0 ){
-                middleElem = this.getProjectStatus(list[cutter - 1]);
-            }
-            if(middleElem === 'awaiting confirmation' || middleElem === 'awaiting resolution'
-                || middleElem === 'cancelled' || middleElem === 'accept / reject'){
-                //awaiting confirmation, awaiting resolution and cancelled
-                return {place: 'before', index: first};
-            }
-            return {place: 'after', index: last-1};
+        if(insertionTarget > list[size]){
+            return {place: 'after', index: size};
         }
-        return -1 // never to be reached
+        return {place: 'before', index: insertionIndex};
     }
 
-    findFirstIndex(list, first, last, target){
+    findFirstIndex(list, first, last, target) {
         let cutter = Math.floor(first + (last - first)/2);
-        if(first < last){
-            if(this.getProjectStatus(list[cutter]) === target){
-                if(cutter === 0){
+        if(first <= last){
+            if(list[cutter] === target){
+                if(cutter === 0 || target !== list[cutter-1]){
                     return cutter;
-                }else if(target !== this.getProjectStatus(list[cutter-1])){
-                    return cutter;
-                }else if(target === this.getProjectStatus(list[cutter-1])){
-                    return this.findFirstIndex(list, first, cutter-1 , target);
                 }
-            }else{
-                if(target === 'accept / reject'){
-                    if(this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
-                        this.getProjectStatus(list[cutter]) === 'cancelled'){
-                        //awaiting confirmation, awaiting resolution and cancelled
-                        return this.findFirstIndex(list, first, cutter-1, target);
-                    }
-                    return this.findFirstIndex(list, cutter + 1, last, target);
-                }else if(target === 'awaiting payment'){
-                    if(this.getProjectStatus(list[cutter]) === 'accept / reject' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
-                        this.getProjectStatus(list[cutter]) === 'cancelled'){
-                        //awaiting confirmation, awaiting resolution and cancelled
-                        return this.findFirstIndex(list, first, cutter - 1, target);
-                    }
-                    return this.findFirstIndex(list, cutter + 1, last, target);
-                }else if (target === 'booking ongoing'){
-                    return this.findFirstIndex(list, first, cutter - 1, target);
+                else if(target === list[cutter-1]){
+                    return this.findFirstIndex(list, first, cutter-1, target);
                 }
             }
-        }else if(first === last){
-            if(cutter === this.sizeOfList){
-                cutter--;
-            }
-            if(this.getProjectStatus(list[cutter]) === target){
-                return cutter;
+            else{
+                if(list[cutter] > target){
+                    return this.findFirstIndex(list, first, cutter-1, target);
+                }else{
+                    return this.findFirstIndex(list, cutter + 1, last, target);
+                }
             }
         }
-        return -1; // status passed is not in list
+        return -1;
     }
 
     findEndIndex(list, first, last, target) {
         let cutter = Math.floor(first + (last - first)/2);
 
-        if(first < last){
-            if(this.getProjectStatus(list[cutter]) === target){
-                if(cutter === this.sizeOfList-1){
+        if(first <= last){
+            if(list[cutter] === target){
+                if(cutter === (list.length - 1) || target !== list[cutter+1]){
                     return cutter;
-                }else if(target !== this.getProjectStatus(list[cutter+1])){
-                    return cutter;
-                } else if(target === this.getProjectStatus(list[cutter+1])){
+                }
+                else if(target === list[cutter+1]){
                     return this.findEndIndex(list, cutter+1, last, target);
                 }
-            }else{
-                if(target === 'accept / reject'){
-                    if(this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
-                        this.getProjectStatus(list[cutter]) === 'cancelled'
-                    ){
-                        //awaiting confirmation, awaiting resolution and cancelled
-                        return this.findEndIndex(list, first, cutter-1, target);
-                    }
+            }
+            else{
+                if(list[cutter] > target){
+                    return this.findEndIndex(list, first, cutter-1, target);
+                }else{
                     return this.findEndIndex(list, cutter + 1, last, target);
-                }else if(target === 'awaiting payment'){
-                    if(this.getProjectStatus(list[cutter]) === 'accept / reject' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting confirmation' ||
-                        this.getProjectStatus(list[cutter]) === 'awaiting resolution' ||
-                        this.getProjectStatus(list[cutter]) === 'cancelled'){
-                        //awaiting confirmation, awaiting resolution and cancelled
-                        return this.findEndIndex(list, first, cutter - 1, target);
-                    }
-                    return this.findEndIndex(list, cutter + 1, last, target);
-                }else if (target === 'booking ongoing'){
-                    return this.findEndIndex(list, first, cutter - 1, target);
                 }
             }
-        }else if(first === last){
-            if(cutter === this.sizeOfList){
-                cutter--;
-            }
-            if(this.getProjectStatus(list[cutter]) === target){
-                return cutter;
-            }
         }
-        return -1; // status passed is not in list
+        return -1;
     }
 }

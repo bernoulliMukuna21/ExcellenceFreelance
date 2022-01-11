@@ -33,7 +33,9 @@ $(document).ready(function(){
             console.log('Client single each booking: ', singleBooking)
             if(statusHTML.innerText === 'awaiting acceptance'){
                 let payButtonHTML = bookingOptionHTLM.lastChild.firstChild
-                $(payButtonHTML).attr('disabled' , true);
+                $(payButtonHTML).prop('disabled' , 'disabled');
+                $(payButtonHTML.firstChild).prop('disabled' , 'disabled');
+                $(payButtonHTML).css('cursor' , 'not-allowed');
                 $(payButtonHTML.firstChild).css('cursor' , 'not-allowed');
                 $(payButtonHTML).css('opacity' , '50%');
             }
@@ -90,7 +92,7 @@ $(document).click(function (event) {
 
     /* Client Booking */
     let bookingDescription;
-    if(elementClicked.parentNode.className === 'booking-main-details'){
+    /*if(elementClicked.parentNode.className === 'booking-main-details'){
         bookingDescription = elementClicked.parentNode.parentNode
             .childNodes[1];
         $(bookingDescription).toggle();
@@ -105,8 +107,8 @@ $(document).click(function (event) {
         bookingDescription = elementClicked.parentNode.parentNode.
             parentNode.childNodes[1];
         $(bookingDescription).toggle();
-    }
-    else if(elementClicked.id === 'progressstatus'){
+    }*/
+    if(elementClicked.id === 'progressstatus'){
         bookingDescription = elementClicked.parentNode.parentNode.
             parentNode.parentNode.childNodes[1];
         $(bookingDescription).toggle();

@@ -5,13 +5,12 @@ var BookingModel = require('../models/BookingModel');
 var mailer = require('../bin/mailer');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
-var { bookingUpdate } = require('../bin/general-helper-functions');
 
 let domain = 'http://localhost:3000';
 //let domain = 'https://excellence-freelance.herokuapp.com';
 
 const endpointSecret = "whsec_WiGL956JT1kUPRKkucfFIPSYQXxr5WTj";
-
+// whsec_WiGL956JT1kUPRKkucfFIPSYQXxr5WTj
 let price, projectName, projectDescription, projectDueDate, serviceName;
 
 function server_io(io) {
@@ -109,10 +108,12 @@ function server_io(io) {
                 if(payload.metadata.paymentType === 'booking-checkout'){
                     let bookingID = payload.metadata.bookingID;
                     try{
-                        let bookingUpdated = await bookingUpdate(bookingID, BookingModel,
-                            {status: 'booking ongoing', paid: true});
+                        let bookingUpdated = await BookingModel.findOne({bookingID: bookingID});
+                        bookingUpdated.status.freelancer = 0; // booking ongoing
+                        bookingUpdated.status.client = 0; // booking ongoing
+                        bookingUpdated.paid = true;
                         let freelancerBooked = bookingID.split(':')[1];
-
+                        /*
                         let successPayMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking</h1>'+
                             '<p>Hello '+bookingUpdated.customer.name.split(' ')[0]+',</p><p>This is a confirmation' +
                             ' of the successful pay for your new booking ('+bookingUpdated.service+' - '
@@ -139,14 +140,14 @@ function server_io(io) {
                             '<li>Due Date: '+bookingUpdated.dueDateTime.toLocaleString()+' </li>' +
                             '<li>Description: '+bookingUpdated.projectDescription+' </li>' +
                             '</ul>'+
-                            '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';
+                            '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';*/
 
                         bookingUpdated.save(err => {
                             if(err){
                                 throw err;
                             }
 
-                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                            /*mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                                 'Client Booking Payment Successful', successPayMessageToAdminHTML), function (err) {
                                 if(err){console.log(err)}
                                 else{
@@ -165,7 +166,7 @@ function server_io(io) {
                                         }
                                     });
                                 }
-                            });
+                            });*/
 
                             io.sockets.to(freelancerBooked).emit('Successful Payment - send to Freelancer',
                                 bookingUpdated);

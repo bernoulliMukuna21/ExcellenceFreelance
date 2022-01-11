@@ -10,12 +10,14 @@ module.exports = {
 
         return output;
     },
-    bookingUpdate: async (id, Model, fieldsValues) => {
-        let bookingToUpdate =  await Model.findOne({bookingID: id});
-        for (const [key, value] of Object.entries(fieldsValues)) {
-            bookingToUpdate[key] = value;
-        }
-
-        return bookingToUpdate;
+    groupByKey: (array, key) => {
+        return array.reduce((hash, singleProject) => {
+            if(singleProject.status[key] === undefined){
+                return hash
+            };
+            return Object.assign(hash, {
+                [singleProject.status[key]]:( hash[singleProject.status[key]] || [] ).concat(singleProject)
+            })
+        }, {});
     }
 };

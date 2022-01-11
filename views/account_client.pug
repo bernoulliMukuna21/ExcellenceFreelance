@@ -48,48 +48,62 @@ block content
                                             li #{bookingDetail.supplier.name}
                                             li #{bookingDetail.dueDateTime.toLocaleString()}
                                             li
-                                                if(bookingDetail.status === 'booking ongoing')
+                                                - let clientListOfStatus = ['booking ongoing', 'pay now', 'awaiting acceptance', 'awaiting response', 'please respond', 'completed', 'thank you!', 'awaiting resolution', 'cancelled'];
+                                                if(clientListOfStatus[bookingDetail.status.client] === 'booking ongoing')
                                                     button#progressstatus(style='border: .1rem solid #A37A00; background-color: #A37A00')
                                                         | booking ongoing
-                                                if(bookingDetail.status === 'awaiting payment')
+                                                if(clientListOfStatus[bookingDetail.status.client] === 'pay now')
                                                     button#progressstatus(style='border: .1rem solid #8d2874; background-color: #8d2874')
                                                         | pay now
-                                                if(bookingDetail.status === 'awaiting acceptance')
+                                                if(clientListOfStatus[bookingDetail.status.client] === 'awaiting acceptance' || clientListOfStatus[bookingDetail.status.client] === 'awaiting response' || clientListOfStatus[bookingDetail.status.client] === 'please respond')
                                                     button#progressstatus(style='border: .1rem solid #213e53; background-color: #213e53')
                                                         | awaiting acceptance
-                                                if(bookingDetail.status === 'complete')
-                                                    if(bookingDetail.completion.status === 'awaiting confirmation')
-                                                        button#progressstatus(style='border: .1rem solid #308634; background-color: #308634')
-                                                            | confirm / reject
-                                                    if(bookingDetail.completion.status === 'confirmed')
-                                                        button#progressstatus(style='border: .1rem solid #308634; background-color: #308634')
-                                                            | confirmed
-                                                    if(bookingDetail.completion.status === 'awaiting resolution')
-                                                        button#progressstatus(style='border: .1rem solid #FF0000; background-color: #FF0000')
-                                                            | awaiting resolution
-                                                    if(bookingDetail.completion.status === 'freelancer-cancelled')
-                                                        button#progressstatus(style='border: .1rem solid #FF0000; background-color: #FF0000')
-                                                            | cancelled
-                                                    if(bookingDetail.completion.status === 'client-cancelled')
-                                                        button#progressstatus(style='border: .1rem solid #FF0000; background-color: #FF0000')
-                                                            | you cancelled
+                                                if(clientListOfStatus[bookingDetail.status.client] === 'completed' || clientListOfStatus[bookingDetail.status.client] === 'thank you!' || clientListOfStatus[bookingDetail.status.client] === 'awaiting resolution')
+                                                    button#progressstatus(style='border: .1rem solid #308634; background-color: #308634')
+                                                        | #{clientListOfStatus[bookingDetail.status.client]}
+                                                if(clientListOfStatus[bookingDetail.status.client] === 'cancelled')
+                                                    button#progressstatus(style='border: .1rem solid #FF0000; background-color: #FF0000')
+                                                        | cancelled
                                             li
                                                 i.far.fa-trash-alt
                                     .booking-description(style='display: none')
                                         .project-details
                                             div
-                                                h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
-                                                div
-                                                    h4 Description:
-                                                    p #{bookingDetail.projectDescription}
-                                                if bookingDetail.bookingType === 'request_booking'
-                                                    h4 Cost: £#{bookingDetail.requestedPrice}
-                                                else if bookingDetail.bookingType === 'instant_booking'
-                                                    h4 Cost: £#{bookingDetail.price}
+                                                if(clientListOfStatus[bookingDetail.status.client] !== 'please respond')
+                                                    h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                    div.client-booking-descrption-details
+                                                        h4 Description:
+                                                        p #{bookingDetail.projectDescription}
+                                                    if bookingDetail.bookingType === 'request_booking'
+                                                        h4 Cost: £#{bookingDetail.requestedPrice}
+                                                    else if bookingDetail.bookingType === 'instant_booking'
+                                                        h4 Cost: £#{bookingDetail.price}
+                                                else
+                                                    div.client-booking-modification-container
+                                                        .client-side-originalBooking
+                                                            div
+                                                                h4 Original Booking
+                                                            div
+                                                                h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                                div.client-booking-descrption-details
+                                                                    h4 Description:
+                                                                    p #{bookingDetail.projectDescription}
+                                                                h4 Cost: £#{bookingDetail.requestedPrice}
+                                                        .client-side-modificationBooking
+                                                            div
+                                                                h4 New Proposal
+                                                            div
+                                                                h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                                div.client-booking-descrption-details
+                                                                    h4 Description:
+                                                                    p #{bookingDetail.projectDescription}
+                                                                h4 Cost: £#{bookingDetail.requestedPrice}
                                             div
                                                 - let domain = 'http://localhost:3000';
-                                                if bookingDetail.status !== 'booking ongoing'
+                                                if clientListOfStatus[bookingDetail.status.client] !== 'booking ongoing'
                                                     a(href=`${domain}/payment/create-checkout-session/booking-checkout?bookingID=${bookingDetail.bookingID}`): button Pay
+                                                if clientListOfStatus[bookingDetail.status.client] === 'please respond'
+                                                    button.client-accept-booking-bttn Accept
                                                 button.delete-booking-bttn Delete
                                         .project-completion-options(style='display: none')
                                             - let freelanceName = bookingDetail.supplier.name

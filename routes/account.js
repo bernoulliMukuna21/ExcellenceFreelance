@@ -13,7 +13,7 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { base64ToImageSrc, imageToDisplay } = require('../bin/imageBuffer');
 var { stripeFindCustomerByEmail, stripeCustomerSubscription } = require('../bin/stripe-config');
-var { numberOfDaysSince } = require('../bin/general-helper-functions');
+var { numberOfDaysSince, groupByKey } = require('../bin/general-helper-functions');
 
 // Set Storage Engine
 //destination: './public/images/uploads',
@@ -166,7 +166,8 @@ router.get('/freelancer/:this_user', async function (req, res) {
                 res.send('An Error occurred!');
             }
 
-            console.log(allBookingToFreelancer)
+            // Group the project by statuses
+            allBookingToFreelancer = groupByKey(allBookingToFreelancer, 'freelancer');
         }
 
 

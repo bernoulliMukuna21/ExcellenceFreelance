@@ -15,7 +15,7 @@ function server_io(io) {
         socket.on('Accept project', acceptData => {
             BookingModel.findOne({bookingID: acceptData.bookingToAcceptID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.status = acceptData['status'] = 'awaiting payment';
+                    bookingDetailUpdate.status.freelancer = acceptData['status'] = 1; // 1 -> awaiting payment
                     bookingDetailUpdate.price = bookingDetailUpdate.requestedPrice;
 
                     let bookingAcceptanceMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
@@ -49,7 +49,11 @@ function server_io(io) {
                         '</ul>'+
                         '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';
 
-                    bookingDetailUpdate.save(err => {
+                    socket.emit('Accept project on Freelancer side', acceptData);
+                    socket.broadcast.to(acceptData.clientThatBooked)
+                        .emit('Accept project on Client side', acceptData);
+
+                    /*bookingDetailUpdate.save(err => {
                         if(err){
                             throw err;
                         }
@@ -80,7 +84,7 @@ function server_io(io) {
                             .emit('Accept project on Client side', {
                                 bookingToAcceptID: acceptData.bookingToAcceptID,
                                 clientThatBooked: acceptData.clientThatBooked});
-                    })
+                    })*/
 
                 }).catch(err => console.log(err));
         })
@@ -565,7 +569,11 @@ function server_io(io) {
             dueDateTime: bookingDueDateTime,
             price: bookingData.projectprice,
             requestedPrice: bookingData.projectenquiryprice,
-            status: 'awaiting acceptance'
+            status:{
+                freelancer: 2, // 2 -> 'accept / modify'
+                client: 2 // 2 -> 'awaiting acceptance'
+
+            }
         }
 
         if (bookingType === 'instant_booking'){
@@ -633,7 +641,7 @@ function server_io(io) {
                     }else if (bookingType === 'request_booking'){
                         // send booking details to freelancer and redirect to profile page
 
-                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                        /*mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
                             'New Booking Made', newBookingMessageToAdminHTML), function (err) {
                             if(err){console.log(err)}
                             else{
@@ -652,7 +660,7 @@ function server_io(io) {
                                     }
                                 });
                             }
-                        });
+                        });*/
 
                         io.sockets.to(freelancerToBook).emit('Booking Data to Freelancer', newServiceInfos);
                         res.redirect(`${domain}/account/${req.user.user_stature}/${customer}`);
@@ -665,7 +673,71 @@ function server_io(io) {
         }
     })
 
-    return router;
+    router.post('/project-modification/:bookingToModifyID', ensureAuthentication, async (req, res)=>{
+        let dataToModify = req.body;
+        let bookingID = req.params.bookingToModifyID;
+        let clientToSendModification = bookingID.split(':')[0];
+
+        BookingModel.findOne({bookingID: bookingID})
+            .then(bookingDetailUpdate => {
+                bookingDetailUpdate.status = { freelancer: 3, client: 4 }
+                console.log('booking to update: ', bookingDetailUpdate);
+
+                let newBookingModifyConversation = {
+                    newProposedDescription: dataToModify.description,
+                    newProposedPrice: dataToModify.price,
+                    newProposedDueDate: dataToModify.time
+                };
+
+                bookingDetailUpdate.bookingModificationConversation.push(newBookingModifyConversation);
+
+                let bookingModificationToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Modification</h1>'+
+                    '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',</p><p>There has been an update' +
+                    ' on the following booking ('+ bookingDetailUpdate.service+' - ' +bookingDetailUpdate.projectName
+                    +'). Please' + '<a target="_blank" style="text-decoration: underline; color: #0645AD;' +
+                    ' cursor: pointer" href="http://localhost:3000/users/login"> login </a> to your account to accept or ' +
+                    'reject this new proposal by '+bookingDetailUpdate.supplier.name+
+                    '. Please note your booking ID (booking ID: '+ bookingDetailUpdate._id +'). </p>'+'<p>Thank you,<br>The NxtDue Team' +
+                    '<br>07448804768</p>';
+
+                let bookingModificationToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Modification</h1>'+
+                    '<p>Hello '+bookingDetailUpdate.supplier.name.split(' ')[0]+',</p><p> This is an update that your booking modification' +
+                    ' has successfully been sent to the client. The booking ID is: '+ bookingDetailUpdate._id +' .' +
+                    ' Once there has been a response, we will inform you or you can <a target="_blank" style="text-decoration: underline;' +
+                    ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                    ' into your account regularly to check for updates.</p>'+
+                    '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+
+                res.status(200).send(bookingDetailUpdate);
+                io.sockets.to(clientToSendModification).emit('Booking Modification to Client', bookingDetailUpdate);
+                /*bookingDetailUpdate.save(err => {
+                    if(err){
+                        throw err;
+                    }
+                    console.log('New Booking Conversation saved!');
+                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                        'Booking Modification', bookingModificationToClientHTML), function (err) {
+                        if(err){console.log(err)}
+                        else{
+                            console.log('Freelancer booking Modification has been sent to client');
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                'Booking Modification', bookingModificationToFreelancerHTML), function (err) {
+                                if(err){console.log(err)}
+                                else{console.log('Freelancer booking Modification has been sent to Freelancer');}
+                            });
+                        }
+                    });
+
+                    res.status(200).send(bookingDetailUpdate);
+                })*/
+            })
+            .catch(err=>{
+                res.status(404).send('error occured')
+            });
+    })
+
+
+        return router;
 }
 
 module.exports = {router, server_io};
