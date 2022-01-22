@@ -1,3 +1,8 @@
+$(document).ready(function(){
+    if( $('.bottom-side').is(':empty') ){
+        $('.middle-side').css('border-bottom', 'none');
+    }
+})
 function scrollToFreelancers(){
     $('html, body').animate({
         scrollTop: $('.index-page-three').offset().top

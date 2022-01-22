@@ -48,22 +48,11 @@ block content
                 p #{service_price.service}
                 p #{'£'+service_price.price}
         .bottom-side
-          if(!isLogged)
+          if(loggedInUser.user_stature !== 'freelancer')
             button Instant Book
             button Request
-          else if loggedInUser.user_stature === 'client'
-            button Instant Book
-            button Request
-          else
-            button(style='disabled: disabled; opacity: 50%; cursor: not-allowed' disabled='disabled') Instant Book
-            button(style='disabled: disabled; opacity: 50%; cursor: not-allowed' disabled='disabled') Request
-
-
 
         input(type='hidden', value=emailEncode(freelancer.email))
 
     include ./partials/booking_form
   include ./partials/footer
-
-  //
-              a(href='/account/freelancer/'+emailEncode(freelancer.email)): button View Profile

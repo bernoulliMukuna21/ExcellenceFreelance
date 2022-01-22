@@ -300,4 +300,47 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
     }
 });
 
+// Profile Switch
+/*** Freelancer -> Client ***/
+router.get('/switch/client/:user_email', ensureAuthentication, async function (req, res) {
+    UserModel.findOne({email:emailDecode(req.params.user_email)})
+        .then( user => {
+            user.user_stature = 'client';
+            user.save(err => {
+                if(err){
+                    throw err;
+                }
+                res.redirect('/');
+
+            })
+        })
+        .catch( err => {
+            if( err ){
+                throw err;
+            }
+        })
+})
+
+/*** Client -> Freelancer ***/
+router.get('/switch/freelancer/:user_email', ensureAuthentication, async function (req, res) {
+    let userUUID = req.params.user_email;
+    UserModel.findOne({email:emailDecode(userUUID)})
+        .then( user => {
+            user.user_stature = 'freelancer';
+            user.save(err => {
+                if(err){
+                    throw err;
+                }
+                res.redirect(`/account/freelancer/${userUUID}`);
+            })
+
+        })
+        .catch( err => {
+            if( err ){
+                throw err;
+            }
+        })
+})
+
+
 module.exports = router;

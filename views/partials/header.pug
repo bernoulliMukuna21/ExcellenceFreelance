@@ -7,14 +7,12 @@ header
                 a(href='/users/login'): button(class='nav-btn') Login
             else
                 if(loggedInUser.user_stature === 'client')
-                    //
-                        a(href='/account/switch/'+emailEncode(loggedInUser.email))
-                            button(class='nav-btn', id='be-freelancer') Be a Freelancer
+                    a(href='/account/switch/freelancer/'+emailEncode(loggedInUser.email))
+                        button(class='nav-btn', id='be-freelancer') Switch to Freelancer
                     a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                 else if(loggedInUser.user_stature === 'freelancer')
-                    //
-                        a(href='/account/switch/' + emailEncode(loggedInUser.email))
-                            button(class='nav-btn', id='be-freelancer') Switch to Client
+                    a(href='/account/switch/client/' + emailEncode(loggedInUser.email))
+                        button(class='nav-btn', id='be-freelancer') Switch to Client
                     a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
 
                 a(href='/'): button(class='nav-btn') Home
