@@ -592,7 +592,6 @@ $(document).on('click', '#booking-modificationAcceptance-submit-bttn', function(
 
 // Modify Booking
 const formatAMPM = (time) => {
-    console.log('time: ', time)
     time = time.split(':')
     let hours = time[0];
     let minutes = time[1];
@@ -600,7 +599,6 @@ const formatAMPM = (time) => {
     hours = hours % 12;
     hours = hours ? hours : 12;
     hours = hours>=10 ? hours : '0'+hours;
-    console.log('minutes: ', minutes)
     minutes = minutes.toString().padStart(2, '0');
 
     return [`${hours}`, minutes, ampm];
@@ -647,21 +645,36 @@ $(document).on('click', '.freelancer-booking-finish-button', function(event) {
     projectCompletionShow(event);
 })
 
-$(document).on('click', '.freelancer-booking-delete-button', function(event) {
+$(document).on('click', '#freelancer-booking-delete-button', function(event) {
+    console.log(event.target)
+    if(event.target.className === 'far fa-trash-alt'){
+        console.log('Inside class name section')
+        let trashIconContainer = event.target.parentNode;
+        let projectStatus = trashIconContainer.previousSibling.innerText;
+        console.log(projectStatus)
 
-    let projectDetails = event.target.parentNode.parentNode;
-    let projectTop = projectDetails.previousSibling;
-    let projectStatus = projectTop.childNodes[3];
-    let projectToCancelID = projectDetails.nextSibling.value;
-    let clientThatBooked = projectToCancelID.split(':')[0];
-
-    if(projectStatus.innerText === 'booking ongoing'){
-        projectCompletionShow(event)
+        if(projectStatus === 'paid' || projectStatus === 'cancelled'){
+           let deleteBttn = trashIconContainer.parentNode.nextSibling
+               .childNodes[1].lastChild;
+            console.log('Trigger delete bttn: ', deleteBttn);
+           $(deleteBttn).trigger("click");
+        }
     }else{
-        console.log('Please go ahead and delete project');
-        socketConnection.socket.emit('Delete project - Freelancer Request',
-            {projectToCancelID, clientThatBooked, status: projectStatus});
+        let projectDetails = event.target.parentNode.parentNode;
+        let projectTop = projectDetails.previousSibling;
+        let projectStatus = projectTop.childNodes[3];
+        let projectToCancelID = projectDetails.nextSibling.value;
+        let clientThatBooked = projectToCancelID.split(':')[0];
+
+        if(projectStatus.innerText === 'booking ongoing'){
+            projectCompletionShow(event)
+        }else{
+            console.log('Please go ahead and delete project');
+            socketConnection.socket.emit('Delete project - Freelancer Request',
+                {projectToCancelID, clientThatBooked, status: projectStatus});
+        }
     }
+
 })
 
 function projectCompletionShow(event, data) {
@@ -685,7 +698,7 @@ function projectCompletionShow(event, data) {
         $(bookingCompletionHTML.childNodes[1]).hide();
         $(bookingCompletionHTML.childNodes[2]).hide();
         $(bookingCompletionHTML.childNodes[3]).hide();
-    }else if(buttonHTML.className === 'freelancer-booking-delete-button'){
+    }else if(buttonHTML.id === 'freelancer-booking-delete-button'){
         $(bookingCompletionHTML.childNodes[0]).hide();
         $(bookingCompletionHTML.childNodes[1]).show();
         $(bookingCompletionHTML.childNodes[2]).hide();
@@ -752,6 +765,7 @@ $(document).on('click', '.project-cancellation-cancel', function(event) {
 
 // Continue with the process
 $(document).on('click', '.project-finish-continue', function(event) {
+    console.log('Button confirmation clicked!')
     let bookingFinishID = event.target.parentNode.parentNode.
         parentNode.lastChild.value;
     socketConnection.socket.emit('Project Completion Finish',
@@ -759,9 +773,10 @@ $(document).on('click', '.project-finish-continue', function(event) {
 })
 
 $(document).on('click', '.project-cancellation-continue', function(event) {
-    let bookingModaldeletion = event.target.parentNode.parentNode;
-    let deletionReason = bookingModaldeletion.firstChild.lastChild.firstChild.value;
-    let projectToCancelID = bookingModaldeletion.nextSibling.value;
+    let cancellationFormContainer = event.target.parentNode.parentNode
+    let bookingModaldeletion = cancellationFormContainer.parentNode;
+    let deletionReason = cancellationFormContainer.childNodes[0].childNodes[1].childNodes[0].value;
+    let projectToCancelID = bookingModaldeletion.childNodes[4].value;
     let clientThatBooked = projectToCancelID.split(':')[0];
     let minimumLength = 1; //100;
 

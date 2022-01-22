@@ -28,6 +28,10 @@ export default class BookingInsertionIndex {
         projectContainerHTML.firstChild.childNodes[3].innerText = newStatus;
     }
 
+    updateProjectDueDate(projectContainerHTML, newDueDate){
+        projectContainerHTML.childNodes[0].childNodes[2].innerText = newDueDate;
+    }
+
     getProjectDueTime(projectContainerHTML) {
         /* This method returns the due time
         * of the project.
@@ -77,10 +81,10 @@ export default class BookingInsertionIndex {
         if (status === 'please respond') {
             return 4;
         }
-        if (status === 'completed') {
+        if (status === 'awaiting confirmation') {
             return 5;
         }
-        if (status === 'processing payout...') {
+        if (status === 'confirmed, well done!') {
             return 6;
         }
         if (status === 'awaiting resolution') {
@@ -131,7 +135,7 @@ export default class BookingInsertionIndex {
             status as the new project. The bext step becomes to be find the current
              index to insert it, based on the order the projects are expected to
              appear*/
-
+            console.log(this.statusToInteger(status))
             insertIndex = this.correctInsertionIndex(listOfProjectsStatusesIndexes,
                 this.statusToInteger(status));
         }else{
