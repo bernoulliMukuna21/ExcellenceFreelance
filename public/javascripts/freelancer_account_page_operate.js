@@ -523,8 +523,7 @@ $('.update-general-information').submit(function (event) {
                     '.account-third-side');
             }
 
-            accountsOperation.pageDispalyStyle(freelancersectionNames[0],
-                freelancersectionNames, freelancerProfileSections);
+            $('.user-main-page').trigger('click');
 
             let successMessages = [[{label: 'successMessage',
                 message: 'Profile successfully saved!'}]];
