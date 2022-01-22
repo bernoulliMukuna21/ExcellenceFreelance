@@ -69,14 +69,6 @@ $(document).ready(function(){
                 $(bookingDescription.childNodes[1].childNodes[1]).show();
                 $(bookingDescription.childNodes[1].childNodes[2]).hide();
             }
-            if(statusHTML.innerText === 'you cancelled'){
-                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
-                $(bookingDescription.childNodes[0]).hide();
-                $(bookingDescription.childNodes[1]).show();
-                $(bookingDescription.childNodes[1].childNodes[0]).hide();
-                $(bookingDescription.childNodes[1].childNodes[1]).hide();
-                $(bookingDescription.childNodes[1].childNodes[2]).show();
-            }
         })
     }
 })
@@ -91,7 +83,7 @@ $(document).click(function (event) {
 
     /* Client Booking */
     let bookingDescription;
-    /*if(elementClicked.parentNode.className === 'booking-main-details'){
+    if(elementClicked.parentNode.className === 'booking-main-details'){
         bookingDescription = elementClicked.parentNode.parentNode
             .childNodes[1];
         $(bookingDescription).toggle();
@@ -106,7 +98,7 @@ $(document).click(function (event) {
         bookingDescription = elementClicked.parentNode.parentNode.
             parentNode.childNodes[1];
         $(bookingDescription).toggle();
-    }*/
+    }
     if(elementClicked.id === 'progressstatus'){
         bookingDescription = elementClicked.parentNode.parentNode.
             parentNode.parentNode.childNodes[1];
