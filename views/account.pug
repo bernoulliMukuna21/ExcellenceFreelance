@@ -219,6 +219,15 @@ block content
                                                             placeholder='Enter Price (e.g. 8.90, 134)')
                                                         button#servicePriceBttn: i.fas.fa-plus-square
                                             .saved-serviceAndPrice
+                                                each serviceAndPrice in freelancerUser.serviceAndPrice
+                                                    .single-serviceAndPrice
+                                                        .show-serviceAndPrice
+                                                            h4 #{serviceAndPrice.service}
+                                                            h4 £#{serviceAndPrice.price}
+                                                            button.delete-aServiceAndPrice-btn x
+                                                        .hide-serviceAndPrice(style='display: none')
+                                                            input(type='text', name='service', value=serviceAndPrice.service, readonly=true)
+                                                            input(type='text', name='price', value=serviceAndPrice.price, readonly=true)
 
                                         .user-bio-details
                                             h3 Description and Other Necessary Information

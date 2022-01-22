@@ -321,6 +321,8 @@ $('#client-profile-update-form').submit(function (event) {
             // display the updated names of te client
             accountsOperation.showNames(data.name, data.surname,
                 '.client-profile-name');
+
+            $('.client-profile-information ul li:first-child').trigger('click');
         },
         error: function (error) {
             let errors = error.responseJSON;

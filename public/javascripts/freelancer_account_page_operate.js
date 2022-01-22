@@ -527,7 +527,7 @@ $('.update-general-information').submit(function (event) {
             accountsOperation.ajaxFormMessage_generator(successMessages,
                 '.freelancer-update-infos');
             $("html, body").animate({ scrollTop: 0 }, "slow");
-            $('.single-update-container').delay(5000).hide(1000);
+            $('.single-update-container').delay(2000).hide(500);
         },
         error: function (error) {
             let errors = error.responseJSON;

@@ -52,7 +52,7 @@ header ul{
   margin-left: 1rem;
   cursor: pointer;
   border: none;
-  border: 0.1rem solid #213e53;
+  border-bottom: 0.1rem solid #213e53;
   background-color: white;
   color: #213e53;
   min-width: 10rem;
