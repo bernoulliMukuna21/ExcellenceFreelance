@@ -113,6 +113,7 @@
     border-radius: .5rem;
     padding: 1rem 0;
     cursor: pointer;
+    min-width: 12rem;
 }
 .book-btn{
     background-color: #4CAF50;

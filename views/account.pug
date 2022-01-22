@@ -36,7 +36,8 @@ block content
                     if (isLogged && (freelancerUser.email !== loggedInUser.email))
                         div.public-service-enquiry
                             - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
-                            button(class='book-btn') Instant Book
+                            if loggedInUser.user_stature === 'client'
+                                button(class='book-btn') Instant Book
                             a(id='freelance-mssg-btn')
                                 p Message
                                 i.far.fa-envelope
