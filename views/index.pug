@@ -45,9 +45,13 @@ block content
                 p #{service_price.service}
                 p #{'£'+service_price.price}
         .bottom-side
-          if(loggedInUser.user_stature !== 'freelancer')
+          if (!isLogged)
             button Instant Book
             button Request
+          else
+            if(loggedInUser.user_stature === 'client')
+              button Instant Book
+              button Request
 
         input(type='hidden', value=emailEncode(freelancer.email))
 
