@@ -468,9 +468,14 @@ $('.update-general-information').submit(function (event) {
             * children under the section that the service can
             * be hidden to show the updated services.
             */
-            $('.freelancer-services').children().hide();
-            accountsOperation.showServicesAndPrices(data.serviceAndPrice,
-                '.freelancer-services');
+            let freelancerServicesAndPrices = data.serviceAndPrice;
+            if ( freelancerServicesAndPrices.length > 0 ){
+                $('.freelancer-services').children().hide();
+                accountsOperation.showServicesAndPrices(freelancerServicesAndPrices,
+                    '.freelancer-services');
+
+                $('.freelancer-emptySericeAndPricesMessage').hide();
+            }
 
             /*
             * On the other hand, it is possible to have empty skills.

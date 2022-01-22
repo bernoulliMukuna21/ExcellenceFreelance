@@ -9,6 +9,12 @@ block content
 
     .freelancer-page-main-container
         .freelancer-update-infos
+        if (isLogged && (freelancerUser.email === loggedInUser.email) && loggedInUser.serviceAndPrice.length < 1)
+            .freelancer-emptySericeAndPricesMessage
+                i.fas.fa-exclamation-circle
+                p Profile#{' '}
+                    span(style='text-decoration: underline; font-weight: bold') Not
+                    | #{' '}available for bookings. Please add service(s) and price(s) to become visible
         div.main-account-page
             .freelancer_account_left_side
                 .account-profile-details
