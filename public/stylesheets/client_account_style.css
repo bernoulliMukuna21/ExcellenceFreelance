@@ -144,13 +144,16 @@ input:focus{
     text-align: justify;
     font-size: 1.3rem;
 }
-.project-details div:first-child{
-    margin: 1rem 0 3rem 0;
+.project-details>div:first-child{
+    margin-bottom: 3rem;
 }
-.project-details div:first-child div{
-    margin: 1.5rem 0;
+.project-details>div:first-child>h4:first-child{
+    margin-top: .5rem;
 }
-.project-details div:last-child,
+.client-booking-descrption-details{
+    margin: 1rem 0;
+}
+.project-details>div:last-child,
 .project-finish-update-options{
     display: flex;
     justify-content: center;
@@ -166,18 +169,6 @@ input:focus{
     border-radius: .5rem;
     cursor: pointer;
 }
-.project-details div:last-child a{
-    border-radius: .5rem;
-    margin: 0 1rem;
-}
-.project-details div:last-child a button{
-    margin: 0;
-}
-
-.project-details div:last-child>button,
-.project-finish-update-options button:last-child{
-    background-color: #bf3524;
-}
 .project-details div:last-child button:hover,
 .project-finish-update-options button:first-child:hover{
     background-color: #29722d;
@@ -185,6 +176,60 @@ input:focus{
 .project-details div:last-child>button:hover,
 .project-finish-update-options button:last-child:hover{
     background-color: #ad3122;
+}
+.project-details div:last-child a{
+    border-radius: .5rem;
+    margin: 0 1rem;
+}
+.project-details div:last-child a button{
+    margin: 0;
+}
+.project-details #booking-side-message-bttn{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 12rem;
+    color: white;
+    background-color: #213e53;
+    cursor: pointer;
+}
+.project-details #booking-side-message-bttn:hover{
+    background-color: #0d3349;
+}
+
+.project-details div:last-child>button,
+.project-finish-update-options button:last-child{
+    background-color: #bf3524;
+}
+.project-details div:last-child button.client-accept-booking-bttn{
+    background-color: #308634;
+}
+.project-details div:last-child button.client-accept-booking-bttn:hover{
+    background-color: #29722d;
+}
+
+.client-booking-modification-container{
+    display: flex;
+}
+.client-side-modificationBooking{
+    color: #8d2874;
+}
+
+.client-side-originalBooking, .client-side-modificationBooking{
+    width: 100%;
+}
+.client-side-originalBooking{
+    border-right: .1rem solid black;
+}
+.client-side-modificationBooking{
+    border-left: .1rem solid black;
+}
+.client-side-originalBooking>div:first-child, .client-side-modificationBooking>div:first-child{
+    border-bottom: .1rem solid black;
+    text-align: center;
+}
+.client-side-originalBooking>div:nth-child(2), .client-side-modificationBooking>div:nth-child(2){
+    padding: 1rem;
 }
 
 .project-finish-update-options button{
@@ -287,6 +332,69 @@ input:focus{
 .client-booking-completion-rejection p span:last-child{
     font-style: italic;
     font-weight: bolder;
+}
+.client-booking-modification-acceptance{
+    max-width: 70rem;
+}
+.client-booking-modification-acceptance div section,
+.client-booking-modification-acceptance div p{
+    text-align: left;
+}
+.client-booking-modification-acceptance h4{
+    text-align: center;
+    font-size: 1.5rem;
+    text-decoration: underline;
+    margin-bottom: 1rem;
+}
+.client-booking-modification-acceptance>span{
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: red;
+}
+.client-booking-modification-acceptance section label{
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+.client-booking-modification-acceptance section:nth-child(4){
+    margin-top: 3rem;
+    text-align: center;
+}
+.client-booking-modification-acceptance section:nth-child(4) button,
+.client-ongoingBooking-deletion-message button{
+    border: none;
+    padding: 1rem 0;
+    margin: 0 1rem;
+    width: 12rem;
+    background-color: #308634;
+    color: white;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+.client-booking-modification-acceptance section:nth-child(4) button:hover,
+.client-ongoingBooking-deletion-message button:hover{
+    background-color:  #29722d;
+}
+
+.client-booking-modification-acceptance section:nth-child(4) button#client-booking-modificationReject,
+#client-ongoingBooking-cancel{
+    background-color: #FF0000;
+}
+.client-booking-modification-acceptance section:nth-child(4) button#client-booking-modificationReject:hover,
+#client-ongoingBooking-cancel{
+    background-color:  #bf3524;
+}
+.client-ongoingBooking-deletion-message{
+    text-align: center;
+    max-width: 50rem;
+}
+
+.client-ongoingBooking-deletion-message i.fas.fa-exclamation-circle{
+    font-size: 4rem;
+    color: #EED202;
+    font-weight: bolder;
+}
+.client-ongoingBooking-deletion-message section>p{
+    margin: 2rem 0 5rem 0;
 }
 /*
 * Client Profile Update

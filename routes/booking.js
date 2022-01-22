@@ -16,7 +16,8 @@ function server_io(io) {
         socket.on('Accept project', acceptData => {
             BookingModel.findOne({bookingID: acceptData.bookingToAcceptID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.status = acceptData['status'] = 'awaiting payment';
+                    bookingDetailUpdate.status.freelancer = bookingDetailUpdate.status.client =
+                        acceptData['status'] = 1; // 1 -> awaiting payment
                     bookingDetailUpdate.price = bookingDetailUpdate.requestedPrice;
 
                     let bookingAcceptanceMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
@@ -75,24 +76,121 @@ function server_io(io) {
                             }
                         });
 
-                        socket.emit('Accept project on Freelancer side', acceptData);
+                        socket.emit('Accept project on Freelancer side', acceptData)
+
+                        if(acceptData.fromStatus === 'awaiting response'){
+                            bookingDetailUpdate = {bookingDetailUpdate, fromStatus: 'please respond'}
+                        }else if(!acceptData.fromStatus){
+                            bookingDetailUpdate = {bookingDetailUpdate}
+                        }
+
                         socket.broadcast.to(acceptData.clientThatBooked)
-                            .emit('Accept project on Client side', {
-                                bookingToAcceptID: acceptData.bookingToAcceptID,
-                                clientThatBooked: acceptData.clientThatBooked});
+                            .emit('Accept project on Client side', bookingDetailUpdate);
                     })
 
                 }).catch(err => console.log(err));
+        })
+        socket.on('Booking Acceptance - Client', bookingModified_AcceptedData => {
+            console.log('Client accepted changes proposed by freelancer: ');
+
+            bookingModified_AcceptedData = bookingModified_AcceptedData.bookingModificationData;
+            let freelancerToSend = bookingModified_AcceptedData.bookingToAcceptID.split(':')[1];
+
+            BookingModel.findOne({bookingID: bookingModified_AcceptedData.bookingToAcceptID})
+                .then(bookingDetailUpdate => {
+                    // Take the original booking and add at the top of
+                    // all of the bookings conversation
+                    let initialBookingInformation = {
+                        newProposedDescription: bookingDetailUpdate.projectDescription,
+                        newProposedPrice: bookingDetailUpdate.price,
+                        newProposedDueDate: bookingDetailUpdate.dueDateTime
+                    };
+                    bookingDetailUpdate.bookingModificationConversation.unshift(initialBookingInformation);
+
+                    // Update the original to the agreed booking details
+                    bookingDetailUpdate.status = {
+                        freelancer: 1, // awaiting payment
+                        client: 1 // pay now
+                    };
+                    bookingModified_AcceptedData['status'] = 1;
+                    bookingDetailUpdate.projectDescription = bookingModified_AcceptedData.acceptDescription;
+                    bookingDetailUpdate.dueDateTime = bookingModified_AcceptedData.acceptDueDate;
+                    bookingDetailUpdate.price = bookingModified_AcceptedData.acceptPrice.slice(1);
+
+                    let bookingAcceptanceMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
+                        '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',</p><p> There has been an update ' +
+                        'your booking ('+bookingDetailUpdate.service+' - ' +bookingDetailUpdate.projectName+'). I am pleased to announce that '+
+                        ' you have accepted the modification terms made by ' + bookingDetailUpdate.supplier.name +
+                        ' . Please <a target="_blank" style="text-decoration: underline; color: #0645AD; cursor: pointer" ' +
+                        'href="http://localhost:3000/users/login"> login </a> to your account to make the payment</p>'+
+                        '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+
+                    let bookingAcceptanceMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
+                        '<p>Hello '+bookingDetailUpdate.supplier.name.split(' ')[0]+',</p><p> I am pleased to let you know that ' +
+                         bookingDetailUpdate.customer.name + ' has accepted the modification proposed for the following booking ('+
+                        bookingDetailUpdate.service+' - ' +bookingDetailUpdate.projectName +').' +
+                        ' It is advised to wait for the payment to be made before starting the work as the client can still cancel.' +
+                        ' Once the client has paid, you will be informed to begin the work. So, please check your inbox and' +
+                        ' <a target="_blank" style="text-decoration: underline;' +
+                        ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                        ' regularly to your account for updates.</p>'+
+                        '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+
+                    let bookingAcceptanceMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Accepted</h1>'+
+                        '<p>Hello,</p>'+'<p> The following booking has been accpeted by the freelancer: </p>'+
+                        '<ul style="list-style-type:none;">' +
+                        `<li>Project ID: ${bookingDetailUpdate._id}</li>`+
+                        '<li>Project Name: '+bookingDetailUpdate.service+' - '+bookingDetailUpdate.projectName+' </li>' +
+                        '<li>Client Name: '+bookingDetailUpdate.customer.name+' </li>' +
+                        '<li>Freelancer Name: '+bookingDetailUpdate.supplier.name+' </li>' +
+                        '<li>Creation Date: '+bookingDetailUpdate.creationDate.toLocaleString()+' </li>' +
+                        '<li>Due Date: '+bookingDetailUpdate.dueDateTime.toLocaleString()+' </li>' +
+                        '<li>Description: '+bookingDetailUpdate.projectDescription+' </li>' +
+                        '</ul>'+
+                        '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';
+
+                    bookingDetailUpdate.save(err => {
+                        if(err){
+                            throw err;
+                        }
+
+                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                            'Client Booking Acceptance', bookingAcceptanceMessageToAdminHTML), function (err) {
+                            if(err){console.log(err)}
+                            else{
+                                console.log('Client booking acceptance Message has been sent to Admin')
+                                // emailDecode(bookingDetailUpdate.customer.uuid)
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                    'Booking Accepted', bookingAcceptanceMessageToFreelancerHTML), function (err) {
+                                    if(err){console.log(err)}
+                                    else{
+                                        console.log('Client booking acceptance Message has been sent to Freelancer');
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                            "You've accepted a booking", bookingAcceptanceMessageToClientHTML), function (err) {
+                                            if(err){console.log(err)}
+                                            else{console.log('Client booking acceptance Message has been sent to Client')}
+                                        });
+                                    }
+                                });
+                            }
+                        });
+
+                        socket.emit('Accept modified booking on Client side', bookingDetailUpdate);
+                        socket.broadcast.to(freelancerToSend)
+                            .emit('Accept modified booking on Freelancer side', bookingDetailUpdate);
+
+                    })
+                })
+                .catch(err => console.log(err))
         })
 
         socket.on('Project Completion Finish', finishData => {
             // UpdateDB, Send Email to both Clent and Freelancer and live update
             // on client side
-
             BookingModel.findOne({bookingID: finishData.bookingFinishID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.status = 'complete';
-                    bookingDetailUpdate.completion.status = 'awaiting confirmation';
+                    bookingDetailUpdate.status.freelancer = bookingDetailUpdate.status.client = 5;
+                    bookingDetailUpdate.completionDate = Date.now();
 
                     let completionRequestMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Completed</h1>'+
                         '<p>Hello '+ bookingDetailUpdate.supplier.name.split(' ')[0] +',</p>'+'<p> Congratulations on your successful' +
@@ -116,7 +214,6 @@ function server_io(io) {
                         'login'+ '</a> to your account to update us on this information.</p>'+
                         '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
 
-
                     bookingDetailUpdate.save(err => {
                         if(err){
                             throw err;
@@ -137,9 +234,9 @@ function server_io(io) {
                             }
                         });
 
-                        socket.emit('Booking Completion - Request to Freelancer', finishData);
+                        socket.emit('Booking Completion - Request to Freelancer', bookingDetailUpdate);
                         socket.broadcast.to(bookingDetailUpdate.customer.uuid)
-                            .emit('Booking Completion - Request to Client', finishData);
+                            .emit('Booking Completion - Request to Client', bookingDetailUpdate);
                     })
 
                 }).catch(err => console.log(err));
@@ -149,7 +246,7 @@ function server_io(io) {
         socket.on('Completion Confirmed', completionData => {
             BookingModel.findOne({bookingID: completionData.bookingCompletionConfirmedID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.completion.status = 'confirmed';
+                    bookingDetailUpdate.status = { freelancer: 6 , client: 6 };
 
                     let payoutSum = (bookingDetailUpdate.price - ((5/ 100) * bookingDetailUpdate.price)).toFixed(2);
                     let confirmationMessagetoAdminHTML = '<p>Hello,</p>'+'<p>We have a confirmation'+
@@ -215,7 +312,7 @@ function server_io(io) {
         socket.on('Completion Conflict', completionData => {
             BookingModel.findOne({bookingID: completionData.bookingCompletionConflictID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.completion.status = 'awaiting resolution';
+                    bookingDetailUpdate.status = { freelancer: 7, client:7 };
 
                     let payoutSum = (bookingDetailUpdate.price - ((5/ 100) * bookingDetailUpdate.price)).toFixed(2);
                     let conflictMessagetoAdminHTML = '<p>Hello,</p>'+'<p>The following booking is <b> awaiting resolution</b> (Please'+
@@ -276,26 +373,27 @@ function server_io(io) {
 
                         socket.emit('Booking Completion Conflict - to Client', completionData);
                         socket.broadcast.to(bookingDetailUpdate.supplier.uuid)
-                            .emit('Booking Completion Conflict - to Freelancer', completionData);
+                            .emit('Booking Completion Conflict - to Freelancer', bookingDetailUpdate);
 
                     })
                 }).catch(err => console.log(err));
         })
 
         socket.on('Delete project - Freelancer Request', deleteData => {
+
             BookingModel.findOneAndDelete({bookingID: deleteData.projectToCancelID})
                 .then(bookingDetailUpdate =>{
 
                     let deleteMessagetoClientHTML = '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',' +
                         '</p><p> Unfortunately, '+bookingDetailUpdate.supplier.name+' has' +
                         ' decided to cancel the booking ('+bookingDetailUpdate.service+' - '+bookingDetailUpdate.projectName+')' +
-                        '. We are sorry for any inconveniences this might have caused.</p><p>' +
+                        '. If the work was alreayd completed, please ignore this message.Otherwise, we are sorry for any inconveniences this might have caused.</p><p>' +
                         ' Booking ID: '+ bookingDetailUpdate._id +'</p><p>Thank you,<br>The NxtDue Team<br>07448804768</p>';
 
                     let deleteMessagetoFreelancerHTML = '<p>Hello '+bookingDetailUpdate.supplier.name.split(' ')[0]+',' +
                         '</p><p> The project has successfully been deleted.' +
                         ' We are sorry that you decided to cancel the booking; please do contact us for any information that' +
-                        ' might have led to you deleting the booking.</p><p>' +
+                        ' might have led to you deleting the booking. If this work was already completed, please ignore the message</p><p>' +
                         ' Booking ID: '+ bookingDetailUpdate._id +'</p><p>Thank you,<br>The NxtDue Team<br>07448804768</p>';
 
                     let deleteMessagetoAdminHTML = '<p>Hello,</p>'+'<p>The following booking has been deleted (it was not ongoing): </p>'+
@@ -343,9 +441,8 @@ function server_io(io) {
         socket.on('Ongoing Project Cancel - Freelancer', cancelData => {
             BookingModel.findOne({bookingID: cancelData.projectToCancelID})
                 .then(bookingDetailUpdate =>{
-                    bookingDetailUpdate.status = 'complete';
-                    bookingDetailUpdate.completion.status = 'freelancer-cancelled';
-                    bookingDetailUpdate.completion.deletionReason = cancelData.deletionReason;
+                    bookingDetailUpdate.status = { freelancer: 9, client: 8 }
+                    bookingDetailUpdate.deletionReason = cancelData.deletionReason;
 
                     let cancelMessagetoClientHTML = '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',' +
                         '</p><p>Unfortunately, '+bookingDetailUpdate.supplier.name+' has' +
@@ -407,9 +504,9 @@ function server_io(io) {
                             }
                         });
 
-                        socket.emit('Ongoing Project Cancel on Freelancer side', cancelData);
+                        socket.emit('Ongoing Project Cancel on Freelancer side', bookingDetailUpdate);
                         socket.broadcast.to(cancelData.clientThatBooked)
-                            .emit('Ongoing Project Cancel on Client side', cancelData);
+                            .emit('Ongoing Project Cancel on Client side', bookingDetailUpdate);
                     })
                 }).catch(err => console.log(err));
         })
@@ -417,8 +514,7 @@ function server_io(io) {
         socket.on('Booking ongoing Delete - Client Request', cancelData => {
             BookingModel.findOne({bookingID: cancelData.bookingToDeleteID})
                 .then(bookingDetailUpdate=>{
-                    bookingDetailUpdate.status = 'complete';
-                    bookingDetailUpdate.completion.status = 'client-cancelled';
+                    bookingDetailUpdate.status = { freelancer: 9, client: 8 };
 
                     let cancelMessagetoClientHTML = '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',' +
                         '</p><p> The project has successfully been cancelled. Since it was "booking ongoing", the NxtDue Admnistartion' +
@@ -447,7 +543,6 @@ function server_io(io) {
                         '<li>Description: '+bookingDetailUpdate.projectDescription+' </li>' +
                         '</ul>'+
                         '</p><p>Thank you,<br>The NxtDue Team<br>07448804768</p>';
-
 
                     bookingDetailUpdate.save(err => {
                         if(err){
@@ -479,10 +574,8 @@ function server_io(io) {
 
                         socket.emit('Booking ongoing Cancel on Client side', cancelData);
                         socket.broadcast.to(cancelData.freelancerBooked)
-                            .emit('Booking ongoing Cancel on Freelancer side', cancelData);
-
+                            .emit('Booking ongoing Cancel on Freelancer side', bookingDetailUpdate);
                     })
-
                 }).catch(err=> console.log(err))
         })
 
@@ -579,7 +672,11 @@ function server_io(io) {
             dueDateTime: bookingDueDateTime,
             price: bookingData.projectprice,
             requestedPrice: bookingData.projectenquiryprice,
-            status: 'awaiting acceptance'
+            status:{
+                freelancer: 2, // 2 -> 'accept / modify'
+                client: 2 // 2 -> 'awaiting acceptance'
+
+            }
         }
 
         if (bookingType === 'instant_booking'){
@@ -679,7 +776,70 @@ function server_io(io) {
         }
     })
 
-    return router;
+    router.post('/project-modification/:bookingToModifyID', ensureAuthentication, async (req, res)=>{
+        let dataToModify = req.body;
+        let bookingID = req.params.bookingToModifyID;
+        let clientToSendModification = bookingID.split(':')[0];
+
+        BookingModel.findOne({bookingID: bookingID})
+            .then(bookingDetailUpdate => {
+                bookingDetailUpdate.status = { freelancer: 3, client: 4 }
+                console.log('booking to update: ', bookingDetailUpdate);
+
+                let newBookingModifyConversation = {
+                    newProposedDescription: dataToModify.description,
+                    newProposedPrice: dataToModify.price,
+                    newProposedDueDate: dataToModify.time
+                };
+
+                bookingDetailUpdate.bookingModificationConversation.push(newBookingModifyConversation);
+
+                let bookingModificationToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Modification</h1>'+
+                    '<p>Hello '+bookingDetailUpdate.customer.name.split(' ')[0]+',</p><p>There has been an update' +
+                    ' on the following booking ('+ bookingDetailUpdate.service+' - ' +bookingDetailUpdate.projectName
+                    +'). Please' + '<a target="_blank" style="text-decoration: underline; color: #0645AD;' +
+                    ' cursor: pointer" href="http://localhost:3000/users/login"> login </a> to your account to accept or ' +
+                    'reject this new proposal by '+bookingDetailUpdate.supplier.name+
+                    '. Please note your booking ID (booking ID: '+ bookingDetailUpdate._id +'). </p>'+'<p>Thank you,<br>The NxtDue Team' +
+                    '<br>07448804768</p>';
+
+                let bookingModificationToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Modification</h1>'+
+                    '<p>Hello '+bookingDetailUpdate.supplier.name.split(' ')[0]+',</p><p> This is an update that your booking modification' +
+                    ' has successfully been sent to the client. The booking ID is: '+ bookingDetailUpdate._id +' .' +
+                    ' Once there has been a response, we will inform you or you can <a target="_blank" style="text-decoration: underline;' +
+                    ' color: #0645AD; cursor: pointer" href="http://localhost:3000/users/login"> login </a>' +
+                    ' into your account regularly to check for updates.</p>'+
+                    '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+
+                bookingDetailUpdate.save(err => {
+                    if(err){
+                        throw err;
+                    }
+                    console.log('New Booking Conversation saved!');
+                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                        'Booking Modification', bookingModificationToClientHTML), function (err) {
+                        if(err){console.log(err)}
+                        else{
+                            console.log('Freelancer booking Modification has been sent to client');
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                'Booking Modification', bookingModificationToFreelancerHTML), function (err) {
+                                if(err){console.log(err)}
+                                else{console.log('Freelancer booking Modification has been sent to Freelancer');}
+                            });
+                        }
+                    });
+
+                    res.status(200).send(bookingDetailUpdate);
+                    io.sockets.to(clientToSendModification).emit('Booking Modification to Client', bookingDetailUpdate);
+                })
+            })
+            .catch(err=>{
+                res.status(404).send('error occured')
+            });
+    })
+
+
+        return router;
 }
 
 module.exports = {router, server_io};

@@ -25,15 +25,16 @@ $(document).ready(function(){
     }
 
     /* CLient Booking Communication */
-    let allClientBookings = $('.client-bookings-body')[0].childNodes;
-    if(allClientBookings.length>0){
+    if( $('.client-bookings-body')[0].firstChild.id !== 'clientBookingEmpty' ){
+        let allClientBookings = $('.client-bookings-body')[0].childNodes;
+
         allClientBookings.forEach(singleBooking => {
             let statusHTML = singleBooking.firstChild.firstChild.childNodes[3];
             let bookingOptionHTLM = singleBooking.childNodes[1].firstChild;
-            console.log('Client single each booking: ', singleBooking)
+            console.log('Client single each booking: ', singleBooking);
             if(statusHTML.innerText === 'awaiting acceptance'){
                 let payButtonHTML = bookingOptionHTLM.lastChild.firstChild
-                $(payButtonHTML).attr('disabled' , true);
+                $(payButtonHTML.firstChild).prop('disabled' , 'disabled');
                 $(payButtonHTML.firstChild).css('cursor' , 'not-allowed');
                 $(payButtonHTML).css('opacity' , '50%');
             }
@@ -68,14 +69,6 @@ $(document).ready(function(){
                 $(bookingDescription.childNodes[1].childNodes[1]).show();
                 $(bookingDescription.childNodes[1].childNodes[2]).hide();
             }
-            if(statusHTML.innerText === 'you cancelled'){
-                let bookingDescription = statusHTML.parentNode.parentNode.nextSibling;
-                $(bookingDescription.childNodes[0]).hide();
-                $(bookingDescription.childNodes[1]).show();
-                $(bookingDescription.childNodes[1].childNodes[0]).hide();
-                $(bookingDescription.childNodes[1].childNodes[1]).hide();
-                $(bookingDescription.childNodes[1].childNodes[2]).show();
-            }
         })
     }
 })
@@ -106,7 +99,7 @@ $(document).click(function (event) {
             parentNode.childNodes[1];
         $(bookingDescription).toggle();
     }
-    else if(elementClicked.id === 'progressstatus'){
+    if(elementClicked.id === 'progressstatus'){
         bookingDescription = elementClicked.parentNode.parentNode.
             parentNode.parentNode.childNodes[1];
         $(bookingDescription).toggle();
@@ -126,65 +119,162 @@ $(document).click(function (event) {
 })
 
 /*** Booking ***/
-$(document).on('click', '#projectCompleted', function(event) {
-    let bookingDescriptionHTML = event.target.parentNode.parentNode.
+// Booking Acceptance
+$(document).on('click', '.client-accept-booking-bttn', function(event) {
+    let buttonContainerHTML = event.target.parentNode;
+    let bookingDescriptionContainerHTML = buttonContainerHTML.previousSibling;
+    let bookingContainerHTML = buttonContainerHTML.parentNode.
         parentNode.parentNode;
-    let clientSide_modal = bookingDescriptionHTML.parentNode.parentNode.
-        parentNode.parentNode.nextSibling;
 
-    console.log('confirmed ID: ', bookingDescriptionHTML.nextSibling.value)
+   let bookingModification = bookingDescriptionContainerHTML.childNodes[0].childNodes[1];
+    bookingModification = bookingModification.childNodes[1];
 
-    $(clientSide_modal).show();
-    $(clientSide_modal.firstChild.firstChild.firstChild).show();
-    $(clientSide_modal.firstChild.firstChild.childNodes[1]).hide();
-    $(clientSide_modal.firstChild.firstChild.childNodes[2])
-        .val(bookingDescriptionHTML.nextSibling.value);
+    clientSideBookingInfosModal(bookingContainerHTML,
+        'booking modification acceptance - client',
+        {
+            acceptDueDate: bookingModification.childNodes[0].innerText.split(': ')[1].trim(),
+            acceptDescription: bookingModification.childNodes[1].childNodes[1].innerText,
+            acceptPrice: bookingModification.childNodes[2].innerText.split(':')[1].trim()
+        });
+})
+
+$(document).on('click', '#projectCompleted', function(event) {
+    let bookingContainerHTML = event.target.parentNode.parentNode.
+        parentNode.parentNode.parentNode;
+    clientSideBookingInfosModal(bookingContainerHTML,
+        'booking completed - client');
 })
 
 $(document).on('click', '#projectIncomplete', function(event) {
-    let bookingDescriptionHTML = event.target.parentNode.parentNode.
-        parentNode.parentNode;
-    let clientSide_modal = bookingDescriptionHTML.parentNode.parentNode.
-        parentNode.parentNode.nextSibling;
-
-    console.log('conflict ID: ', bookingDescriptionHTML.nextSibling.value)
-    $(clientSide_modal).show();
-    $(clientSide_modal.firstChild.firstChild.childNodes[1]).show();
-    $(clientSide_modal.firstChild.firstChild.firstChild).hide();
-    $(clientSide_modal.firstChild.firstChild.childNodes[2])
-        .val(bookingDescriptionHTML.nextSibling.value);
+    let bookingContainerHTML = event.target.parentNode.parentNode.
+        parentNode.parentNode.parentNode;
+    clientSideBookingInfosModal(bookingContainerHTML,
+        'booking incompleted - client');
 })
 
-$(document).on('click', '.client-booking-completion-confirmation .client-bookingCompletion-continue', function(event) {
-    // Booking Completion confirmed
-    let bookingCompletionConfirmedID = event.target.parentNode.parentNode.nextSibling.nextSibling.value;
-    socketConnection.socket.emit('Completion Confirmed', {bookingCompletionConfirmedID})
-})
-$(document).on('click', '.client-booking-completion-rejection .client-bookingCompletion-continue', function(event) {
-    // Booking Completion Conflict
-    let bookingCompletionConflictID = event.target.parentNode.parentNode.nextSibling.value;
-    socketConnection.socket.emit('Completion Conflict', {bookingCompletionConflictID})
-})
-
-$(document).on('click', '.client-booking-completion .client-bookingCompletion-cancel', function(event) {
-    $(event.target.parentNode.parentNode.parentNode.parentNode.parentNode).hide();
-})
-
+// Delete Booking
 $(document).on('click', '.delete-booking-bttn', function(event) {
+    console.log('Booking Deletion requested by Client');
     let deleteBttnHTML = event.target;
     let projectDetails = deleteBttnHTML.parentNode.parentNode.
         parentNode;
     let bookingToDeleteID = projectDetails.nextSibling.value;
     let freelancerBooked = bookingToDeleteID.split(':')[1];
     let projectStatus = projectDetails.previousSibling.firstChild.childNodes[3].innerText;
+    let bookingContainerHTML = projectDetails.parentNode;
+
+    console.log('Booking Details: ', projectDetails.parentNode);
+    console.log({bookingToDeleteID, freelancerBooked, projectStatus});
+    let deleteData = {bookingToDeleteID, freelancerBooked, status: projectStatus};
 
     if(projectStatus === 'booking ongoing'){
-        socketConnection.socket.emit('Booking ongoing Delete - Client Request',
-            {bookingToDeleteID, freelancerBooked, status: projectStatus});
+        clientSideBookingInfosModal(bookingContainerHTML,
+            'ongoingBooking delete - client', deleteData);
     }else{
         socketConnection.socket.emit('Booking Delete - Client Request',
             {bookingToDeleteID, freelancerBooked, status: projectStatus});
     }
+});
+
+$(document).on('click', '#client-ongoingBooking-continue', function(event) {
+    let deletionData = event.target.parentNode.nextSibling.value;
+    socketConnection.socket.emit('Booking ongoing Delete - Client Request',
+        JSON.parse(deletionData));
+})
+
+function clientSideBookingInfosModal(bookingContainerHTML, buttonInformation, bookingData) {
+
+    let bookingID = bookingContainerHTML.lastChild.value;
+    console.log('BookindID: ', bookingID)
+    let clientSide_modal = bookingContainerHTML.parentNode.parentNode.
+        parentNode.parentNode.parentNode.nextSibling;
+
+    // Show the modal
+    $(clientSide_modal).show();
+    let clientSide_modalContainer = clientSide_modal.childNodes[0].childNodes[0];
+    $(clientSide_modalContainer.nextSibling)
+        .val(bookingID);
+
+    if(buttonInformation === 'booking modification acceptance - client'){
+        let acceptanceDataToShow = clientSide_modalContainer.childNodes[2].childNodes[2];
+        acceptanceDataToShow.childNodes[0].childNodes[1].innerText = bookingData.acceptDueDate;
+        acceptanceDataToShow.childNodes[1].childNodes[1].innerText = bookingData.acceptDescription;
+        acceptanceDataToShow.childNodes[2].childNodes[1].innerText = bookingData.acceptPrice;
+        $(acceptanceDataToShow.childNodes[3].childNodes[0]).val(JSON.stringify(bookingData));
+        $(clientSide_modalContainer.childNodes[0]).hide();
+        $(clientSide_modalContainer.childNodes[1]).hide();
+        $(clientSide_modalContainer.childNodes[2]).show();
+        $(clientSide_modalContainer.childNodes[3]).hide();
+    } else if(buttonInformation === 'booking completed - client'){
+        $(clientSide_modalContainer.childNodes[0]).show();
+        $(clientSide_modalContainer.childNodes[1]).hide();
+        $(clientSide_modalContainer.childNodes[2]).hide();
+        $(clientSide_modalContainer.childNodes[3]).hide();
+    } else if(buttonInformation === 'booking incompleted - client'){
+        $(clientSide_modalContainer.childNodes[0]).hide();
+        $(clientSide_modalContainer.childNodes[1]).show();
+        $(clientSide_modalContainer.childNodes[2]).hide();
+        $(clientSide_modalContainer.childNodes[3]).hide();
+    }else if(buttonInformation === 'ongoingBooking delete - client'){
+        $(clientSide_modalContainer.childNodes[0]).hide();
+        $(clientSide_modalContainer.childNodes[1]).hide();
+        $(clientSide_modalContainer.childNodes[2]).hide();
+        $(clientSide_modalContainer.childNodes[3]).show();
+        $(clientSide_modalContainer.childNodes[3].childNodes[2]).val(JSON.stringify(bookingData));
+    }
+}
+
+// Client Booking Side Modal Click
+$(document).on('click', '#client-booking-modificationAcceptance', function(event) {
+    console.log('Booking Acceptance');
+    let acceptanceBookingModal_lastSection = event.target.parentNode;
+    let bookingModificationData = acceptanceBookingModal_lastSection.childNodes[0].value;
+    bookingModificationData = JSON.parse(bookingModificationData);
+
+    let bookingID = acceptanceBookingModal_lastSection.parentNode.parentNode.parentNode.nextSibling.value;
+    bookingModificationData.bookingToAcceptID = bookingID;
+
+    let modified_acceptedDueDate = bookingModificationData.acceptDueDate;
+    modified_acceptedDueDate = modified_acceptedDueDate.split(',');
+    modified_acceptedDueDate = modified_acceptedDueDate[0].trim().split("/").reverse().join("-")+'T'+
+        modified_acceptedDueDate[1].trim()+'Z';
+    modified_acceptedDueDate = new Date(modified_acceptedDueDate);
+
+    bookingModificationData.acceptDueDate = modified_acceptedDueDate;
+
+    socketConnection.socket.emit('Booking Acceptance - Client', {bookingModificationData})
+})
+
+$(document).on('click', '.client-booking-completion-confirmation .client-bookingCompletion-continue', function(event) {
+    // Booking Completion confirmed
+    let bookingCompletionConfirmedID = event.target.parentNode.parentNode.parentNode.nextSibling.value;
+    socketConnection.socket.emit('Completion Confirmed', {bookingCompletionConfirmedID})
+})
+$(document).on('click', '.client-booking-completion-rejection .client-bookingCompletion-continue', function(event) {
+    // Booking Completion Conflict
+    let bookingCompletionConflictID = event.target.parentNode.parentNode.parentNode.nextSibling.value;
+    socketConnection.socket.emit('Completion Conflict', {bookingCompletionConflictID})
+})
+
+
+// Closing Modal
+function close_clientSideModal(event) {
+    let buttonHTML = event.target;
+    if(buttonHTML.id === 'client-booking-modificationReject'){
+        $(buttonHTML.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode).hide();
+    }else{
+        $(buttonHTML.parentNode.parentNode.parentNode.parentNode.parentNode).hide();
+    }
+
+}
+$(document).on('click', '.client-booking-completion .client-bookingCompletion-cancel', function(event) {
+    close_clientSideModal(event);
+})
+$(document).on('click', '#client-booking-modificationReject', function(event) {
+    close_clientSideModal(event);
+})
+$(document).on('click', '#client-ongoingBooking-cancel', function(event) {
+    close_clientSideModal(event);
 })
 
 

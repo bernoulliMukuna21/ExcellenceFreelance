@@ -18,6 +18,32 @@ $('#freelance-mssg-btn').click(function (event) {
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;
 });
 
+$(document).on('click', '#booking-side-message-bttn', function(event) {
+    let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
+    $.ajax({
+        method: 'GET',
+        url: `/messages/get-profile/${freelancerToMessage_uniqueKey}`,
+        data: {},
+        success: function (data) {
+            $('.user-messages-side').empty();
+            $('.all-different-conversations-container').empty();
+
+            let sourceImage = !data.userImageSrc ? '/images/userDefaultImage.png'
+                :data.userImageSrc;
+            receiver = data.userData;
+            console.log('My receiver: ', receiver)
+            roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
+            $('.client-profile-information ul li:last-child').trigger('click')
+        },
+        error: function (error) {
+            console.log('Error occurred in Initialising Message');
+        }
+    })
+
+    /*window.location.href = '/account/'+loggedInUser.type+'/'+
+        loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;*/
+})
+
 $( document ).ready(function() {
     $('.user-messages-side').empty();
     $('.all-different-conversations-container').empty();
@@ -34,9 +60,6 @@ $( document ).ready(function() {
         roomsFromDB({requirement: 'getRooms'});
     }
 });
-
-
-
 
 // Ongoing conversation and restarted by opening the chat room
 $(document).on('click', '.message-single-room', function(currentRoom) {
@@ -301,4 +324,3 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
-

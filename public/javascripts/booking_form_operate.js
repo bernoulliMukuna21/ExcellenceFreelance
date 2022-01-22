@@ -3,10 +3,17 @@ import * as socketConnection from './socketio-connection-client-side.js'
 import {createBookingHTML, moveProjectBooking} from "./account_operate.js";
 import BookingInsertionIndex from './BookingInsertionIndex.js'
 
+let allServicesPrices;
 let domainName = 'https://www.nxtdue.com';
 //let domainName = 'http://localhost:3000';
 
-let allServicesPrices;
+var locale = 'en-GB'; //window.navigator.userLanguage || window.navigator.language;
+let freelancerListOfStatus = ['booking ongoing', 'awaiting payment', 'accept / modify', 'awaiting response',
+    'please respond', 'awaiting confirmation', 'confirmed, well done!', 'awaiting resolution', 'paid', 'cancelled'];
+
+let clientListOfStatus = ['booking ongoing', 'pay now', 'awaiting acceptance', 'awaiting response',
+    'please respond', 'confirm / reject', 'thank you!', 'awaiting resolution', 'cancelled'];
+
 function emptyForm() {
     // Clear input value
     $('.booking-form div:nth-child(2)>section h1').remove();
@@ -174,9 +181,10 @@ $(document).on('submit', '#service-booking-form', function(event) {
     for (var value of formData.entries()) {
         bookingDataJSON[value[0]] = value[1];
     }
-
-    if(bookingDataJSON.servicename === '' || bookingDataJSON.projectdueTimeHour==='' ||
-        bookingDataJSON.projectdueTimeMinute==='' || bookingDataJSON.projectduedate === ''){
+    console.log('Booking Data: ', bookingDataJSON);
+    if(bookingDataJSON.servicename.trim() === '' || bookingDataJSON.projectdescription.trim() === '' ||
+        bookingDataJSON.projectdueTimeHour.trim() === '' || bookingDataJSON.projectdueTimeMinute.trim() === '' ||
+        bookingDataJSON.projectduedate.trim() === ''){
         if(bookingDataJSON.servicename === ''){
             $('#service-booking-form>select').css('border', '.1rem solid red');
         }
@@ -192,7 +200,6 @@ $(document).on('submit', '#service-booking-form', function(event) {
             $('#bookingMinute').css('border', '.1rem solid red');
         }
     }else{
-
         if ($(bookingButtonHTML).is(':visible') && (bookingButtonHTML.innerText).includes('Instant Book')){
             // If the user wants to make an instant booking
 
@@ -226,13 +233,42 @@ $(document).on('submit', '#service-booking-form', function(event) {
     }
 })
 
+// Add, Update and Delete booking - helper functions
+function findProject(allProjectsContainerHTML, projectID) {
+    let projectAtIndex;
+    let allProjects = Array.from($(allProjectsContainerHTML)[0].childNodes);
+    console.log('All Projects: ', allProjects);
+    let projectIndex = allProjects.findIndex(
+        singleProject => singleProject.lastChild.value === projectID);
+    console.log(projectIndex);
+    if(projectIndex === -1){
+        projectAtIndex = undefined;
+    }else{
+        projectAtIndex = allProjects[projectIndex];
+    }
+
+    // return both the correct project and its index
+    return [projectAtIndex, projectIndex];
+}
+
+function timeConversion([hour, minute, ampm], date) {
+    let time = (parseInt(hour) + (ampm == 'PM' ? 12 : 0)) + ':' + minute + ':00';
+    time = parseInt(time.split(':')[0])>=10 ? time : '0' + time;
+    let dateTime = date.trim().split("/").reverse().join("-")+'T'+time.trim()+'Z';
+    let timeInMilliSecond = BookingInsertionIndex.prototype.getDueDateMilliseconds(dateTime);
+
+    return [dateTime, timeInMilliSecond];
+}
+
 // Dealing with Request booking
 socketConnection.socket.on('Booking Data to Freelancer', bookingData => {
     /* With 'Request Booking', the project is inserted to all the bookings area.
     * It never goes to NDP (Next Due Project).
-    * all bookings that come here are accept/reject*/
+    * all bookings that come here are accept/modify*/
 
-    bookingData.status = 'accept / reject';
+    bookingData.status = freelancerListOfStatus[bookingData.status.freelancer];
+    bookingData.price = bookingData.requestedPrice;
+    console.log('Request booking: ', bookingData);
 
     if( $('.freelancer-all-projects').is(':empty') ){
         // There are no project in all projects section
@@ -245,11 +281,12 @@ socketConnection.socket.on('Booking Data to Freelancer', bookingData => {
         freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
         let newProjectDueDateTime = BookingInsertionIndex.prototype.getDueDateMilliseconds(bookingData.dueDateTime);
 
-        let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking, 'accept / reject',
-            bookingData);
-        let newProjectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
-            'accept / reject', newProjectDueDateTime);
+        let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+            bookingData.status, bookingData);
 
+        let newProjectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+            bookingData.status, newProjectDueDateTime);
+        console.log('Request booking Insertiong Index: ', newProjectInsertionIndex);
         let place = newProjectInsertionIndex.place;
         let index = newProjectInsertionIndex.index;
 
@@ -260,31 +297,29 @@ socketConnection.socket.on('Booking Data to Freelancer', bookingData => {
     }
 })
 
+
 // Dealing with instant booking or paid bookings
 socketConnection.socket.on('Successful Payment - send to Freelancer', successData => {
     console.log('Success Payment: ', successData)
-    console.log('Successful payment next')
     let nxtdue_Project = $('.freelancer-projects-top-container')[0];
-    let freelancerAllProjectsBooking = [];
+    successData.status = freelancerListOfStatus[successData.status.freelancer];
 
     if( !$('.freelancer-all-projects').is(':empty') ){
+        console.log('All projects is not empty');
         // First, we will check whether the project is new or is there already
         // Check for ID in the list of all projects
-        freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-        freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
 
-        let projectIndex = freelancerAllProjectsBooking.findIndex(
-            singleProject => singleProject.lastChild.value === successData.bookingID);
-        if(projectIndex !== -1){
-            // project is not already in the list of all project
+        let projectAtIndex = findProject('.freelancer-all-projects', successData.bookingID)[0];
+        if(projectAtIndex){
+            // project is already in the list of all project
             // then delete it. It has a new update
-            (freelancerAllProjectsBooking[projectIndex]).remove();
+            (projectAtIndex).remove();
         }
-
     }
 
     //successData.status === 'booking ongoing' &&
     if(nxtdue_Project.childNodes[0].className === 'emptyNextDueProject'){
+        console.log('Top project is empty');
         // There are no 'booking ongoing' - No next due project
         $('.emptyNextDueProject').remove();
         accountsOperation.createBookingHTML(accountsOperation.createBookingTopHTML(successData,
@@ -315,21 +350,32 @@ socketConnection.socket.on('Successful Payment - send to Freelancer', successDat
                 'freelancer-projects-top', 'freelancer-projects-top-details'),
                 $('.freelancer-projects-top-container'));
         }else{
+
             // New project is due after the current due project. Send the new
             // project in all due projects
-            let sizeOfProjectsBooking = freelancerAllProjectsBooking.length;
-            let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking, 'booking ongoing',
-                newProjectDueDateTime);
 
-            if(sizeOfProjectsBooking === 0){
+            if( $('.freelancer-all-projects').is(':empty') ){
                 // There is only one booking. It is 'booking ongoing' stage
                 accountsOperation.createBookingHTML(accountsOperation.createBookingTopHTML(successData,
                     'freelancer-one-project-top', 'freelancer-one-project-details')
                     , 'freelancer-one-project', $('.freelancer-all-projects'));
             }else{
+                let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
+                freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
+
+                let singleProject = findProject('.freelancer-all-projects', successData.bookingID);
+
+                if(singleProject){
+                    // Request booking is now paid off
+                    freelancerAllProjectsBooking.splice(singleProject[1], 1);
+                }
+
+                let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking, successData.status,
+                    newProjectDueDateTime);
                 // There are multiple projects, so find the right index for insertion
                 let newProjectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
-                    'booking ongoing', newProjectDueDateTime);
+                    successData.status, newProjectDueDateTime);
+                console.log('Success Payment booking Insertiong Index: ', newProjectInsertionIndex);
                 let place = newProjectInsertionIndex.place;
                 let index = newProjectInsertionIndex.index;
 
@@ -342,18 +388,22 @@ socketConnection.socket.on('Successful Payment - send to Freelancer', successDat
     }
 })
 
-// Freelancer has accepeted booking
+// Freelancer and Cient - Accept Booking
 socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
+    console.log('Freelancer Booking Acceptance: ');
+    console.log(AcceptData);
     let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
     freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
 
     let updatedProject = freelancerAllProjectsBooking[AcceptData.projectIndex];
 
-    console.log('Updated Project: ', updatedProject);
-    BookingInsertionIndex.prototype.updateProjectStatus(updatedProject, AcceptData.status);
+    BookingInsertionIndex.prototype.updateProjectStatus(updatedProject,
+        freelancerListOfStatus[AcceptData.status]);
+
     let updateProjectDueTime = BookingInsertionIndex.prototype.getProjectDueTime(updatedProject);
     updateProjectDueTime = BookingInsertionIndex.prototype.getDueDateMilliseconds(
-        updateProjectDueTime)
+        updateProjectDueTime);
+
     // Update background-color of the status
     $(updatedProject.firstChild.childNodes[3]).css(
         {
@@ -362,88 +412,428 @@ socketConnection.socket.on('Accept project on Freelancer side', AcceptData => {
         }
     )
 
-    freelancerAllProjectsBooking = freelancerAllProjectsBooking.slice(0,AcceptData.projectIndex)
-        .concat(freelancerAllProjectsBooking.slice(AcceptData.projectIndex + 1))
+    // when the booking went through modification, there is
+    // a need to update the look of the details as well
+    if(AcceptData.fromStatus === 'awaiting response'){
+        console.log('coming from awaiting response')
+        let originalData = updatedProject.childNodes[1].childNodes[0].childNodes[0].childNodes[1];
+        let projectDetailsUpdate =
+            `<div><h4>Creation Date: ${originalData.childNodes[0].childNodes[1].innerText}</h4>`+
+            `<div class="freelancer-project-details-descritpion">`+
+            `<h4>Description:</h4>`+
+            `<p>${originalData.childNodes[1].childNodes[1].innerText}</p>`+
+            `</div>`+
+            `<h4> Price: ${originalData.childNodes[2].childNodes[1].innerText}</h4>`+
+            `</div>`;
+        $(updatedProject.childNodes[1].childNodes[0]).empty();
+        updatedProject.childNodes[1].childNodes[0].innerHTML = projectDetailsUpdate;
+    }
 
-    let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking, 'awaiting payment',
+    // Create `Reject` button
+    let acceptButtonOptions = updatedProject.childNodes[1].childNodes[1];
+    $(acceptButtonOptions).empty();
+    acceptButtonOptions.innerHTML = `<button id="freelancer-booking-delete-button">`+
+        `Reject</button>`
+
+    freelancerAllProjectsBooking.splice(AcceptData.projectIndex, 1);
+
+    let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+        freelancerListOfStatus[AcceptData.status],
         updateProjectDueTime);
 
     if(freelancerAllProjectsBooking.length === 0){
         // There are no projects left in the list of all the projects
-
         $('.freelancer-all-projects').empty();
-        $(updatedProject.childNodes[1].childNodes[1].firstChild).remove();
         accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
             'freelancer-one-project', $('.freelancer-all-projects'));
     }else{
         // There are still porject
         let newProjectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
-            'awaiting payment', updateProjectDueTime);
+            freelancerListOfStatus[AcceptData.status], updateProjectDueTime);
 
         let place = newProjectInsertionIndex.place;
         let index = newProjectInsertionIndex.index;
 
-        freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-
         // remove element from frontend before putting it in its new position
-        (freelancerAllProjectsBooking[AcceptData.projectIndex]).remove();
+        //$(freelancerAllProjectsBookingHTML[AcceptData.projectIndex]).remove();
+        $('.freelancer-all-projects').children().eq(AcceptData.projectIndex).remove();
 
-        $(updatedProject.childNodes[1].childNodes[1].firstChild).remove();
+        // Insert Element in its position
         accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
-            'freelancer-one-project', $('.freelancer-all-projects'), {place:place,
-                HTML: freelancerAllProjectsBooking[index]});
+            'freelancer-one-project', $('.freelancer-all-projects'),
+            {place:place, HTML: freelancerAllProjectsBooking[index]});
+    }
+
+    if(AcceptData.fromStatus === 'awaiting response'){
+        $('.freelancer-booking-completion-rejection').hide();
     }
 
 })
 
-socketConnection.socket.on('Accept project on Client side', AcceptData => {
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
-
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === AcceptData.bookingToAcceptID);
-
+socketConnection.socket.on('Accept project on Client side', acceptData => {
     // Update Status
-    let projectToUpdate = allprojects[projectIndex].firstChild.firstChild.childNodes[3]
-        .firstChild;
-    $(projectToUpdate).css(
+    console.log('FReelancer has accepted project details norml/modified');
+    let fromStatus = acceptData.fromStatus;
+
+    acceptData = acceptData.bookingDetailUpdate;
+    let bookingID = acceptData.bookingID;
+    let status = clientListOfStatus[acceptData.status.client];
+
+    let projectToUpdate = findProject('.client-bookings-body',
+        bookingID)[0];
+    let projectToUpdateStatus = projectToUpdate.childNodes[0].childNodes[0].childNodes[3]
+        .childNodes[0];
+
+    projectToUpdateStatus.innerText = status;
+    $(projectToUpdateStatus).css(
         {
             'border': '.1rem solid #8d2874',
             'background-color':'#8d2874'
         }
     )
-    projectToUpdate.innerText = 'pay now';
+    if(fromStatus === 'please respond'){
+        // Update Booking Details
+        let projectAcceptedDetails = `<h4>Creation Date: ${new Date(acceptData.creationDate).toLocaleString(locale)}</h4>`+
+            `<div class="client-booking-descrption-details"><h4>Description:</h4>`+
+            `<p>${acceptData.projectDescription}</p></div><h4>Cost: £${acceptData.price}</h4>`;
+
+        let projectDetailsDivContainer = projectToUpdate.childNodes[1].childNodes[0].childNodes[0];
+        $(projectDetailsDivContainer).empty();
+        $(projectDetailsDivContainer).append(projectAcceptedDetails);
+    }
 
     // Enable pay button
-    let payButtonHTM = allprojects[projectIndex].childNodes[1].firstChild.lastChild.firstChild;
-    $(payButtonHTM).attr('disabled' , false);
-    $(payButtonHTM.firstChild).css('cursor' , 'pointer');
-    $(payButtonHTM).css('opacity' , '100%');
+    let projectButtons = projectToUpdate.childNodes[1].childNodes[0].lastChild;
+    let buttonHTML = projectButtons.childNodes[0];
+
+    if(buttonHTML.innerText === 'Pay'){
+        $(buttonHTML.firstChild).prop('disabled' , false);
+        $(buttonHTML.firstChild).css('cursor' , 'pointer');
+        $(buttonHTML).css('opacity' , '100%');
+    }else if(buttonHTML.innerText === 'Accept'){
+        // remove 'Accept' button to add 'Pay' button
+        let paymentURL = `${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
+        let payButtonHTML = `<a href=${paymentURL}><button>Pay</button></a>`;
+
+        $(projectButtons).children().eq(0).remove();
+        $(projectButtons).prepend(payButtonHTML);
+    }
+
+    //$(projectButtons.childNodes[1]).hide();
 })
 
+// Freelancer and Cient - Accept Modified Booking
+socketConnection.socket.on('Accept modified booking on Freelancer side', modified_accpeptedBookingData => {
+    console.log(modified_accpeptedBookingData);
+    let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
+    freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
+
+    let projectDetails = findProject('.freelancer-all-projects',
+        modified_accpeptedBookingData.bookingID);
+    let updatedProject = projectDetails[0];
+    let projectIndex = projectDetails[1];
+
+    let updateProjectDueTime = modified_accpeptedBookingData.dueDateTime;
+    updateProjectDueTime = BookingInsertionIndex.prototype.getDueDateMilliseconds(
+        updateProjectDueTime);
+    let projectStatus = freelancerListOfStatus[modified_accpeptedBookingData.status.freelancer];
+
+    let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+        projectStatus,
+        updateProjectDueTime);
+
+    /* Front-End Update */
+    // Progress Status Update
+    BookingInsertionIndex.prototype.updateProjectStatus(updatedProject,
+        projectStatus);
+    $(updatedProject.firstChild.childNodes[3]).css(
+        {
+            'border': '.1rem solid #8d2874',
+            'background-color':'#8d2874'
+        }
+    )
+
+    // Due Date Update
+    BookingInsertionIndex.prototype.updateProjectDueDate(updatedProject, new Date(updateProjectDueTime).toLocaleString(locale));
+
+    // Description & Project Details update
+    let acceptedDetailsUpdate =
+        `<div><h4>Creation Date: ${new Date(modified_accpeptedBookingData.creationDate).toLocaleString(locale)}</h4>`+
+        `<div class="freelancer-project-details-descritpion"><h4>Description:</h4><p>`+
+        `${modified_accpeptedBookingData.projectDescription}</p></div><h4>Price: £`+
+        `${modified_accpeptedBookingData.price}</h4></div>`;
+    $(updatedProject.childNodes[1].childNodes[0]).empty();
+    updatedProject.childNodes[1].childNodes[0].innerHTML = acceptedDetailsUpdate;
+
+    // Update buttons
+    let acceptButtonOptions = updatedProject.childNodes[1].childNodes[1];
+    $(acceptButtonOptions).empty();
+    acceptButtonOptions.innerHTML = `<button id="freelancer-booking-delete-button">`+
+        `Reject</button>`
+
+    // Update Position of the project on the frontend
+    freelancerAllProjectsBooking.splice(projectIndex, 1);
+
+    if(freelancerAllProjectsBooking.length === 0){
+        // There are no projects left in the list of all the projects
+        $('.freelancer-all-projects').empty();
+        accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
+            'freelancer-one-project', $('.freelancer-all-projects'));
+    }else{
+        // There are still porject
+        let projectNewInsertionIndex =
+            bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus, updateProjectDueTime);
+
+        $('.freelancer-all-projects').children().eq(projectIndex).remove();
+
+        accountsOperation.createBookingHTML(Array.from(updatedProject.childNodes),
+            'freelancer-one-project', $('.freelancer-all-projects'),
+            {place:projectNewInsertionIndex.place,
+                HTML: freelancerAllProjectsBooking[projectNewInsertionIndex.index]});
+    }
+})
+
+socketConnection.socket.on('Accept modified booking on Client side', modified_accpeptedBookingData => {
+    console.log('Modified Data: ', modified_accpeptedBookingData);
+    let bookingID = modified_accpeptedBookingData.bookingID;
+    let projectToUpdate = findProject('.client-bookings-body', bookingID)[0];
+    let projectStatus = clientListOfStatus[modified_accpeptedBookingData.status.client];
+    let projectCreationDate = new Date(modified_accpeptedBookingData.creationDate).toLocaleString(locale);
+    let projectDueDate = new Date(modified_accpeptedBookingData.dueDateTime).toLocaleString(locale);
+    let projectDescription = modified_accpeptedBookingData.projectDescription;
+    let projectPrice = modified_accpeptedBookingData.price;
+
+    // Update Booking Status
+    let projectToUpdateStatus = projectToUpdate.childNodes[0].childNodes[0].childNodes[3]
+        .childNodes[0];
+    projectToUpdateStatus.innerText = projectStatus;
+    $(projectToUpdateStatus).css(
+        {
+            'border': '.1rem solid #8d2874',
+            'background-color':'#8d2874'
+        }
+    )
+
+    // Update Booking Due Date
+    let projectToUpdateDueDate = projectToUpdate.childNodes[0].childNodes[0].childNodes[2];
+    projectToUpdateDueDate.innerText = projectDueDate;
+
+    // update booking details
+    let projectUpdateDetailsHTML = projectToUpdate.childNodes[1].childNodes[0];
+
+    // - update description and price
+    let projectUpdateDetailsTopHTML = projectUpdateDetailsHTML.childNodes[0];
+    $(projectUpdateDetailsTopHTML).empty();
+    projectUpdateDetailsTopHTML.innerHTML = `<h4>Creation Date: ${projectCreationDate}`+
+        `</h4><div class="client-booking-descrption-details"><h4>Description:</h4>`+
+        `<p>${projectDescription}</p></div><h4>Cost: £${projectPrice}</h4>`;
+
+    // - update buttons option
+    let projectUpdateButtonsHTML = projectUpdateDetailsHTML.childNodes[1];
+    $(projectUpdateButtonsHTML).empty();
+    let paymentURL = `${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
+    projectUpdateButtonsHTML.innerHTML = `<a href=${paymentURL}><button>Pay</button></a>`+
+        `<a id="booking-side-message-bttn"><p>Message</p><i class="far fa-envelope"><input `+
+        `type="hidden" id="freelancerToMessageUUID" value=${modified_accpeptedBookingData.supplier.uuid}></i></a>`+
+        `<button class="delete-booking-bttn">Delete</button>`;
+
+    // Hide Completion Conversation Modal
+    $('.client-account-modal').hide();
+})
+
+// Booking Modification
+// 1. Freelancer Side
+$(document).on('submit', '#booking-modification-form', function(event) {
+    event.preventDefault();
+    console.log('Form subitted')
+    $('.freelancer-booking-modification>p').hide();
+
+    let formData = accountsOperation.dataCollection(this);
+    let bookingModifyDataJSON = {}
+
+    for (var value of formData.entries()) {
+        bookingModifyDataJSON[value[0]] = value[1];
+    }
+    let previousDataToModify = JSON.parse(bookingModifyDataJSON.modifyToData);
+    let dataToModifyDate = bookingModifyDataJSON.bookingModificationDate;
+    let dataToModifyHour = bookingModifyDataJSON.bookingHourModify;
+    let dataToModifyMinute = bookingModifyDataJSON.bookingMinuteModify;//bookingMeridiesModify
+    let dataToModifyAMPM = bookingModifyDataJSON.bookingMeridiesModify
+
+    //time
+    let dataToModifyTime = timeConversion([dataToModifyHour, dataToModifyMinute,
+        dataToModifyAMPM], dataToModifyDate);
+    let previousTime = timeConversion(previousDataToModify.modifyDueTime, previousDataToModify.modifyDueDate)
+
+    //description
+    let dataToModifyDescription = bookingModifyDataJSON.bookingModificationDescription;
+    let previousDescription = previousDataToModify.modifyDescription;
+
+    //price
+    let dataToModifyPrice = bookingModifyDataJSON.modificationprice;
+    let previousPrice = previousDataToModify.modifyPrice;
+
+    // Validate form
+    if(dataToModifyTime[1] === previousTime[1] && dataToModifyDescription === previousDescription
+        && dataToModifyPrice === previousPrice){
+        // No changes to the details, so no update
+        $('.freelancer-booking-modification>p').show();
+    }else if(dataToModifyDescription === '' || dataToModifyPrice === '' || !(/^\d+(?:\.\d{2})?$/.test(dataToModifyPrice))){
+        if(dataToModifyDescription === ''){
+            $(event.target.childNodes[1].childNodes[1]).css({'border': '0.1rem solid red'});
+        }
+        else{
+            $(event.target.childNodes[2].childNodes[1]).css({'border': '0.1rem solid red'});
+        }
+    }else{
+        // changes to the details, so update
+        let bookingToModifyID = event.target.parentNode.parentNode.lastChild.value;
+        console.log('Booking ID: ', bookingToModifyID)
+        let dataToModify = {
+            time: dataToModifyTime[0],
+            description: dataToModifyDescription,
+            price: dataToModifyPrice
+        }
+
+        $.ajax({
+            method: 'POST',
+            url: `/booking/project-modification/${bookingToModifyID}`,
+            data: dataToModify,
+            success: function (data) {
+                console.log('Update was successful');
+                console.log(data);
+                let bookingDetailUpdate = data;
+                let modifyData = data.bookingModificationConversation[data.bookingModificationConversation.length - 1];
+                let singleProject = findProject('.freelancer-all-projects',
+                    bookingDetailUpdate.bookingID);
+                let projectAtIndex = singleProject[0];
+                let singleProjectIndex = singleProject[1];
+
+                let freelancerAllProjectsBooking = Array.from($('.freelancer-all-projects')[0].childNodes);
+                //$(freelancerAllProjectsBooking[singleProjectIndex]).remove();
+                $('.freelancer-all-projects').children().eq(singleProjectIndex).remove();
+                freelancerAllProjectsBooking.splice(singleProjectIndex, 1);
+
+                // Update frontend
+                let projectBookingDetails = projectAtIndex.childNodes[1].childNodes[0];
+                $(projectBookingDetails).empty();
+                accountsOperation.createBookingModificationHTML(data, modifyData, projectBookingDetails);
+                projectAtIndex.childNodes[0].childNodes[3].innerText =
+                    freelancerListOfStatus[bookingDetailUpdate.status.freelancer];
+                //$(projectBookingDetails.childNodes[0]).hide();
+
+                if(freelancerAllProjectsBooking.length === 0){
+                    // There are no projects left in the list of all the projects
+                    $('.freelancer-all-projects').empty();
+                    accountsOperation.createBookingHTML(Array.from(projectAtIndex.childNodes),
+                        'freelancer-one-project', $('.freelancer-all-projects'));
+                }else{
+                    let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+                        freelancerListOfStatus[bookingDetailUpdate.status.freelancer],
+                        BookingInsertionIndex.prototype.getDueDateMilliseconds(bookingDetailUpdate.dueDateTime));
+
+                    let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+                        freelancerListOfStatus[bookingDetailUpdate.status.freelancer],
+                        BookingInsertionIndex.prototype.getDueDateMilliseconds(bookingDetailUpdate.dueDateTime));
+
+                    accountsOperation.createBookingHTML(Array.from(projectAtIndex.childNodes),
+                        'freelancer-one-project', $('.freelancer-all-projects'),
+                        {place: projectInsertionIndex.place,
+                            HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+                    $(projectAtIndex).remove();
+                }
+                $(event.target.parentNode.parentNode.parentNode.parentNode).hide();
+            },
+            error: function (error) {
+                console.log('Error occurred in Modification');
+            }
+        })
+    }
+})
+
+// 1. Client Side
+socketConnection.socket.on('Booking Modification to Client', modificationData => {
+    console.log('Modification Button: ', modificationData);
+    let bookingDetailUpdate = modificationData;
+    let modifyData = modificationData.bookingModificationConversation;
+    let lastModificationConversationIndex = modifyData.length - 1;
+    let lastModifyConversationData = modifyData[lastModificationConversationIndex];
+
+    let projectToUpdate = findProject('.client-bookings-body',
+        modificationData.bookingID)[0];
+    let projectToUpdateStatus = projectToUpdate.childNodes[0].childNodes[0].childNodes[3]
+        .childNodes[0];
+    projectToUpdateStatus.innerText = clientListOfStatus[modificationData.status.client];
+    let projectDetailsTopContainer = projectToUpdate.childNodes[1].childNodes[0].childNodes[0];
+    $(projectDetailsTopContainer).empty();
+    console.log(projectDetailsTopContainer);
+    accountsOperation.bookingModificationClientSide(modificationData,
+        lastModifyConversationData, projectDetailsTopContainer);
+
+    let buttonsHTML = projectToUpdate.childNodes[1].childNodes[0].childNodes[1];
+
+    $(buttonsHTML.childNodes[0]).hide();
+    $(buttonsHTML).prepend('<button class="client-accept-booking-bttn">Accept</button>');
+})
+
+// Completion
 socketConnection.socket.on('Booking Completion - Request to Freelancer', finishData => {
+    // 'Booking Completion - Request to Freelancer'
+    console.log('Project finish continue');
+    console.log(finishData);
     let nxtdue_Project = $('.freelancer-projects-top-container')[0];
-    if(finishData.bookingFinishID === nxtdue_Project.lastChild.value){
+    let projectStatus = freelancerListOfStatus[finishData.status.freelancer];
+    let bookingID = finishData.bookingID;
+
+    if(bookingID === nxtdue_Project.lastChild.value){
+        console.log('Inside top project');
         // Next Due project is completed
-        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, 'awaiting confirmation');
-        console.log('Nxt Due Project awaiting confirmation: ', nxtdue_Project);
+        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, projectStatus);
         projectBookingCompletion_cssUpdate(nxtdue_Project);
 
-        accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
-            {bookingID: finishData.bookingFinishID},
-            'freelancer-one-project-top', 'freelancer-one-project-details'),
-            'freelancer-one-project', $('.freelancer-all-projects'));
-        $('.freelancer-projects-top-container').empty();
-
         if( $('.freelancer-all-projects').is(':empty') ){
+            // Move project to all other projects
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'));
+
+            // Empty Next Due Project Container
+            $('.freelancer-projects-top-container').empty();
+
+            // Show a message to show that it is indeed empty
             let emptyNextDueProjectHTML = document.createElement('p');
             emptyNextDueProjectHTML.classList.add('emptyNextDueProject');
             emptyNextDueProjectHTML.innerText = 'No Next Due Project'
             $('.freelancer-projects-top-container').append(emptyNextDueProjectHTML);
         }else{
-            let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0];
-            let singleProject = freelancerAllProjectsBooking.childNodes[0];
+            let freelancerAllProjectsBookingHTML = $('.freelancer-all-projects')[0];
+            let freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBookingHTML.childNodes)
+            let singleProject = freelancerAllProjectsBookingHTML.childNodes[0];
 
-            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject)==='booking ongoing'){
+            let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus,
+                BookingInsertionIndex.prototype.getDueDateMilliseconds(finishData.dueDateTime));
+
+            let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus,
+                BookingInsertionIndex.prototype.getDueDateMilliseconds(finishData.dueDateTime));
+
+            // Move project to all other projects
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'),
+                {place: projectInsertionIndex.place,
+                    HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+
+            // Empty Next Due Project Container
+            $('.freelancer-projects-top-container').empty();
+
+            // Possibly the move the next 'booking ongoing' project to the top.
+            // Otherwise, leave an empty message at the top.
+            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject) === 'booking ongoing'){
                 // Send the project from the list of all projects to the Next Due project
                 accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(singleProject,
                     {bookingID: singleProject.lastChild.value},
@@ -458,20 +848,35 @@ socketConnection.socket.on('Booking Completion - Request to Freelancer', finishD
             }
         }
     }else{
+        console.log('Inside all projects');
         // The project completed is in the list of all the project.
 
         // Find the project
-        let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-        freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
+        let freelancerAllProjectsBookingHTML = $('.freelancer-all-projects')[0];
+        let freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBookingHTML.childNodes)
 
-        let projectIndex = freelancerAllProjectsBooking.findIndex(
-            singleProject => singleProject.lastChild.value === finishData.bookingFinishID);
-
-        let singleProject = freelancerAllProjectsBooking[projectIndex];
-        BookingInsertionIndex.prototype.updateProjectStatus(singleProject, 'awaiting confirmation');
+        let singleProject = findProject('.freelancer-all-projects', bookingID);
+        let projectIndex = singleProject[1];
+        singleProject = singleProject[0];
+        BookingInsertionIndex.prototype.updateProjectStatus(singleProject, projectStatus);
         projectBookingCompletion_cssUpdate(singleProject);
 
-        $(singleProject).clone().appendTo($('.freelancer-all-projects'));
+        freelancerAllProjectsBooking.splice(projectIndex, 1);
+
+        let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus,
+            BookingInsertionIndex.prototype.getDueDateMilliseconds(finishData.dueDateTime));
+
+        let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus,
+            BookingInsertionIndex.prototype.getDueDateMilliseconds(finishData.dueDateTime));
+
+        // Move project to all other projects
+        accountsOperation.createBookingHTML(Array.from(singleProject.childNodes),
+            'freelancer-one-project', $('.freelancer-all-projects'),
+            {place: projectInsertionIndex.place,
+                HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+
         $(singleProject).remove();
     }
 
@@ -481,14 +886,12 @@ socketConnection.socket.on('Booking Completion - Request to Freelancer', finishD
 
 socketConnection.socket.on('Booking Completion - Request to Client', finishData => {
     console.log('Client side: ', finishData);
+    let bookingID = finishData.bookingID;
+    let projectStatus = clientListOfStatus[finishData.status.freelancer];
     let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
 
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === finishData.bookingFinishID);
-    let singleProject = allprojects[projectIndex];
-    console.log('Project Index: ', projectIndex);
-
-    singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'confirm / reject';
+    singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= projectStatus;
     $(singleProject.firstChild.firstChild.childNodes[3].firstChild).css(
         {
             'border': '.1rem solid #308634',
@@ -498,6 +901,9 @@ socketConnection.socket.on('Booking Completion - Request to Client', finishData 
     $(singleProject.childNodes[1].childNodes[0]).hide();
     $(singleProject.childNodes[1].childNodes[1]).show();
     $(singleProject.childNodes[1].childNodes[1].childNodes[0]).show();
+    singleProject.childNodes[1].childNodes[1]
+        .childNodes[0].childNodes[0].childNodes[1].innerText =
+        `Date of Completion:${new Date(finishData.completionDate).toLocaleString('en-GB')}`
     $(singleProject.childNodes[1].childNodes[1].childNodes[1]).hide();
     $(singleProject.childNodes[1].childNodes[1].childNodes[2]).hide();
     $(singleProject).clone().appendTo($('.client-bookings-body'));
@@ -540,13 +946,10 @@ function projectBookingCompletion_cssUpdate(html) {
 // 1: Confirmation
 socketConnection.socket.on('Booking Completion Confirmation - to Client', confirmData => {
     console.log('booking compeltion confirmation (client): ', confirmData);
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
+    let bookingID = confirmData.bookingCompletionConfirmedID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
 
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === confirmData.bookingCompletionConfirmedID);
-
-    let singleProject = allprojects[projectIndex];
-    singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'confirmed';
+    singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'thank you!';
 
     $(singleProject.childNodes[1].childNodes[0]).hide();
     $(singleProject.childNodes[1].childNodes[1]).show();
@@ -555,31 +958,22 @@ socketConnection.socket.on('Booking Completion Confirmation - to Client', confir
     $(singleProject.childNodes[1].childNodes[1].childNodes[2]).show();
 
     // Close modal
-    $(singleProject.parentNode.parentNode.parentNode.nextSibling).hide();
+    $(singleProject.parentNode.parentNode.parentNode.parentNode.parentNode.nextSibling).hide();
 })
-
+/*** ___________________________________________________________________________________________________ ****/
 socketConnection.socket.on('Booking Completion Confirmation - to Freelancer', confirmData => {
     console.log('booking compeltion confirmation (Freelancer): ', confirmData);
     // Find the project
-    let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-    freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
-
-    let projectIndex = freelancerAllProjectsBooking.findIndex(
-        singleProject => singleProject.lastChild.value === confirmData.bookingCompletionConfirmedID);
-
-    let singleProject = freelancerAllProjectsBooking[projectIndex];
+    let bookingID = confirmData.bookingCompletionConfirmedID;
+    let singleProject = findProject('.freelancer-all-projects', bookingID)[0];
     BookingInsertionIndex.prototype.updateProjectStatus(singleProject, 'confirmed, well done!');
 })
+/*** ___________________________________________________________________________________________________ ****/
 
 // 2: Conflict
-
 socketConnection.socket.on('Booking Completion Conflict - to Client', conflictData => {
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
-
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === conflictData.bookingCompletionConflictID);
-
-    let singleProject = allprojects[projectIndex];
+    let bookingID = conflictData.bookingCompletionConflictID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
     singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'awaiting resolution';
     $(singleProject.firstChild.firstChild.childNodes[3].firstChild).css(
         {
@@ -597,18 +991,20 @@ socketConnection.socket.on('Booking Completion Conflict - to Client', conflictDa
     $(singleProject.childNodes[1].childNodes[1].childNodes[2].firstChild.childNodes[1]).show();
 
     // Close modal
-    $(singleProject.parentNode.parentNode.parentNode.nextSibling).hide();
+    $(singleProject.parentNode.parentNode.parentNode.parentNode.parentNode.nextSibling).hide();
 })
 
 socketConnection.socket.on('Booking Completion Conflict - to Freelancer', conflictData => {
     // Find the project
-    let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-    freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
+    console.log('Booking awaiting resolution');
+    let bookingID = conflictData.bookingID;
+    console.log('freelancer bookingID: ', bookingID);
+    let projectToUpdate = findProject('.freelancer-all-projects', bookingID);
+    let singleProject = projectToUpdate[0];
+    let projectIndex = projectToUpdate[1];
+    let bookingDueTime = BookingInsertionIndex.prototype.getDueDateMilliseconds(conflictData.dueDateTime);
+    let status = freelancerListOfStatus[conflictData.status.freelancer];
 
-    let projectIndex = freelancerAllProjectsBooking.findIndex(
-        singleProject => singleProject.lastChild.value === conflictData.bookingCompletionConflictID);
-
-    let singleProject = freelancerAllProjectsBooking[projectIndex];
     BookingInsertionIndex.prototype.updateProjectStatus(singleProject, 'awaiting resolution');
     $(singleProject.firstChild.childNodes[3]).css(
         {
@@ -617,57 +1013,90 @@ socketConnection.socket.on('Booking Completion Conflict - to Freelancer', confli
         }
     )
     $(singleProject.childNodes[1].childNodes[2].firstChild.childNodes[1]).show();
-})
 
+    let freelancerAllProjectsBookingHTML = $('.freelancer-all-projects')[0].childNodes;
+    let freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBookingHTML);
+    freelancerAllProjectsBooking.splice(projectIndex, 1);
+
+    let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+        status, bookingDueTime);
+
+    let newProjectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+        status, bookingDueTime);
+    console.log(newProjectInsertionIndex);
+    let place = newProjectInsertionIndex.place;
+    let index = newProjectInsertionIndex.index;
+
+    accountsOperation.createBookingHTML(Array.from(singleProject.childNodes),
+        'freelancer-one-project', $('.freelancer-all-projects'),
+        {place:place, HTML: freelancerAllProjectsBooking[index]});
+
+    $(singleProject).remove();
+})
 
 // Booking Rejection
 socketConnection.socket.on('Delete project on Freelancer side', deleteData => {
     console.log('Data Deletion (Freelancer Side): ', deleteData)
-    let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-    freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
-
-    let projectIndex = freelancerAllProjectsBooking.findIndex(
-        singleProject => singleProject.lastChild.value === deleteData.projectToCancelID);
-
-    let singleProject = freelancerAllProjectsBooking[projectIndex];
+    let bookingID = deleteData.projectToCancelID;
+    let singleProject = findProject('.freelancer-all-projects', bookingID)[0];
     $(singleProject).remove();
 })
 
 socketConnection.socket.on('Delete project on Client side', deleteData => {
     console.log('Data Deletion (Client Side): ', deleteData)
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
-
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === deleteData.projectToCancelID);
-    let singleProject = allprojects[projectIndex];
+    let bookingID = deleteData.projectToCancelID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
     $(singleProject).remove();
 })
 
 // 'Booking Ongoing' Cancelled
 socketConnection.socket.on('Ongoing Project Cancel on Freelancer side', cancelData => {
     console.log('Booking ongoing Cancel freelancer side: ', cancelData);
+    let bookingID = cancelData.bookingID;
+    let projectStatus = freelancerListOfStatus[cancelData.status.freelancer];
+    let dueDateTime = BookingInsertionIndex.prototype
+        .getDueDateMilliseconds(cancelData.dueDateTime);
     let nxtdue_Project = $('.freelancer-projects-top-container')[0];
-    if(cancelData.projectToCancelID === nxtdue_Project.lastChild.value){
+
+    if(bookingID === nxtdue_Project.lastChild.value){
         // Next Due project is cancelled
-        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, 'cancelled');
+        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, projectStatus);
         projectCancellation_cssUpdate(nxtdue_Project);
 
-        accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
-            {bookingID: cancelData.projectToCancelID},
-            'freelancer-one-project-top', 'freelancer-one-project-details'),
-            'freelancer-one-project', $('.freelancer-all-projects'));
-        $('.freelancer-projects-top-container').empty();
-
         if( $('.freelancer-all-projects').is(':empty') ){
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'));
+            $('.freelancer-projects-top-container').empty();
+
             let emptyNextDueProjectHTML = document.createElement('p');
             emptyNextDueProjectHTML.classList.add('emptyNextDueProject');
             emptyNextDueProjectHTML.innerText = 'No Next Due Project'
             $('.freelancer-projects-top-container').append(emptyNextDueProjectHTML);
         }else{
-            let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0];
-            let singleProject = freelancerAllProjectsBooking.childNodes[0];
+            let freelancerAllProjectsBookingHTML = $('.freelancer-all-projects')[0];
+            let freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBookingHTML.childNodes);
+            let singleProject = freelancerAllProjectsBookingHTML.childNodes[0];
 
-            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject)==='booking ongoing'){
+            let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus, dueDateTime);
+
+            let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus, dueDateTime);
+
+            // Move project to all other projects
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'),
+                {place: projectInsertionIndex.place,
+                    HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+
+            // Empty Next Due Project Container
+            $('.freelancer-projects-top-container').empty();
+
+            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject) === 'booking ongoing'){
                 // Send the project from the list of all projects to the Next Due project
                 accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(singleProject,
                     {bookingID: singleProject.lastChild.value},
@@ -688,14 +1117,26 @@ socketConnection.socket.on('Ongoing Project Cancel on Freelancer side', cancelDa
         let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
         freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
 
-        let projectIndex = freelancerAllProjectsBooking.findIndex(
-            singleProject => singleProject.lastChild.value === cancelData.projectToCancelID);
-
-        let singleProject = freelancerAllProjectsBooking[projectIndex];
+        let singleProject = findProject('.freelancer-all-projects', bookingID);
+        let projectIndex = singleProject[1];
+        singleProject = singleProject[0];
         BookingInsertionIndex.prototype.updateProjectStatus(singleProject, 'cancelled');
         projectCancellation_cssUpdate(singleProject);
 
-        $(singleProject).clone().appendTo($('.freelancer-all-projects'));
+        freelancerAllProjectsBooking.splice(projectIndex, 1);
+
+        let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus, dueDateTime);
+
+        let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus, dueDateTime);
+
+        // Move project to all other projects
+        accountsOperation.createBookingHTML(Array.from(singleProject.childNodes),
+            'freelancer-one-project', $('.freelancer-all-projects'),
+            {place: projectInsertionIndex.place,
+                HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+
         $(singleProject).remove();
     }
 })
@@ -719,11 +1160,9 @@ function projectCancellation_cssUpdate(html) {
 
 socketConnection.socket.on('Ongoing Project Cancel on Client side', cancelData => {
     console.log('Booking ongoing Cancel client side: ', cancelData)
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
+    let bookingID = cancelData.bookingID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
 
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === cancelData.projectToCancelID);
-    let singleProject = allprojects[projectIndex];
     singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'cancelled';
     $(singleProject.firstChild.firstChild.childNodes[3].firstChild).css(
         {
@@ -742,11 +1181,9 @@ socketConnection.socket.on('Ongoing Project Cancel on Client side', cancelData =
 
 socketConnection.socket.on('Booking ongoing Cancel on Client side', cancelData => {
     console.log('Cancel Data (Client Side): ', cancelData)
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
+    let bookingID = cancelData.bookingToDeleteID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
 
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === cancelData.bookingToDeleteID);
-    let singleProject = allprojects[projectIndex];
     singleProject.firstChild.firstChild.childNodes[3].firstChild.innerText= 'cancelled';
     $(singleProject.firstChild.firstChild.childNodes[3].firstChild).css(
         {
@@ -762,33 +1199,60 @@ socketConnection.socket.on('Booking ongoing Cancel on Client side', cancelData =
     $(singleProject.childNodes[1].childNodes[1].childNodes[2].firstChild.childNodes[0]).show();
     $(singleProject.childNodes[1].childNodes[1].childNodes[2].firstChild.childNodes[1]).hide();
     $(singleProject).clone().appendTo($('.client-bookings-body'));
+
+    // Close modal and remove project
+    $(singleProject.parentNode.parentNode.parentNode.parentNode.parentNode.nextSibling).hide();
     $(singleProject).remove();
 })
 
 socketConnection.socket.on('Booking ongoing Cancel on Freelancer side', cancelData => {
     console.log('Cancel Data (Freelancer Side): ', cancelData);
+    let bookingID = cancelData.bookingID;
+    let projectStatus = freelancerListOfStatus[cancelData.status.freelancer];
+    let dueDateTime = BookingInsertionIndex.prototype
+        .getDueDateMilliseconds(cancelData.dueDateTime);
     let nxtdue_Project = $('.freelancer-projects-top-container')[0];
-    if(cancelData.bookingToDeleteID === nxtdue_Project.lastChild.value){
-        // Next Due project is cancelled
-        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, 'cancelled');
-        clientprojectCancellation_cssUpdate(nxtdue_Project);
 
-        accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
-            {bookingID: cancelData.projectToCancelID},
-            'freelancer-one-project-top', 'freelancer-one-project-details'),
-            'freelancer-one-project', $('.freelancer-all-projects'));
-        $('.freelancer-projects-top-container').empty();
+    if(bookingID === nxtdue_Project.lastChild.value){
+        // Next Due project is cancelled
+        BookingInsertionIndex.prototype.updateProjectStatus(nxtdue_Project, projectStatus);
+        projectCancellation_cssUpdate(nxtdue_Project);
 
         if( $('.freelancer-all-projects').is(':empty') ){
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'));
+
+            $('.freelancer-projects-top-container').empty();
+
             let emptyNextDueProjectHTML = document.createElement('p');
             emptyNextDueProjectHTML.classList.add('emptyNextDueProject');
             emptyNextDueProjectHTML.innerText = 'No Next Due Project';
             $('.freelancer-projects-top-container').append(emptyNextDueProjectHTML);
         }else{
-            let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0];
-            let singleProject = freelancerAllProjectsBooking.childNodes[0];
+            let freelancerAllProjectsBookingHTML = $('.freelancer-all-projects')[0];
+            let freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBookingHTML.childNodes);
+            let singleProject = freelancerAllProjectsBookingHTML.childNodes[0];
 
-            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject)==='booking ongoing'){
+            let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus, dueDateTime);
+
+            let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+                projectStatus, dueDateTime);
+
+            // Move project to all other projects
+            accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(nxtdue_Project,
+                {bookingID: bookingID},
+                'freelancer-one-project-top', 'freelancer-one-project-details'),
+                'freelancer-one-project', $('.freelancer-all-projects'),
+                {place: projectInsertionIndex.place,
+                    HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
+
+            // Empty Next Due Project Container
+            $('.freelancer-projects-top-container').empty();
+
+            if(BookingInsertionIndex.prototype.getProjectStatus(singleProject) === 'booking ongoing'){
                 // Send the project from the list of all projects to the Next Due project
                 accountsOperation.createBookingHTML(accountsOperation.moveProjectBooking(singleProject,
                     {bookingID: singleProject.lastChild.value},
@@ -809,14 +1273,25 @@ socketConnection.socket.on('Booking ongoing Cancel on Freelancer side', cancelDa
         let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
         freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
 
-        let projectIndex = freelancerAllProjectsBooking.findIndex(
-            singleProject => singleProject.lastChild.value === cancelData.bookingToDeleteID);
-
-        let singleProject = freelancerAllProjectsBooking[projectIndex];
+        let singleProject = findProject('.freelancer-all-projects', bookingID);
+        let projectIndex = singleProject[1];
+        singleProject = singleProject[0];
         BookingInsertionIndex.prototype.updateProjectStatus(singleProject, 'cancelled');
         clientprojectCancellation_cssUpdate(singleProject);
 
-        $(singleProject).clone().appendTo($('.freelancer-all-projects'));
+        freelancerAllProjectsBooking.splice(projectIndex, 1);
+
+        let bookingInsertion = new BookingInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus, dueDateTime);
+
+        let projectInsertionIndex = bookingInsertion.findProjectInsertionIndex(freelancerAllProjectsBooking,
+            projectStatus, dueDateTime);
+
+        // Move project to all other projects
+        accountsOperation.createBookingHTML(Array.from(singleProject.childNodes),
+            'freelancer-one-project', $('.freelancer-all-projects'),
+            {place: projectInsertionIndex.place,
+                HTML: freelancerAllProjectsBooking[projectInsertionIndex.index]});
         $(singleProject).remove();
     }
 })
@@ -837,7 +1312,6 @@ function clientprojectCancellation_cssUpdate(html) {
     $(html.childNodes[1].childNodes[0]).hide();
     $(html.childNodes[1].childNodes[1]).hide();
     $(html.childNodes[1].childNodes[2]).show();
-    console.log('Client cancel show mssg: ', html.childNodes[1].childNodes[2])
     $(html.childNodes[1].childNodes[2].childNodes[0]).hide();
     $(html.childNodes[1].childNodes[2].childNodes[1]).show();
     $(allprojectsContainer.nextSibling).hide();
@@ -845,22 +1319,14 @@ function clientprojectCancellation_cssUpdate(html) {
 
 socketConnection.socket.on('Booking Delete on Client side - Client Request', deleteData => {
     console.log('Data Deletion (Client Side): ', deleteData)
-    let allprojects = Array.from($('.client-bookings-body')[0].childNodes);
-
-    let projectIndex = allprojects.findIndex(singleProject =>
-        singleProject.lastChild.value === deleteData.bookingToDeleteID);
-    let singleProject = allprojects[projectIndex];
+    let bookingID = deleteData.bookingToDeleteID;
+    let singleProject = findProject('.client-bookings-body', bookingID)[0];
     $(singleProject).remove();
 })
 
 socketConnection.socket.on('Booking Delete on Freelancer side - Client Request', deleteData => {
     console.log('Data Deletion (Freelancer Side): ', deleteData)
-    let freelancerAllProjectsBooking = $('.freelancer-all-projects')[0].childNodes;
-    freelancerAllProjectsBooking = Array.from(freelancerAllProjectsBooking);
-
-    let projectIndex = freelancerAllProjectsBooking.findIndex(
-        singleProject => singleProject.lastChild.value === deleteData.bookingToDeleteID);
-
-    let singleProject = freelancerAllProjectsBooking[projectIndex];
+    let bookingID = deleteData.bookingToDeleteID;
+    let singleProject = findProject('.freelancer-all-projects', bookingID)[0];
     $(singleProject).remove();
 })

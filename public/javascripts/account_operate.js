@@ -3,6 +3,8 @@
 * showing clicked page sections(e.g. messages, main profile page, update
 * information) on both the client and freelancer section.
 * */
+var locale = "en-GB"; //window.navigator.language|| window.navigator.userLanguage;
+
 function pageNavigation(pageToShow, name_of_pages, different_pages){
     /*
     * This function is used to show the clicked page section.
@@ -36,7 +38,6 @@ function pageDispalyStyle(page, name_of_pages, different_pages){
         $('.newMessageReceived').hide();
     }
 }
-
 
 
 /*
@@ -191,7 +192,7 @@ function emptyDescription(defaultText, htmlContainer) {
     let pageTag = document.createElement('p');
     pageTag.id = 'addDescription';
     pageTag.innerText = defaultText;
-    
+
     divContainer.appendChild(pageTag);
     $(htmlContainer).append(divContainer);
 }
@@ -520,6 +521,7 @@ function createBookingHTML(bookingContentsHTML,singleBookingContainer, allBookin
         singleBookingContainerHTML = singleBookingContainer;
     }
 
+    $(bookingContentsHTML[1]).hide();
     singleBookingContainerHTML.append(bookingContentsHTML[0]);
     singleBookingContainerHTML.append(bookingContentsHTML[1]);
     singleBookingContainerHTML.append(bookingContentsHTML[2]);
@@ -552,7 +554,7 @@ function createBookingTopHTML(bookingData, projectHTML, projectDetailsHTML) {
     ClientName.innerText = bookingData.customer.name;
 
     let dueDate = document.createElement('p');
-    dueDate.innerText = (new Date(bookingData.dueDateTime)).toLocaleString();
+    dueDate.innerText = (new Date(bookingData.dueDateTime)).toLocaleString(locale);
 
     let status = document.createElement('p');
     status.classList.add('project-status');
@@ -562,12 +564,21 @@ function createBookingTopHTML(bookingData, projectHTML, projectDetailsHTML) {
     }else if(bookingData.status === 'awaiting payment'){
         status.innerText = 'awaiting payment';
         $(status).css({'border': '.1rem solid #8d2874', 'background-color':'#8d2874'})
-    }else if(bookingData.status === 'accept / reject'){
-        status.innerText = 'accept / reject';
+    }else if(bookingData.status === 'accept / modify' ||
+        bookingData.status === 'please respond' ||
+        bookingData.status === 'awaiting response'){
+        status.innerText = bookingData.status;
         $(status).css({'border': '.1rem solid #213e53', 'background-color':'#213e53'})
+    }else if(bookingData.status === 'completed' ||
+        bookingData.status === 'paid' ||
+        bookingData.status === 'processing payout...'){
+        status.innerText = bookingData.status;
+        $(status).css({'border': '.1rem solid #308634', 'background-color':'#308634'})
+    }else if(bookingData.status === 'awaiting resolution' ||
+        bookingData.status === 'cancelled'){
+        status.innerText = bookingData.status;
+        $(status).css({'border': '.1rem solid #FF0000', 'background-color':'#FF0000'})
     }
-
-
 
     /*project options*/
     let optionsDIV = document.createElement('div');
@@ -597,55 +608,30 @@ function createBookingToggleDetails(bookingData, projectDetailsHTML) {
     /* Details Description */
     let detailsDIV = document.createElement('div');
 
-    let creationDate = document.createElement("h4");
-    console.log(bookingData.creationDate)
-    creationDate.innerText = `Creation Date: ${new Date(bookingData.creationDate).toLocaleString()}`;
-
-    let descriptionDIV = document.createElement('div');
-    let descriptionTitle = document.createElement("h4");
-    descriptionTitle.innerText = 'Description:';
-    let projectDescription = document.createElement("p");
-    projectDescription.innerText = bookingData.projectDescription;
-    descriptionDIV.appendChild(descriptionTitle);
-    descriptionDIV.appendChild(projectDescription);
-
-    let price = document.createElement("h4");
-    if(bookingData.bookingType === 'instant_booking'){
-        price.innerText = `Price: £${bookingData.price}`;
-    }else if(bookingData.bookingType === 'request_booking'){
-        price.innerText = `Price: £${bookingData.requestedPrice}`;
-    }
-
-
-    detailsDIV.appendChild(creationDate);
-    detailsDIV.appendChild(descriptionDIV);
-    detailsDIV.appendChild(price);
+    let projectDetailsDescription = `<div>` +
+        `<h4>Creation Date: ${new Date(bookingData.creationDate).toLocaleString(locale)}</h4>`+
+        `<div class="freelancer-project-details-descritpion">`+
+        `<h4>Description:</h4>`+
+        `<p>${bookingData.projectDescription}</p>`+
+        `</div>`+
+        `<h4> Price: £${bookingData.price}</h4>`+
+        `</div>`;
+    detailsDIV.innerHTML = projectDetailsDescription;
 
     /* Details Options */
     let detailsOptionsDIV = document.createElement('div');
-
-    let projectAccept = document.createElement("button");
-    projectAccept.classList.add('freelancer-booking-accept-button');
-    projectAccept.innerText = 'Accept';
-    if(bookingData.status !== 'accept / reject'){
-        $(projectAccept).attr("style", "display: none;")
+    let detailsOptionsHTML;
+    let deleteBttn = 'Reject';
+    if(bookingData.status === 'booking ongoing'){
+        deleteBttn = 'Cancel'
+        detailsOptionsHTML = `<button class="freelancer-booking-finish-button">Finish</button>`;
     }
-
-    let projectFinish = document.createElement("button");
-    projectFinish.classList.add('freelancer-booking-finish-button');
-    projectFinish.innerText = 'Finish';
-    if(bookingData.status !== 'booking ongoing'){
-        $(projectFinish).attr("style", "display: none;")
+    if(bookingData.status === 'accept / modify'){
+        detailsOptionsHTML = `<button class="freelancer-booking-accept-button">Accept</button>`+
+            `<button class="freelancer-booking-modify-button">Modify</button>`;
     }
-
-
-    let projectReject = document.createElement("button");
-    projectReject.classList.add('freelancer-booking-delete-button');
-    projectReject.innerText = 'Reject';
-
-    detailsOptionsDIV.appendChild(projectAccept);
-    detailsOptionsDIV.appendChild(projectFinish);
-    detailsOptionsDIV.appendChild(projectReject);
+    detailsOptionsHTML += `<button id="freelancer-booking-delete-button">${deleteBttn}</button>`;
+    detailsOptionsDIV.innerHTML = detailsOptionsHTML;
 
     projectDetailsContainer.appendChild(detailsDIV);
     projectDetailsContainer.appendChild(detailsOptionsDIV);
@@ -662,7 +648,7 @@ function createBookingFinalMessages(bookingData) {
     let projectCompletionConfirmed = document.createElement('div');
     projectCompletionConfirmed.classList.add('freelancer-project-completion-confirmed');
     let projectEarning = document.createElement("h4");
-    projectEarning.innerText = `Earning: £${bookingData.price - ((bookingData.price/100)*5)}`;
+    projectEarning.innerText = `Earning: £${(bookingData.price - ((bookingData.price/100)*5)).toFixed(2)}`;
     let failureInfos = document.createElement("p");
     $(failureInfos).css({'font-style': 'normal'});
     failureInfos.innerText = ` Unfortunately, ${bookingData.customer.name} has informed us that `+
@@ -702,6 +688,69 @@ function createBookingIdInput(bookingData) {
     return projectIdHTML
 }
 
+function createBookingModificationHTML(originalBookingData, modifyBookingData, detailsDIV) {
+    let projectDetailsDescriptionOriginalHTML = `<div class="freelancer-side-originalBooking">`+
+        `<div>`+
+        `<h4>Original</h4>`+
+        `</div>`+
+        `<div>`+
+        `<h4>Creation Date: `+
+        `<span style="font-weight: normal">${new Date(originalBookingData.creationDate).toLocaleString(locale)}</span>`+
+        `</h4>`+
+        `<div class="freelancer-project-details-descritpion">`+
+        `<h4>Description: </h4>`+
+        `<p>${originalBookingData.projectDescription}</p>`+
+        `</div>`+
+        `<h4>Price: `+
+        `<span style="font-weight: normal">£${originalBookingData.requestedPrice}</span>`+
+        `</h4>`+
+        `</div>`+
+        `</div>`;
+    detailsDIV.innerHTML += projectDetailsDescriptionOriginalHTML;
+
+    let projectDetailsDescriptionProposedHTML = `<div class="freelancer-side-BookingChangesProposed" style='color: #8d2874; font-style: italic'>`+
+        `<div>`+
+        `<h4>Your Proposal</h4>`+
+        `</div>`+
+        `<div>`+
+        `<h4 id="newProposedDueDate">Proposed Due Date: `+
+        `<span style="font-weight: normal">${new Date(modifyBookingData.newProposedDueDate).toLocaleString(locale)}</span>`+
+        `</h4>`+
+        `<div class="freelancer-project-details-descritpion">`+
+        `<h4>Proposed Description: </h4>`+
+        `<p>${modifyBookingData.newProposedDescription}</p>`+
+        `</div>`+
+        `<h4 id="newProposedDueDate">Price: `+
+        `<span style="font-weight: normal">£${modifyBookingData.newProposedPrice}</span>`+
+        `</h4>`+
+        `</div>`+
+        `</div>`;
+    detailsDIV.innerHTML += projectDetailsDescriptionProposedHTML;
+}
+function bookingModificationClientSide(originalBookingData, modifyBookingData, insertionDIV){
+    let divContainer = document.createElement('div');
+    divContainer.classList.add('client-booking-modification-container');
+
+    console.log('locale language: ', locale)
+    let originalBookingHTML = `<div class="client-side-originalBooking">`+
+        `<div><h4>Original Booking</h4></div><div><h4>Creation Date: `+
+        `${new Date(originalBookingData.creationDate).toLocaleString(locale)}</h4>`+
+        `<div class="client-booking-descrption-details"><h4>Description :</h4>`+
+        `<p>${originalBookingData.projectDescription}</p></div><h4>Cost: `+
+        `£${originalBookingData.requestedPrice}</h4></div></div>`;
+
+    let modifiedBookingHTML = `<div class="client-side-modificationBooking">`+
+        `<div><h4>New Proposal</h4></div><div><h4>Proposed Due Date: `+
+        `${new Date(modifyBookingData.newProposedDueDate).toLocaleString(locale)}</h4>`+
+        `<div class="client-booking-descrption-details"><h4>Proposed Description :</h4>`+
+        `<p>${modifyBookingData.newProposedDescription}</p></div><h4>Proposed Cost: `+
+        `£${modifyBookingData.newProposedPrice}</h4></div></div>`;
+
+    divContainer.innerHTML += originalBookingHTML;
+    divContainer.innerHTML += modifiedBookingHTML;
+
+    $(insertionDIV).append(divContainer);
+}
 function moveProjectBooking(nextDueProjectHTML, bookingID, projectTopContainer, projectDetailsContainer) {
     let projectTopContainerHTML = document.createElement('div');
     projectTopContainerHTML.classList.add(projectTopContainer);
@@ -712,11 +761,8 @@ function moveProjectBooking(nextDueProjectHTML, bookingID, projectTopContainer, 
     $(projectDetailsContainerHTML).attr("style", "display: none;")
     $(nextDueProjectHTML.childNodes[1]).children().clone().appendTo(projectDetailsContainerHTML);
 
-    $('.freelancer-booking-finish-button').attr('type', 'hidden')
-
     return [projectTopContainerHTML, projectDetailsContainerHTML, createBookingIdInput(bookingID)]
 }
-
 
 export{ pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
     dataCollection, showNames, showServicesAndPrices, showSkills,
@@ -724,4 +770,5 @@ export{ pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
     showEducations, emptyEducation, deleteItem, keyBoardAction,
     ajaxFormMessage_generator, createNewRoom, createNewConversationContainer,
     roomConversationsNavigation, createMessageHTML, createBookingHTML,
-    createBookingTopHTML, moveProjectBooking }
+    createBookingTopHTML, createBookingModificationHTML, bookingModificationClientSide,
+    moveProjectBooking }

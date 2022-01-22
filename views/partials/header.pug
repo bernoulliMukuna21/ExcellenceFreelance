@@ -1,6 +1,6 @@
 header
     div.top-container
-        h1.web-title: a(href='/') NxtDue
+        h1.web-title: a(href='/') nxtDue
         div.top-navbar(style='color:#213e53;')
             if (!isLogged)
                 a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
@@ -25,7 +25,7 @@ header
 
     div.top-mobilenavcontainer
         .mobileweb-title
-            a(href='/') NxtDue
+            a(href='/') nxtDue
         div.mobiletop-navbar
             if (!isLogged)
                 .mobileheaderLinks
@@ -35,11 +35,14 @@ header
                 if(loggedInUser.user_stature === 'client')
                     .mobileheaderLinks
                         a(href='/account/client/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
+                        a(href='/') Home
+                        a(href='/users/logout') Logout
+
                 else if(loggedInUser.user_stature === 'freelancer')
                     .mobileheaderLinks
                         a(href='/account/freelancer/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
-                a(href='/') Home
-                a(href='/users/logout') Logout
+                        a(href='/') Home
+                        a(href='/users/logout') Logout
 
             a.headerburger-icon(href='javascript:void(0)')
                 i.fa.fa-bars

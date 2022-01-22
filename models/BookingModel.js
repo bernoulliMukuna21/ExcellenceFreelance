@@ -23,7 +23,7 @@ let BookingSchema = new mongoose.Schema({
     projectDescription: {
         type: String
     },
-    creationDate:{
+    creationDate: {
         type: Date,
     },
     dueDateTime: {
@@ -32,22 +32,38 @@ let BookingSchema = new mongoose.Schema({
     price: {
         type: String
     },
-    requestedPrice:{
+    requestedPrice: {
         type: String
     },
     status: {
-        type: String,
-        default: 'awaiting acceptance'
+        freelancer: Number,
+        client: Number
     },
-    completion: {
-        status: String,
-        date: Date,
-        deletionReason: String
+    completionDate: {
+        type: Date
     },
-    paid:{
+    deletionReason: {
+        type: String
+    },
+    paid: {
         type: Boolean,
         default: false
-    }
+    },
+    bookingModificationConversation: [{
+        responseDay:{
+            type: Date,
+            default: Date.now()
+        },
+        newProposedDescription: {
+            type: String
+        },
+        newProposedPrice:{
+            type: String
+        },
+        newProposedDueDate:{
+            type: Date
+        }
+    }]
 });
 
 

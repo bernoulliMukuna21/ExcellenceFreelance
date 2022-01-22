@@ -1,0 +1,10 @@
+/* This is for smaller screens like mobile and tablet*/
+
+@media (max-width:500px) {
+    .top-container{
+        display: none;
+    }
+    .top-mobilenavcontainer{
+        display: block;
+    }
+}

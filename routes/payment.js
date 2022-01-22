@@ -5,7 +5,6 @@ var BookingModel = require('../models/BookingModel');
 var mailer = require('../bin/mailer');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
-var { bookingUpdate } = require('../bin/general-helper-functions');
 
 //let domainName = 'http://localhost:3000';
 let domainName = 'https://www.nxtdue.com';
@@ -110,8 +109,10 @@ function server_io(io) {
                 if(payload.metadata.paymentType === 'booking-checkout'){
                     let bookingID = payload.metadata.bookingID;
                     try{
-                        let bookingUpdated = await bookingUpdate(bookingID, BookingModel,
-                            {status: 'booking ongoing', paid: true});
+                        let bookingUpdated = await BookingModel.findOne({bookingID: bookingID});
+                        bookingUpdated.status.freelancer = 0; // booking ongoing
+                        bookingUpdated.status.client = 0; // booking ongoing
+                        bookingUpdated.paid = true;
                         let freelancerBooked = bookingID.split(':')[1];
 
                         let successPayMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking</h1>'+

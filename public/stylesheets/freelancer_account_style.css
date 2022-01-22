@@ -1016,7 +1016,7 @@ button.like{
     align-items: center;
     font-size: 1.3rem;
     font-weight: bold;
-    padding: 1rem 1rem 2rem 1rem;
+    padding: 1rem;
 }
 .freelancer-one-project{
     border-bottom-left-radius: .5rem;
@@ -1038,10 +1038,28 @@ button.like{
 .freelancer-projects-top-details>div:first-child,
 .freelancer-one-project-details>div:first-child{
     margin-bottom: 3rem;
+    display: flex;
 }
-.freelancer-projects-top-details div:first-child div,
-.freelancer-one-project-details div:first-child div{
+.freelancer-project-details-descritpion{
     margin: 1.5em 0;
+}
+.freelancer-side-originalBooking, .freelancer-side-BookingChangesProposed{
+    flex: 1;
+    border-right: .1rem solid #213e53;
+}
+.freelancer-side-BookingChangesProposed{
+    border: none;
+    border-left: .1rem solid #213e53;
+}
+.freelancer-side-originalBooking>div:nth-child(1),
+.freelancer-side-BookingChangesProposed>div:nth-child(1){
+    border-bottom: .2rem solid #213e53;
+    text-align: center;
+    padding: .5rem;
+}
+.freelancer-side-originalBooking>div:nth-child(2),
+.freelancer-side-BookingChangesProposed>div:nth-child(2){
+    padding: .5rem;
 }
 .freelancer-projects-top-details h4, .freelancer-projects-top-details p,
 .freelancer-one-project-details h4, .freelancer-one-project-details p{
@@ -1077,7 +1095,7 @@ button.like{
 }
 
 .freelancer-one-project{
-    padding: 3rem 4rem;
+    padding: 1rem 3rem;
     border-bottom: .2rem solid #213e53;
 }
 .freelancer-one-project:hover{
@@ -1102,32 +1120,33 @@ button.like{
     padding: 1rem 0;
     margin: 0 1rem;
     width: 15rem;
-    background-color: #308634;
+    background-color: #FF0000;
     color: white;
     border-radius: .5rem;
     cursor: pointer;
 }
-.freelancer-projects-top-details>div:nth-child(2) button.freelancer-booking-finish-button,
-.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button{
-    background-color: #213e53;
-}
-.freelancer-projects-top-details>div:nth-child(2) button:last-child,
-.freelancer-one-project-details>div:nth-child(2) button:last-child{
+.freelancer-projects-top-details>div:nth-child(2) button:hover,
+.freelancer-one-project-details>div:nth-child(2) button:hover{
     background-color: #bf3524;
 }
 
-.freelancer-projects-top-details>div:nth-child(2) button:hover,
-.freelancer-projects-top-details>div:nth-child(2) button:hover{
-    background-color: #29722d;
+.freelancer-projects-top-details>div:nth-child(2) button.freelancer-booking-finish-button,
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button,
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-modify-button{
+    background-color: #213e53;
 }
 .freelancer-projects-top-details>div:nth-child(2) button.freelancer-booking-finish-button:hover,
-.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button:hover{
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-finish-button:hover,
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-modify-button:hover{
     background-color: #1a3040;
 }
-.freelancer-projects-top-details>div:nth-child(2) button:last-child:hover,
-.freelancer-projects-top-details>div:nth-child(2) button:last-child:hover{
-    background-color: #ad3122;
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-accept-button{
+    background-color: #308634;
 }
+.freelancer-one-project-details>div:nth-child(2) button.freelancer-booking-accept-button:hover{
+    background-color: #29722d;
+}
+
 .freelancer-project-final-messages h4, .freelancer-project-final-messages p{
     text-align: center;
 }
@@ -1148,4 +1167,135 @@ button.like{
     padding: 2rem;
     font-size: 1.5rem;
     color: black;
+}
+.freelancer-booking-modification form, #booking-modification-acceptance{
+    margin-top: 2rem;
+}
+.freelancer-booking-modification>p{
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 1.3rem;
+    color: red;
+}
+.freelancer-booking-modification form label,  .freelancer-booking-modification-acceptance-form form label{
+    font-size: 1.3rem;
+}
+.booking-dateandtime-modification{
+    display: grid;
+    grid-template-columns: 60% 38%;
+    grid-gap: 2%;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.freelancer-booking-modification input, .freelancer-booking-modification textarea,
+.freelancer-booking-modification select{
+    /*margin-top: .5rem;*/
+}
+.booking-dateandtime-modification input, .booking-dateandtime-modification select{
+    cursor: pointer;
+}
+.freelancer-booking-modification textarea{
+    resize: none
+}
+.freelancer-booking-modification input, .freelancer-booking-modification textarea{
+    border: none;
+}
+.freelancer-booking-modification input:focus, .freelancer-booking-modification textarea:focus{
+    outline: none;
+    border: none;
+}
+.booking-time-modification div{
+    display: flex;
+    align-items: center;
+}
+.booking-time-modification div p{
+    font-size: 1.3rem;
+    font-weight: bolder;
+    margin: 0 .25rem;
+}
+.freelancer-booking-modification form section:nth-child(2){
+    margin-bottom: 1.5rem;
+}
+.freelancer-booking-modification form section:nth-child(3)>div{
+    display: grid;
+    grid-template-columns: 10% 90%;
+    align-items: center;
+    background-color: white;
+    padding: .5rem 0;
+    border-radius: .5rem;
+    margin-top: .5rem;
+}
+.freelancer-booking-modification form section:nth-child(3)>div:focus{
+    border: .1rem solid #213e53;
+}
+.freelancer-booking-modification form section:nth-child(3)>div input{
+    border-left: .2rem solid #213e53;
+    padding: 0;
+    border-radius: 0;
+    padding: .5rem 1rem;
+}
+.freelancer-booking-modification form section:nth-child(3)>div input:focus{
+    outline: none;
+    border: none;
+    border-left: .2rem solid #213e53;
+}
+.freelancer-booking-modification form i.fas.fa-pound-sign{
+    font-size: 1.5rem;
+    text-align: center;
+    color: #213e53;
+}
+#booking-modification-submit-bttn{
+    border: 0;
+    margin: 0;
+    width: 100%;
+    background-color: #213e53;
+}
+#booking-modification-submit-bttn:hover{
+    background-color: #0d3349;
+}
+.freelancer-booking-modification form section:nth-child(4){
+    margin-top: 3rem;
+}
+
+.freelancer-booking-modification-acceptance-form{
+    font-size: 1.3rem;
+}
+.freelancer-booking-modification-acceptance-form h4{
+    margin-bottom: 1rem;
+}
+.freelancer-booking-modification-acceptance-form span{
+    font-weight: bold;
+    font-style: italic;
+    color: red;
+}
+.freelancer-booking-modification-acceptance-form label{
+    font-weight: bold;
+}
+.freelancer-booking-modification-acceptance-form input,
+.freelancer-booking-modification-acceptance-form p{
+    background: #eee;
+    border: none;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+.freelancer-booking-modification-acceptance-form input:focus{
+    border: none;
+    outline: none;
+    cursor: default;
+}
+.freelancer-booking-modification-acceptance-form section:last-child{
+    margin-top: 3rem;
+    text-align: center;
+}
+.freelancer-booking-modification-acceptance-form section:last-child button:last-child{
+    background-color: #308634;
+}
+.freelancer-booking-modification-acceptance-form section:last-child button:last-child:hover{
+    background-color: #29722d;
+}
+.freelancer-booking-modification-acceptance-form section:last-child button:first-child{
+    background-color: #FF0000;
+}
+.freelancer-booking-modification-acceptance-form section:last-child button:first-child:hover{
+    background-color: #bf3524;
 }
