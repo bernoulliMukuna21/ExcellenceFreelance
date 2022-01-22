@@ -17,7 +17,13 @@ router.get('/', async function (req, res, next) {
         let loggedInUser;
         let loggedInUser_imageSrc;
 
-        let allFreelancers = await UserModel.find({user_stature: 'freelancer'});
+        let allFreelancers = await UserModel.find({
+            $and: [{
+                user_stature: 'freelancer'
+            },{
+                "serviceAndPrice.0": { $exists: true }
+            }]
+        });
 
         if (req.isAuthenticated()) {
             loggedInUser = req.user;
@@ -29,6 +35,8 @@ router.get('/', async function (req, res, next) {
                         user_stature: 'freelancer'
                     }, {
                         email: { $ne: loggedInUser.email }
+                    },{
+                        "serviceAndPrice.0": { $exists: true }
                     }]
                 });
             }
