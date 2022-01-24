@@ -48,9 +48,7 @@ $(document).click(function (event) {
         || elementClicked.id == 'addService' || elementClicked.id == 'addPrice'
         || elementClicked.id == 'addServiceAndPrice'
     ){
-        let pageToGo = freelancersectionNames[1];
-        accountsOperation.pageDispalyStyle(pageToGo, freelancersectionNames,
-            freelancerProfileSections);
+        $('.user-update-page').trigger("click");
     }
 
     /*
@@ -366,6 +364,12 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
         $('#userServicesPriceField input').val('');
     }
 }
+
+// Price input validation
+$('#price').keypress(function(event){
+    return accountsOperation.priceValidation(event.key, $(this).val());
+});
+
 // services
 $('#servicePriceBttn').click(function (event) {
     event.preventDefault();

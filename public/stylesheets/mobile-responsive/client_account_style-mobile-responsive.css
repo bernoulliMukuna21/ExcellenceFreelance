@@ -34,7 +34,7 @@
         text-align: center;
         width: 100%;
         border-radius: .5rem;
-        box-shadow: rgba(99, 99, 99, 1) 0px 2px 8px 0px;
+        box-shadow: rgb(160, 159, 159) 0px 2px 8px 0px;
     }
     .client-profile-information ul li:first-child{
         border: none;

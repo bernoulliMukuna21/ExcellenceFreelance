@@ -810,9 +810,41 @@ button.like{
 .user-service_and_price{
     border-top: .1rem solid #213e53;
 }
+.user-servicePrice-container>div{
+    display: grid;
+    grid-template-columns: 43% 43% 10%;
+    column-gap: 2%;
+}
+#userServicesPriceField{
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: .1rem solid #ccc;
+    border-radius: .5rem;
+}
+#userServicesPriceField i.fas.fa-pound-sign{
+    padding: .5rem 0;
+    padding-right: 1rem;
+    margin: 0 1rem;
+    font-size: 1.3rem;
+    border-right: .2rem solid #213e53;
+    color: #213e53;
+}
+#userServicesPriceField input{
+    padding: .5rem 0;
+    margin: 0;
+    border: none;
+}
+#servicePriceBttn{
+    margin-top: .5rem ;
+    margin-bottom: 1.5rem;
+}
+/*
 .user-servicePrice-container{
     display: grid;
-    grid-template-columns: 48% 50%;
+    grid-template-columns: 40% 40% 18%;
     column-gap: 2%;
 }
 .user-servicePrice-container>section:nth-child(2) div{
@@ -823,7 +855,7 @@ button.like{
 
 .user-servicePrice-container>section:nth-child(2) div button{
     margin: .5rem 0 1.5rem 0;
-}
+}*/
 .single-serviceAndPrice{
     margin-bottom: .5rem;
 }

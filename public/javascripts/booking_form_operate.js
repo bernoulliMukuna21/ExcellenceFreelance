@@ -12,6 +12,30 @@ let freelancerListOfStatus = ['booking ongoing', 'awaiting payment', 'accept / m
 let clientListOfStatus = ['booking ongoing', 'pay now', 'awaiting acceptance', 'awaiting response',
     'please respond', 'confirm / reject', 'thank you!', 'awaiting resolution', 'cancelled'];
 
+function mobileVersionFunctionality(windowsize){
+    $('#service-booking-dueDate').attr("type", "text");
+    if (windowsize <= 500){
+        console.log('we are looking at the mobile version');
+        $('#service-booking-dueDate').attr("type", "date");
+    }
+}
+$(window).ready(function() {
+    console.log('window load');
+    var windowsize = $(window).width();
+    mobileVersionFunctionality(windowsize);
+})
+
+$(window).resize(function() {
+    console.log('window resize');
+    var windowsize = $(window).width();
+    mobileVersionFunctionality(windowsize);
+});
+
+$('#service-booking-dueDate').blur(function() {
+    var windowsize = $(window).width();
+    mobileVersionFunctionality(windowsize);
+})
+
 function emptyForm() {
     // Clear input value
     $('.booking-form div:nth-child(2)>section h1').remove();
@@ -144,6 +168,11 @@ $('#service-booking-form>select').change(event => {
     }
 })
 
+$('#service-enquiry-price').keypress(function(event){
+    let characterTyped = event.key
+    let currentPriceTyped = $(this).val();
+    return accountsOperation.priceValidation(characterTyped, currentPriceTyped);
+});
 
 $('.closebook-form').click(event => {
     $('.booking').hide();
