@@ -38,6 +38,9 @@ $('#service-booking-dueDate').blur(function() {
     var windowsize = $(window).width();
     mobileVersionFunctionality(windowsize);
 })
+$('#service-booking-dueDate').focus(function() {
+    $(this).attr("placeholder", '');
+})
 
 function emptyForm() {
     // Clear input value
