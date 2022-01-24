@@ -18,7 +18,10 @@ function mobileVersionFunctionality(windowsize){
     $('#service-booking-dueDate').attr("type", "text");
     if (windowsize <= 500){
         console.log('we are looking at the mobile version');
+        let dateValue = $('#service-booking-dueDate').val();
+
         $('#service-booking-dueDate').attr("type", "date");
+
         $('#service-booking-dueDate').attr("placeholder", "dd/mm/yyyy");
     }
 }
