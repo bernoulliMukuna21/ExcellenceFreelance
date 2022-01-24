@@ -19,7 +19,7 @@ function mobileVersionFunctionality(windowsize){
     if (windowsize <= 500){
         console.log('we are looking at the mobile version');
         $('#service-booking-dueDate').attr("type", "date");
-        $('#service-booking-dueDate').attr("placeholder", "24/01/2022");
+        $('#service-booking-dueDate').attr("placeholder", "30/01/2022");
     }
 }
 $(window).ready(function() {
