@@ -38,8 +38,9 @@ div.booking
                             div.booking-dateandtime-picker-container
                                 div
                                     h5 Date
-                                    input#service-booking-dueDate(type='date', name='projectduedate',
-                                        placeholder="24 Jan 2022", required='true')
+                                    input#service-booking-dueDate(type='text', name='projectduedate',
+                                        placeholder="Due Date (dd/mm/yyyy)", onfocus="(this.type='date')"
+                                        onblur="(this.type='text')", required='true')
 
                                 .booking-time-picker
                                     h5 Time
