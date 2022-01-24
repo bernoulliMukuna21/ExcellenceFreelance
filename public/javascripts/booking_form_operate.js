@@ -14,15 +14,16 @@ let freelancerListOfStatus = ['booking ongoing', 'awaiting payment', 'accept / m
 let clientListOfStatus = ['booking ongoing', 'pay now', 'awaiting acceptance', 'awaiting response',
     'please respond', 'confirm / reject', 'thank you!', 'awaiting resolution', 'cancelled'];
 
-function mobileVersionFunctionality(windowsize){
+function mobileVersionFunctionality(windowsize, dateValue){
     $('#service-booking-dueDate').attr("type", "text");
     if (windowsize <= 500){
         console.log('we are looking at the mobile version');
-        let dateValue = $('#service-booking-dueDate').val();
-
         $('#service-booking-dueDate').attr("type", "date");
-
-        $('#service-booking-dueDate').attr("placeholder", "dd/mm/yyyy");
+        if(!dateValue){
+            $('#service-booking-dueDate').attr("placeholder", "dd/mm/yyyy");
+        }else{
+            $('#service-booking-dueDate').attr("placeholder", '');
+        }
     }
 }
 $(window).ready(function() {
@@ -39,8 +40,9 @@ $(window).resize(function() {
 
 $('#service-booking-dueDate').blur(function() {
     var windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize);
+    mobileVersionFunctionality(windowsize, $(this).val());
 })
+
 $('#service-booking-dueDate').focus(function() {
     $(this).attr("placeholder", '');
 })
