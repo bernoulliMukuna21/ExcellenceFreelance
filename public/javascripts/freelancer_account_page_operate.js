@@ -9,6 +9,9 @@ import BookingInsertionIndex from './BookingInsertionIndex.js'
 * will be the default once the page has loaded.
 * */
 
+//let domainName = 'http://localhost:3000';
+let domainName = 'https://www.nxtdue.com';
+
 let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes;
 let freelancerAllowedPages = $('.freelancer-page-allowed')[0].childNodes;
 let freelancersectionNames = $('.account-profile-information ul li');
@@ -46,9 +49,7 @@ $(document).click(function (event) {
         || elementClicked.id == 'addService' || elementClicked.id == 'addPrice'
         || elementClicked.id == 'addServiceAndPrice'
     ){
-        let pageToGo = freelancersectionNames[1];
-        accountsOperation.pageDispalyStyle(pageToGo, freelancersectionNames,
-            freelancerProfileSections);
+        $('.user-update-page').trigger("click");
     }
 
     /*
@@ -365,6 +366,11 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
     }
 }
 
+// Price input validation
+$('#price').keypress(function(event){
+    return accountsOperation.priceValidation(event.key, $(this).val());
+});
+
 // services
 $('#servicePriceBttn').click(function (event) {
     event.preventDefault();
@@ -393,7 +399,7 @@ accountsOperation.deleteItem('.saved-skill',
 $(document).on('click', '.public-service-enquiry button', function(event) {
     let freelancerEmail = event.target.parentNode.lastChild.lastChild.value;
     $('#service-booking-form').get(0).setAttribute('action',
-        `http://localhost:3000/payment/create-checkout-session/booking-checkout?client_freelancer=${freelancerEmail}`); //this works
+        `${domainName}/payment/create-checkout-session/booking-checkout?client_freelancer=${freelancerEmail}`); //this works
 })
 
 /*

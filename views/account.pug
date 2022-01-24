@@ -214,17 +214,18 @@ block content
                                         .user-service_and_price
                                             h3 Service and Price
                                             .user-servicePrice-container
-                                                section#userServiceField
+                                                div
                                                     label Service #[br]
-                                                    input(type='text', name='service', id='service', value='',
-                                                            placeholder='Enter Services (e.g. Developer, Translator, ...)')
-
-                                                section
                                                     label(for='price') Price #[br]
-                                                    div#userServicesPriceField
+                                                div
+                                                    section#userServiceField
+                                                        input(type='text', name='service', id='service', value='',
+                                                            placeholder='Enter Services (e.g. Developer, Translator, ...)')
+                                                    section#userServicesPriceField
+                                                        i.fas.fa-pound-sign
                                                         input(type='text', name='price', id='price', value='',
-                                                            placeholder='Enter Price (e.g. 8.90, 134)')
-                                                        button#servicePriceBttn: i.fas.fa-plus-square
+                                                            placeholder='Enter Price (e.g. 10.99)')
+                                                    button#servicePriceBttn: i.fas.fa-plus-square
                                             .saved-serviceAndPrice
                                                 each serviceAndPrice in freelancerUser.serviceAndPrice
                                                     .single-serviceAndPrice

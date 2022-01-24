@@ -77,8 +77,7 @@ $(document).click(function (event) {
 
     if(elementClicked.className === 'addProfilePicture'){
         let pageToGo = clientsectionNames[1];
-        accountsOperation.pageDispalyStyle(pageToGo, clientsectionNames,
-            clientProfileSections);
+        $('.client-profile-update-page').trigger("click");
     }
 
     /* Client Booking */

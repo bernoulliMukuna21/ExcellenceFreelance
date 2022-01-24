@@ -197,6 +197,25 @@ function emptyDescription(defaultText, htmlContainer) {
     $(htmlContainer).append(divContainer);
 }
 
+function priceValidation(characterTyped, currentPriceTyped) {
+    console.log('running')
+    if(characterTyped === '.'){
+        if(currentPriceTyped.includes('.') || currentPriceTyped === ''){
+            return false;
+        }
+    }
+    else{
+        if(!(/\d/.test(characterTyped))){
+            return false
+        }else{
+            if(currentPriceTyped.includes('.')){
+                if(currentPriceTyped.split('.')[1].length>=2){
+                    return false
+                }
+            }
+        }
+    }
+}
 function showPrice(price, htmlContainer) {
     let pricePage = document.createElement('p');
     pricePage.innerText = 'Minimum Price at ';
@@ -766,8 +785,8 @@ function moveProjectBooking(nextDueProjectHTML, bookingID, projectTopContainer, 
 
 export{ pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
     dataCollection, showNames, showServicesAndPrices, showSkills,
-    emptySkills, countServices, showDescription, emptyDescription, showPrice,
-    showEducations, emptyEducation, deleteItem, keyBoardAction,
+    emptySkills, countServices, showDescription, emptyDescription, priceValidation,
+    showPrice, showEducations, emptyEducation, deleteItem, keyBoardAction,
     ajaxFormMessage_generator, createNewRoom, createNewConversationContainer,
     roomConversationsNavigation, createMessageHTML, createBookingHTML,
     createBookingTopHTML, createBookingModificationHTML, bookingModificationClientSide,

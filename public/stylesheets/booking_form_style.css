@@ -87,7 +87,8 @@ form select.bookform-field, .booking-time-picker select,
     margin: 1rem 0;
 }
 .project-enquiry-price section i{
-    font-size: 2rem;
+    font-size: 1.5rem;
+    color: #213e53;
 }
 #service-enquiry-price{
     border: none;
