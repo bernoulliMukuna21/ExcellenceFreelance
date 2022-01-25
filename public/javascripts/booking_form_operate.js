@@ -17,8 +17,10 @@ function mobileVersionFunctionality(windowsize, dateValue){
     if (windowsize <= 500){
         console.log('we are looking at the mobile version');
         $('#service-booking-dueDate').attr("type", "date");
-        if(!dateValue.includes("dd/mm/yyyy")){
+        if(!dateValue){
             $('#service-booking-dueDate').attr("placeholder", "dd/mm/yyyy");
+        }else{
+            $('#service-booking-dueDate').attr("placeholder", "");
         }
 
     }
@@ -125,6 +127,9 @@ function buttonToShow(button) {
 }
 
 $('.bottom-side button').click(event => {
+    // Get Screen size
+    var windowsize = $(window).width();
+
     /* Get the clicked Freelancer*/
     let parentContainer = event.target.parentNode.parentNode
     let currentFreelancerName =  parentContainer.childNodes[0].
@@ -135,6 +140,9 @@ $('.bottom-side button').click(event => {
 
     // Get the clicked freelancer services and their respective prices
     allServicesPrices = parentContainer.childNodes[1].childNodes[0].childNodes;
+
+    // Date & Time for mobile version
+    mobileVersionFunctionality(windowsize);
 
     // Hide/Show either Book or Enquire button
     buttonToShow(event.target.innerText)
