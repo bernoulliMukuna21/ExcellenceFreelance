@@ -61,9 +61,10 @@ $( document ).ready(function() {
         mobileVersionFunctionality(windowsize, 'showRoomMessages');
     }else{
         roomsFromDB({requirement: 'getRooms'});
-        mobileVersionFunctionality(windowsize);
+        /*mobileVersionFunctionality(windowsize);*/
     }
 });
+/*
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize);
@@ -71,7 +72,7 @@ $(document).on('click', '.client-profile-information ul li:nth-child(3)', functi
 $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize);
-})
+})*/
 
 /*** Booking Initialiser button is clicked ***/
 $(document).on('click', '#booking-side-message-bttn', function(event) {
@@ -93,7 +94,7 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
             roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
             $('.client-profile-information ul li:last-child').trigger('click');
 
-            mobileVersionFunctionality(windowsize);
+            /*mobileVersionFunctionality(windowsize);*/
         },
         error: function (error) {
             console.log('Error occurred in Initialising Message');
