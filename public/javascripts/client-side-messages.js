@@ -30,11 +30,11 @@ function mobileVersionFunctionality(windowsize, sideToShow){
         }
     }
 }
-
+/*
 $(window).resize(function() {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize)
-});
+});*/
 
 $( document ).ready(function() {
     let currentURL = window.location.href;
