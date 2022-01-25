@@ -45,6 +45,7 @@ $( document ).ready(function() {
     }
 
     windowsize = $(window).width();
+    mobileVersionFunctionality(windowsize);
 
     $('.user-messages-side').empty();
     $('.all-different-conversations-container').empty();
@@ -64,7 +65,7 @@ $( document ).ready(function() {
         /*mobileVersionFunctionality(windowsize);*/
     }
 });
-/*
+
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize);
@@ -72,7 +73,7 @@ $(document).on('click', '.client-profile-information ul li:nth-child(3)', functi
 $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize);
-})*/
+})
 
 /*** Booking Initialiser button is clicked ***/
 $(document).on('click', '#booking-side-message-bttn', function(event) {
