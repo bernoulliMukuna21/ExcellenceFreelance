@@ -63,7 +63,9 @@ $( document ).ready(function() {
     }else{
         console.log('Suspect location')
         roomsFromDB({requirement: 'getRooms'});
-        mobileVersionFunctionality(windowsize);
+        if(window.location.href !== currentURL){
+            mobileVersionFunctionality(windowsize);
+        }
     }
 });
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
