@@ -87,4 +87,69 @@
     .booking-main-details ul li:nth-child(5){
         display: none;
     }
+
+    .client-booking-modification-container{
+        display: flex;
+        flex-direction: column;
+    }
+    .client-side-originalBooking,
+    .client-side-modificationBooking{
+        border: none;
+    }
+    .client-side-originalBooking{
+        border-bottom: .2rem dashed black;
+        padding-bottom: 1.5rem;
+    }
+    .client-side-modificationBooking{
+        margin-top: 2rem;
+    }
+    .client-side-originalBooking h4,
+    .client-side-modificationBooking h4{
+        text-align: left;
+    }
+
+    .project-details>div:nth-child(2){
+        font-size: 1.2rem;
+        padding: 0;
+        margin: 0;
+    }
+    .project-details>div:nth-child(2) button,
+    .project-details>div:nth-child(2) a{
+        margin: 0;
+        width: 12rem;
+        font-size: 1.2rem;
+        margin-right: 1.5rem;
+    }
+    .project-details>div:nth-child(2) button.delete-booking-bttn{
+        margin-right: 0;
+    }
+    .project-finish-update-options button{
+        font-size: 1.2rem;
+    }
+
+    /* Profile Update*/
+    .client-profile-update label, .client-profile-update input{
+        font-size: 1.2rem;
+    }
+    .client-basic-infos{
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 2rem;
+    }
+    .client-basic-infos section:first-child{
+        width: 100%;
+    }
+    .client-password-infos{
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+    .client-password-infos .pasword-infos:nth-child(1){
+        display: none;
+    }
+    .client-password-infos input, .client-password-infos label{
+        width: 100%;
+        padding: 1rem;
+        margin: 0;
+    }
 }

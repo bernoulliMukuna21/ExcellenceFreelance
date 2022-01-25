@@ -7,10 +7,8 @@
     .booking-dateandtime-picker-container{
         grid-template-columns: 100%;
     }
-
     #service-booking-dueDate[type='date']:after {
         color: #213e53;
         content: attr(placeholder);
     }
-
 }

@@ -8,7 +8,7 @@ let receiver, pageToGo, pagesNames, pagesSections;
 // Get sender identifier
 let loggedInUser = JSON.parse($('#sender-unique-key').val());
 socket.emit('join', loggedInUser);
-
+var windowsize = $(window).width();
 /********************* First: find Receiver and right room of conversation ***********************/
 // Conversation initializer by clicking 'Message' button
 $('#freelance-mssg-btn').click(function (event) {
@@ -18,35 +18,16 @@ $('#freelance-mssg-btn').click(function (event) {
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;
 });
 
-$(document).on('click', '#booking-side-message-bttn', function(event) {
-    let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
-    $.ajax({
-        method: 'GET',
-        url: `/messages/get-profile/${freelancerToMessage_uniqueKey}`,
-        data: {},
-        success: function (data) {
-            $('.user-messages-side').empty();
-            $('.all-different-conversations-container').empty();
-
-            let sourceImage = !data.userImageSrc ? '/images/userDefaultImage.png'
-                :data.userImageSrc;
-            receiver = data.userData;
-            console.log('My receiver: ', receiver)
-            roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
-            $('.client-profile-information ul li:last-child').trigger('click')
-        },
-        error: function (error) {
-            console.log('Error occurred in Initialising Message');
-        }
-    })
-
-    /*window.location.href = '/account/'+loggedInUser.type+'/'+
-        loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;*/
-})
+$(window).resize(function() {
+    windowsize = $(window).width();
+    mobileVersionFunctionality(windowsize)
+});
 
 $( document ).ready(function() {
+    windowsize = $(window).width();
     $('.user-messages-side').empty();
     $('.all-different-conversations-container').empty();
+    $('.user-messages-main-container-box').show();
 
     if($('#clicked-receiver-key')[0]){
         receiver = $('#clicked-receiver-key').val();
@@ -56,14 +37,52 @@ $( document ).ready(function() {
             :receiver.userToMessageImageSrc;
 
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
+        mobileVersionFunctionality(windowsize);
     }else{
         roomsFromDB({requirement: 'getRooms'});
+        mobileVersionFunctionality(windowsize);
     }
 });
+function mobileVersionFunctionality(windowsize, sideToShow){
+    $('.user-messages-main-container-box').show();
+    $('.user-messages-main-container-box').show();
+    if (windowsize <= 500){
+        if(sideToShow === 'showRoomMessages'){
+            $('.user-messages-side').hide();
+        }else {
+            $('.user-messages-main-container-box').hide();
+        }
+    }
+}
+
+$(document).on('click', '#booking-side-message-bttn', function(event) {
+    let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
+    $.ajax({
+        method: 'GET',
+        url: `/messages/get-profile/${freelancerToMessage_uniqueKey}`,
+        data: {},
+        success: function (data) {
+            windowsize = $(window).width();
+            $('.user-messages-side').empty();
+            $('.all-different-conversations-container').empty();
+
+            let sourceImage = !data.userImageSrc ? '/images/userDefaultImage.png'
+                :data.userImageSrc;
+            receiver = data.userData;
+            console.log('My receiver: ', receiver)
+            roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
+            $('.client-profile-information ul li:last-child').trigger('click');
+            mobileVersionFunctionality(windowsize);
+        },
+        error: function (error) {
+            console.log('Error occurred in Initialising Message');
+        }
+    })
+})
 
 // Ongoing conversation and restarted by opening the chat room
 $(document).on('click', '.message-single-room', function(currentRoom) {
-
+    windowsize = $(window).width();
     let freelancerToMessage = this.childNodes[1].childNodes[0].childNodes[1].value;
     let roomIndex = Array.from(this.parentNode.children).indexOf(this)
     receiver = JSON.parse(freelancerToMessage);
@@ -85,6 +104,8 @@ $(document).on('click', '.message-single-room', function(currentRoom) {
     accountsOperation.roomConversationsNavigation(this,
         '.all-different-conversations-container',
         loggedInUser.uniqueKey, receiver.uniqueKey);
+
+    mobileVersionFunctionality(windowsize, 'showRoomMessages');
 })
 /********************* Second: Sending Messages ***********************/
 
