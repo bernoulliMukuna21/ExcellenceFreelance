@@ -37,7 +37,6 @@ $(window).resize(function() {
 });
 
 $( document ).ready(function() {
-    console.log('Suspect')
     let currentURL = window.location.href;
     let previousURL = document.referrer;
     if(previousURL === '' && currentURL.includes('?receiverKey=')){
@@ -61,11 +60,8 @@ $( document ).ready(function() {
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
         mobileVersionFunctionality(windowsize, 'showRoomMessages');
     }else{
-        console.log('Suspect location')
         roomsFromDB({requirement: 'getRooms'});
-        if(window.location.href !== currentURL){
-            mobileVersionFunctionality(windowsize);
-        }
+        mobileVersionFunctionality(windowsize);
     }
 });
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
