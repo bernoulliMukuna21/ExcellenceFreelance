@@ -37,8 +37,10 @@ $(window).resize(function() {
 });
 
 $( document ).ready(function() {
-
-    if(document.referrer === '' && window.location.href.includes('?receiverKey=')){
+    console.log('Suspect')
+    let currentURL = window.location.href;
+    let previousURL = document.referrer;
+    if(previousURL === '' && currentURL.includes('?receiverKey=')){
         window.location.href = '/account/'+loggedInUser.type+'/'+
             loggedInUser.uniqueKey;
     }
@@ -59,6 +61,7 @@ $( document ).ready(function() {
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
         mobileVersionFunctionality(windowsize, 'showRoomMessages');
     }else{
+        console.log('Suspect location')
         roomsFromDB({requirement: 'getRooms'});
         mobileVersionFunctionality(windowsize);
     }
