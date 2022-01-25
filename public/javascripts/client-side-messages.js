@@ -72,6 +72,7 @@ $(document).on('click', '.user-completed-booking-page', function(event) {
     mobileVersionFunctionality(windowsize);
 })
 
+/*** Booking Initialiser button is clicked ***/
 $(document).on('click', '#booking-side-message-bttn', function(event) {
     let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
     $.ajax({
