@@ -58,6 +58,7 @@ block content
                                     p(style='font-weight: bold') Service and Prices Empty
                         else
                             each servicePrice in freelancerUser.serviceAndPrice
+                                - console.log(servicePrice)
                                 .freelancer-serviceAndPrice-profile
                                     h4 #{servicePrice.service}
                                     h4 £#{servicePrice.price}
@@ -234,6 +235,7 @@ block content
                                                     button#servicePriceBttn: i.fas.fa-plus-square
                                             .saved-serviceAndPrice
                                                 each serviceAndPrice in freelancerUser.serviceAndPrice
+                                                    - console.log(serviceAndPrice)
                                                     .single-serviceAndPrice
                                                         .show-serviceAndPrice
                                                             h4 #{serviceAndPrice.service}
