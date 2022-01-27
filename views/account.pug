@@ -128,35 +128,41 @@ block content
                             form.update-general-information(method='post', autocomplete="off")
                                 h3 Name and other General Information
                                 .user-general-information-one
-                                    .general-information-section-one
-                                        label(for='name') Name: #[br]
-                                        input(id='name', type='text', placeholder='Enter Name', name='name',
-                                            value=typeof (freelancerUser.name) != 'undefined' ? freelancerUser.name: '', required)
+                                    section
+                                        .general-information-section-one
+                                            section
+                                                label(for='name') Name: #[br]
+                                                input(id='name', type='text', placeholder='Enter Name', name='name',
+                                                    value=typeof (freelancerUser.name) != 'undefined' ? freelancerUser.name: '', required)
 
-                                        label(for='email') #[br] Email Address: #[br]
-                                        input(id='email', type='email', placeholder='Enter Email', name='email',
-                                            value=typeof (freelancerUser.email) != 'undefined' ? freelancerUser.email: '', style=updateOption,
-                                            required)
-                                    .general-information-section-two
-                                        label(for='surname') Surname: #[br]
-                                        input(id='surname', type='text', placeholder='Enter Surname', name='surname',
-                                            value=typeof (freelancerUser.surname) != 'undefined' ? freelancerUser.surname: '', required)
+                                            section
+                                                label(for='surname') Surname: #[br]
+                                                input(id='surname', type='text', placeholder='Enter Surname', name='surname',
+                                                    value=typeof (freelancerUser.surname) != 'undefined' ? freelancerUser.surname : '', required)
+                                        .general-information-section-two
+                                            section
+                                                label(for='email') Email Address: #[br]
+                                                input(id='email', type='email', placeholder='Enter Email', name='email',
+                                                    value=typeof (freelancerUser.email) != 'undefined' ? freelancerUser.email : '', style=updateOption,
+                                                    required)
 
-                                        label(for='phone-number') #[br] Phone Number: #[br]
-                                        input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
-                                            value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
-                                        input(type='text', style='display: none;')
-                                    .general-information-section-three
-                                        label Profile Picture
-                                        .file-image-area
-                                            .file-image-upload
-                                                img(id='imagePreview', src=loggedInUser_imageSrc)
-                                            .file-image-upload-btn
-                                                span
-                                                    i.fas.fa-cloud-upload-alt
-                                                    p Upload Image
-                                                input#freelancer-profile-picture(type='file',
-                                                    name='user_profile_picture')
+                                            section
+                                                label(for='phone-number') Phone Number: #[br]
+                                                input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
+                                                    value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
+                                                input(type='text', style='display: none;')
+                                    section
+                                        .general-information-section-three
+                                            label Profile Picture
+                                            .file-image-area
+                                                .file-image-upload
+                                                    img(id='imagePreview', src=loggedInUser_imageSrc)
+                                                .file-image-upload-btn
+                                                    span
+                                                        i.fas.fa-cloud-upload-alt
+                                                        p Upload Image
+                                                    input#freelancer-profile-picture(type='file',
+                                                        name='user_profile_picture')
 
                                 .user-general-information-two
                                     h3 Change your Password
