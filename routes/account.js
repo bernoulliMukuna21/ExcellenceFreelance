@@ -208,7 +208,7 @@ router.get('/freelancer/:this_user', async function (req, res) {
                 freelancerSubscriptionStatus = stripeCustomerSub.data[0].status;
             }
         }
-
+        console.log('Freelancer: ', freelancerUser)
         res.render('account', {
             isLogged, // The user accessing this page is logged in?
             freelancerUser, // The freelancer - profile owner
