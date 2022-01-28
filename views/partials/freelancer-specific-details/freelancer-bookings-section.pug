@@ -15,52 +15,54 @@
                 if emptyBookings
                     p.emptyNextDueProject No Next Due Project
                 else
-                    - let nextDueProject = allBookingToFreelancer[`${0}`]; // booking ongoing
-                    if !nextDueProject
-                        p.emptyNextDueProject No Next Due Project
-                    else
-                        - nextDueProject = nextDueProject[0];
-                        .freelancer-projects-top
-                            p #{nextDueProject.service + ' - ' + nextDueProject.projectName}
-                            p #{nextDueProject.customer.name}
-                            p #{nextDueProject.dueDateTime.toLocaleString()}
-                            p.project-status(style='border: .1rem solid #A37A00; background-color: #A37A00') #{freelancerListOfStatus[nextDueProject.status.freelancer]}
-                            .freelancer-options
-                                i.far.fa-trash-alt#freelancer-booking-delete-button
-                        .freelancer-projects-top-details(style='display: none')
-                            div
-                                div
-                                    h4 Creation Date: #{nextDueProject.creationDate.toLocaleString()}
-                                    div.freelancer-project-details-descritpion
-                                        h4 Description:
-                                        p #{nextDueProject.projectDescription}
+                    h4 Nothing
+                        //
+                            - let nextDueProject = allBookingToFreelancer[`${0}`]; // booking ongoing
+                            if !nextDueProject
+                                p.emptyNextDueProject No Next Due Project
+                            else
+                                - nextDueProject = nextDueProject[0];
+                                .freelancer-projects-top
+                                    p #{nextDueProject.service + ' - ' + nextDueProject.projectName}
+                                    p #{nextDueProject.customer.name}
+                                    p #{nextDueProject.dueDateTime.toLocaleString()}
+                                    p.project-status(style='border: .1rem solid #A37A00; background-color: #A37A00') #{freelancerListOfStatus[nextDueProject.status.freelancer]}
+                                    .freelancer-options
+                                        i.far.fa-trash-alt#freelancer-booking-delete-button
+                                .freelancer-projects-top-details(style='display: none')
+                                    div
+                                        div
+                                            h4 Creation Date: #{nextDueProject.creationDate.toLocaleString()}
+                                            div.freelancer-project-details-descritpion
+                                                h4 Description:
+                                                p #{nextDueProject.projectDescription}
 
-                                    if nextDueProject.bookingType === 'request_booking'
-                                        h4 Price: £#{nextDueProject.requestedPrice}
-                                    else if nextDueProject.bookingType === 'instant_booking'
-                                        h4 Price: £#{nextDueProject.price}
-                            div
-                                button.freelancer-booking-finish-button Finish
-                                button#freelancer-booking-delete-button Cancel
-                            .freelancer-project-final-messages(style='display: none')
-                                - let amount = (nextDueProject.price - ((5/ 100) * nextDueProject.price)).toFixed(2);
-                                - let clientname = nextDueProject.customer.name;
-                                .freelancer-project-completion-confirmed
-                                    h4 Earning: £#{amount}
-                                    p(style='font-style: normal') Unfortunately, #{clientname} has informed us that the
-                                        | #{' '}project has not been delivered.
-                                        | #{' '}The management team has been made aware and will be contact soon. Please do
-                                        | #{' '}check your email inbox regularly for updates. Thank you!
-                                    p (contact us on unilance-management@google.co.uk for enquiries)
-                                .freelancer-project-completion-rejection(style='display: none')
-                                    p #{clientname} has decided to#{' '}
-                                        span cancel
-                                        | #{' '}the project. The management
-                                        | has been informed and will take appropriate actions. Thank you!#[br]
-                                        span (contact us on unilance-management@google.co.uk for enquiries)
+                                            if nextDueProject.bookingType === 'request_booking'
+                                                h4 Price: £#{nextDueProject.requestedPrice}
+                                            else if nextDueProject.bookingType === 'instant_booking'
+                                                h4 Price: £#{nextDueProject.price}
+                                    div
+                                        button.freelancer-booking-finish-button Finish
+                                        button#freelancer-booking-delete-button Cancel
+                                    .freelancer-project-final-messages(style='display: none')
+                                        - let amount = (nextDueProject.price - ((5/ 100) * nextDueProject.price)).toFixed(2);
+                                        - let clientname = nextDueProject.customer.name;
+                                        .freelancer-project-completion-confirmed
+                                            h4 Earning: £#{amount}
+                                            p(style='font-style: normal') Unfortunately, #{clientname} has informed us that the
+                                                | #{' '}project has not been delivered.
+                                                | #{' '}The management team has been made aware and will be contact soon. Please do
+                                                | #{' '}check your email inbox regularly for updates. Thank you!
+                                            p (contact us on unilance-management@google.co.uk for enquiries)
+                                        .freelancer-project-completion-rejection(style='display: none')
+                                            p #{clientname} has decided to#{' '}
+                                                span cancel
+                                                | #{' '}the project. The management
+                                                | has been informed and will take appropriate actions. Thank you!#[br]
+                                                span (contact us on unilance-management@google.co.uk for enquiries)
 
-                        input(type='hidden' name='bookingid' class='singleBookingID'
-                            value=nextDueProject.bookingID)
+                                input(type='hidden' name='bookingid' class='singleBookingID'
+                                    value=nextDueProject.bookingID)
 
     div.freelancer-all-projects
         if !emptyBookings
