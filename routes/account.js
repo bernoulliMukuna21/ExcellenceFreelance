@@ -166,6 +166,7 @@ router.get('/freelancer/:this_user', async function (req, res) {
                 res.send('An Error occurred!');
             }
             // Group the project by statuses
+            allBookingToFreelancer = groupByKey(allBookingToFreelancer, 'freelancer');
         }
     }
     try {
@@ -208,7 +209,7 @@ router.get('/freelancer/:this_user', async function (req, res) {
             }
 
         }*/
-        console.log('Freelancer: ', freelancerUser)
+
         res.render('account', {
             isLogged, // The user accessing this page is logged in?
             freelancerUser, // The freelancer - profile owner
