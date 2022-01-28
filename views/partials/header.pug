@@ -17,6 +17,7 @@ header
 
                 a(href='/'): button(class='nav-btn') Home
                 a(href='/users/logout'): button(class='nav-btn') Logout
+
                 - let loggedinUser_Mssg = {type: loggedInUser.user_stature, uniqueKey: emailEncode(loggedInUser.email)}
                 input(style='display: none;' id='sender-unique-key' value=JSON.stringify(loggedinUser_Mssg))
 
@@ -34,10 +35,12 @@ header
                         a(href='/account/client/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
                         a(href='/') Home
                         a(href='/users/logout') Logout
+
                 else if(loggedInUser.user_stature === 'freelancer')
                     .mobileheaderLinks
                         a(href='/account/freelancer/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
                         a(href='/') Home
                         a(href='/users/logout') Logout
+
             a.headerburger-icon(href='javascript:void(0)')
                 i.fa.fa-bars

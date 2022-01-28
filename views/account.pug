@@ -38,7 +38,6 @@ block content
                                         form(action='http://localhost:3000/payment/create-portal-session' method='POST')
                                             input(type='hidden' id='session-id' name='session_id' value='')
                                             button.payment-details-update Manage billing information
-
                     if (isLogged && (freelancerUser.email !== loggedInUser.email))
                         div.public-service-enquiry
                             - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
@@ -58,6 +57,7 @@ block content
                                     p(style='font-weight: bold') Service and Prices Empty
                         else
                             each servicePrice in freelancerUser.serviceAndPrice
+                                - console.log(servicePrice)
                                 .freelancer-serviceAndPrice-profile
                                     h4 #{servicePrice.service}
                                     h4 £#{servicePrice.price}
@@ -73,7 +73,6 @@ block content
                                     p.newMessageReceived(style='display:none;') new
                             //
                                 li.freelancer-payment-page Payment
-
             .freelancer_account_main_side
                 .freelancer-page-allowed
                     .freelancer-main-page
@@ -234,6 +233,7 @@ block content
                                                     button#servicePriceBttn: i.fas.fa-plus-square
                                             .saved-serviceAndPrice
                                                 each serviceAndPrice in freelancerUser.serviceAndPrice
+                                                    - console.log(serviceAndPrice)
                                                     .single-serviceAndPrice
                                                         .show-serviceAndPrice
                                                             h4 #{serviceAndPrice.service}
@@ -270,7 +270,7 @@ block content
 
 
                                 .update-page-submit
-                                        input#update-page-submission(type='submit', value='Save Profile')
+                                    input#update-page-submission(type='submit', value='Save Profile')
 
                         .freelancer-booking-page(style='display: none;')
                             include ./partials/freelancer-specific-details/freelancer-bookings-section
@@ -289,7 +289,6 @@ block content
             else
                 if (freelancerSubscriptionStatus !== 'active' || (freelancerSubscriptionStatus === 'trialing' && numberOfDays<300))
                     - pageStatus = 'blocked';
-
             if pageStatus === 'blocked'
                 .freelancer-page-blocked
                     h1 PROFILE BLOCKED
