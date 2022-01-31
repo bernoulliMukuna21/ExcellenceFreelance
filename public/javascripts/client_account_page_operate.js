@@ -127,13 +127,13 @@ $(document).on('click', '.client-accept-booking-bttn', function(event) {
 
    let bookingModification = bookingDescriptionContainerHTML.childNodes[0].childNodes[1];
     bookingModification = bookingModification.childNodes[1];
-
+    console.log('Booking Modification: ', bookingModification)
     clientSideBookingInfosModal(bookingContainerHTML,
         'booking modification acceptance - client',
         {
             acceptDueDate: bookingModification.childNodes[0].innerText.split(': ')[1].trim(),
-            acceptDescription: bookingModification.childNodes[1].childNodes[1].innerText,
-            acceptPrice: bookingModification.childNodes[2].innerText.split(':')[1].trim()
+            acceptDescription: bookingModification.childNodes[2].childNodes[1].innerText,
+            acceptPrice: bookingModification.childNodes[3].innerText.split(':')[1].trim()
         });
 })
 

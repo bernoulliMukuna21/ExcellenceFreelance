@@ -126,6 +126,9 @@
     .project-finish-update-options button{
         font-size: 1.2rem;
     }
+    .bookingDetails-showOnMobileResponsive{
+        display: block;
+    }
 
     /* Profile Update*/
     .client-profile-update label, .client-profile-update input{

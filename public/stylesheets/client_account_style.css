@@ -207,6 +207,12 @@ input:focus{
 .project-details div:last-child button.client-accept-booking-bttn:hover{
     background-color: #29722d;
 }
+.bookingDetails-showOnMobileResponsive{
+    display: none;
+}
+.project-details>div:first-child span{
+    font-weight: normal;
+}
 
 .client-booking-modification-container{
     display: flex;

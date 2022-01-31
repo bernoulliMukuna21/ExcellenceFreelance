@@ -628,7 +628,11 @@ function createBookingToggleDetails(bookingData, projectDetailsHTML) {
     let detailsDIV = document.createElement('div');
 
     let projectDetailsDescription = `<div>` +
-        `<h4>Creation Date: ${new Date(bookingData.creationDate).toLocaleString(locale)}</h4>`+
+        `<h4>Creation Date: <span>${new Date(bookingData.creationDate).toLocaleString(locale)}</span></h4>`+
+        `<div class="bookingDetails-showOnMobileResponsive">`+
+        `<h4>Client Name: <span>${bookingData.customer.name}</span></h4>`+
+        `<h4>Due Date: <span>${new Date(bookingData.dueDateTime).toLocaleString(locale)}</span></h4>`+
+        `</div>`+
         `<div class="freelancer-project-details-descritpion">`+
         `<h4>Description:</h4>`+
         `<p>${bookingData.projectDescription}</p>`+
@@ -716,6 +720,10 @@ function createBookingModificationHTML(originalBookingData, modifyBookingData, d
         `<h4>Creation Date: `+
         `<span style="font-weight: normal">${new Date(originalBookingData.creationDate).toLocaleString(locale)}</span>`+
         `</h4>`+
+        `<div class="bookingDetails-showOnMobileResponsive">`+
+        `<h4>Client Name: <span>${originalBookingData.customer.name}</span></h4>`+
+        `<h4>Due Date: <span>${new Date(originalBookingData.dueDateTime).toLocaleString(locale)}</span></h4>`+
+        `</div>`+
         `<div class="freelancer-project-details-descritpion">`+
         `<h4>Description: </h4>`+
         `<p>${originalBookingData.projectDescription}</p>`+
@@ -735,6 +743,9 @@ function createBookingModificationHTML(originalBookingData, modifyBookingData, d
         `<h4 id="newProposedDueDate">Proposed Due Date: `+
         `<span style="font-weight: normal">${new Date(modifyBookingData.newProposedDueDate).toLocaleString(locale)}</span>`+
         `</h4>`+
+        `<div class="bookingDetails-showOnMobileResponsive">`+
+        `<h4>Client Name: <span>${originalBookingData.customer.name}</span></h4>`+
+        `</div>`+
         `<div class="freelancer-project-details-descritpion">`+
         `<h4>Proposed Description: </h4>`+
         `<p>${modifyBookingData.newProposedDescription}</p>`+
@@ -750,10 +761,13 @@ function bookingModificationClientSide(originalBookingData, modifyBookingData, i
     let divContainer = document.createElement('div');
     divContainer.classList.add('client-booking-modification-container');
 
-    console.log('locale language: ', locale)
     let originalBookingHTML = `<div class="client-side-originalBooking">`+
         `<div><h4>Original Booking</h4></div><div><h4>Creation Date: `+
         `${new Date(originalBookingData.creationDate).toLocaleString(locale)}</h4>`+
+        `<div class="bookingDetails-showOnMobileResponsive"><h4>Freelancer Name: `+
+        `<span>${originalBookingData.supplier.name}</span></h4><h4>Due Date: <span>`+
+        `${new Date(originalBookingData.dueDateTime).toLocaleString(locale)}</span></h4>`+
+        `</div>`+
         `<div class="client-booking-descrption-details"><h4>Description :</h4>`+
         `<p>${originalBookingData.projectDescription}</p></div><h4>Cost: `+
         `£${originalBookingData.requestedPrice}</h4></div></div>`;
@@ -761,6 +775,8 @@ function bookingModificationClientSide(originalBookingData, modifyBookingData, i
     let modifiedBookingHTML = `<div class="client-side-modificationBooking">`+
         `<div><h4>New Proposal</h4></div><div><h4>Proposed Due Date: `+
         `${new Date(modifyBookingData.newProposedDueDate).toLocaleString(locale)}</h4>`+
+        `<div class="bookingDetails-showOnMobileResponsive"><h4>Freelancer Name: <span>`+
+        `${originalBookingData.supplier.name}</span></h4></div>`+
         `<div class="client-booking-descrption-details"><h4>Proposed Description :</h4>`+
         `<p>${modifyBookingData.newProposedDescription}</p></div><h4>Proposed Cost: `+
         `£${modifyBookingData.newProposedPrice}</h4></div></div>`;

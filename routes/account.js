@@ -207,7 +207,6 @@ router.get('/freelancer/:this_user', async function (req, res) {
                 * to check what is their subscription status. *
                 freelancerSubscriptionStatus = stripeCustomerSub.data[0].status;
             }
-
         }*/
 
         res.render('account', {

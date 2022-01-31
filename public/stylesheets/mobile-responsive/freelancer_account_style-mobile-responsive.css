@@ -112,6 +112,7 @@
     .user-education-years button, #servicePriceBttn, #add-skills-button{
         color: white;
         background-color: #213e53;
+        border-color: #213e53;
     }
     .user-education-years button, .user-education-years select{
         width: 100%;
@@ -138,14 +139,13 @@
     .freelancer-single-education .show-section button{
         margin-left: 0;
     }
-    .single-serviceAndPrice{
-        border: .1rem solid black;
-    }
+
     .single-serviceAndPrice .show-serviceAndPrice{
         width: 100%;
         grid-template-columns: 55% 25% 5%;
         column-gap: 5%;
         padding: .5rem 1rem;
+        border-color: #213e53;
     }
     .single-serviceAndPrice .show-serviceAndPrice button{
         padding-right: 1.5rem;
@@ -171,5 +171,81 @@
     .user-bio-container{
         grid-template-columns: 75% 20%;
         column-gap: 5%;
+    }
+
+    /*~~~~ Bookings ~~~~~*/
+    .freelancer-projects-header, .freelancer-projects-top,
+    .freelancer-one-project-top{
+        grid-template-columns: 60% 40%;
+        padding: 1.5rem .5rem;
+    }
+    .freelancer-projects-header p:nth-child(2),
+    .freelancer-projects-header p:nth-child(3),
+    .freelancer-projects-header p:nth-child(5){
+        display: none;
+    }
+    .freelancer-projects-top p:nth-child(2),
+    .freelancer-projects-top p:nth-child(3){
+        display: none;
+    }
+    .freelancer-one-project-top p:nth-child(2),
+    .freelancer-one-project-top p:nth-child(3){
+        display: none;
+    }
+    .freelancer-options{
+        display: none;
+    }
+    .freelancer-projects-header p:nth-child(1),
+    .freelancer-projects-top p:nth-child(1),
+    .freelancer-one-project-top p:nth-child(1){
+        text-align: left;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+    .freelancer-projects-header p:nth-child(4),
+    .freelancer-projects-top p:nth-child(4).project-status,
+    .freelancer-one-project-top p:nth-child(4).project-status{
+        width: 100%;
+        margin: 0;
+    }
+    .freelancer-projects-current, .freelancer-one-project{
+        padding: 0rem;
+    }
+    .freelancer-projects-current{
+        padding: 1rem .5rem;
+    }
+    .freelancer-one-project{
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .freelancer-one-project-top,
+    .freelancer-projects-top{
+        width: 100%;
+    }
+    .freelancer-projects-top-details, .freelancer-one-project-details{
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .freelancer-projects-top-details>div:nth-child(2) button,
+    .freelancer-one-project-details>div:nth-child(2) button{
+        font-size: 1.2rem;
+        width: 13rem;
+    }
+
+    .freelancer-one-project-details>div:nth-child(1){
+        flex-direction: column;
+    }
+    .freelancer-side-originalBooking, .freelancer-side-BookingChangesProposed{
+        flex: 1;
+        border: none;
+    }
+    .freelancer-side-BookingChangesProposed{
+        border-top: .2rem dashed #213e53;
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+    .bookingDetails-showOnMobileResponsive{
+        display: block;
     }
 }

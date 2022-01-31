@@ -7,4 +7,15 @@
     .top-mobilenavcontainer{
         display: block;
     }
+    .mobileheaderLinks a:last-child{
+        border-top: .2rem solid #213e53;
+    }
+    .mobileheaderLinks a:last-child button#be-freelancer,
+    .mobileheaderLinks a:last-child button#be-client {
+        border: none;
+        width: 100%;
+        padding: 1rem;
+        background: white;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
 }

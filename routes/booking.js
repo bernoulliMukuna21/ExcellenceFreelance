@@ -784,7 +784,6 @@ function server_io(io) {
         BookingModel.findOne({bookingID: bookingID})
             .then(bookingDetailUpdate => {
                 bookingDetailUpdate.status = { freelancer: 3, client: 4 }
-                console.log('booking to update: ', bookingDetailUpdate);
 
                 let newBookingModifyConversation = {
                     newProposedDescription: dataToModify.description,
@@ -829,8 +828,8 @@ function server_io(io) {
                         }
                     });
 
-                    res.status(200).send(bookingDetailUpdate);
                     io.sockets.to(clientToSendModification).emit('Booking Modification to Client', bookingDetailUpdate);
+                    res.status(200).send(bookingDetailUpdate);
                 })
             })
             .catch(err=>{
