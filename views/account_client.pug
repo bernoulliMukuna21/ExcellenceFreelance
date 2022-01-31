@@ -71,7 +71,13 @@ block content
                                         .project-details
                                             div
                                                 if(clientListOfStatus[bookingDetail.status.client] !== 'please respond')
-                                                    h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                    h4 Creation Date: #{' '}
+                                                        span #{bookingDetail.creationDate.toLocaleString()}
+                                                    div.bookingDetails-showOnMobileResponsive
+                                                        h4 Freelancer Name: #{' '}
+                                                            span #{bookingDetail.supplier.name}
+                                                        h4 Due Date: #{' '}
+                                                            span #{bookingDetail.dueDateTime.toLocaleString()}
                                                     div.client-booking-descrption-details
                                                         h4 Description:
                                                         p #{bookingDetail.projectDescription}
@@ -86,6 +92,11 @@ block content
                                                                 h4 Original Booking
                                                             div
                                                                 h4 Creation Date: #{bookingDetail.creationDate.toLocaleString()}
+                                                                div.bookingDetails-showOnMobileResponsive
+                                                                    h4 Freelancer Name: #{' '}
+                                                                        span #{bookingDetail.supplier.name}
+                                                                    h4 Due Date: #{' '}
+                                                                        span #{bookingDetail.dueDateTime.toLocaleString()}
                                                                 div.client-booking-descrption-details
                                                                     h4 Description:
                                                                     p #{bookingDetail.projectDescription}
@@ -98,6 +109,9 @@ block content
                                                                 h4 New Proposal
                                                             div
                                                                 h4 Proposed Due Date: #{lastBookingModification.newProposedDueDate.toLocaleString()}
+                                                                div.bookingDetails-showOnMobileResponsive
+                                                                    h4 Freelancer Name: #{' '}
+                                                                        span #{bookingDetail.supplier.name}
                                                                 div.client-booking-descrption-details
                                                                     h4 Proposed Description:
                                                                     p #{lastBookingModification.newProposedDescription}

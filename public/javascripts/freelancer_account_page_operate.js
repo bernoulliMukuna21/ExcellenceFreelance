@@ -574,8 +574,8 @@ $(document).on('click', '.freelancer-booking-accept-button', function(event) {
         let projectAllInformationContainer = projectBasicInformation.parentNode.previousSibling;
         let dueDateToAccept = projectAllInformationContainer.childNodes[2].innerText;
         let originalBooking = projectBasicInformation.childNodes[0].childNodes[1];
-        let descriptionToAccept = originalBooking.childNodes[1].childNodes[1].innerText;
-        let priceToAccept = originalBooking.childNodes[2].childNodes[1].innerText;
+        let descriptionToAccept = originalBooking.childNodes[2].childNodes[1].innerText;
+        let priceToAccept = originalBooking.childNodes[3].childNodes[1].innerText;
 
         projectCompletionShow(event,
             {dueDateToAccept, descriptionToAccept, priceToAccept});
@@ -628,15 +628,15 @@ $(document).on('click', '.freelancer-booking-modify-button', function(event) {
     if(currentProjectStatus === 'accept / modify'){
         currentProjectDueDateTime = projectAllInformationContainer.childNodes[2].innerText;
         currentProjectDescription = projectBasicInformation.childNodes[0].
-            childNodes[1].childNodes[1].innerText;
+            childNodes[2].childNodes[1].innerText;
         currentProjectPrice = projectBasicInformation.childNodes[0].
-            childNodes[2].innerText.split(':')[1].slice(2);
+            childNodes[3].innerText.split(':')[1].slice(2);
     }else if(currentProjectStatus === 'awaiting response' ||
         currentProjectStatus === 'please respond'){
         let proposalInfos = projectBasicInformation.childNodes[1].childNodes[1];
         currentProjectDueDateTime = proposalInfos.childNodes[0].childNodes[1].innerText;
-        currentProjectDescription = proposalInfos.childNodes[1].childNodes[1].innerText;
-        currentProjectPrice = proposalInfos.childNodes[2].childNodes[1].innerText.slice(1);
+        currentProjectDescription = proposalInfos.childNodes[2].childNodes[1].innerText;
+        currentProjectPrice = proposalInfos.childNodes[3].childNodes[1].innerText.slice(1);
     }
 
     projectCompletionShow(event,
