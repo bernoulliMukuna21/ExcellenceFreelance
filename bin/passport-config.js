@@ -8,7 +8,7 @@ var bcrypt = require('bcryptjs');
 var ObjectId = require('mongodb').ObjectID;
 var UserModel = require('../models/UserModel');
 
-let domainName = 'https://www.nxtdue.com'; // 'http://localhost:3000'
+let domainName = 'https://www.unilance.co.uk'; // 'http://localhost:3000'
 
 module.exports = function(passport) {
 

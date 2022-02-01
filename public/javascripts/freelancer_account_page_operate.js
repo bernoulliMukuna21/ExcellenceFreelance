@@ -10,7 +10,7 @@ import BookingInsertionIndex from './BookingInsertionIndex.js'
 * */
 
 //let domainName = 'http://localhost:3000';
-let domainName = 'https://www.nxtdue.com';
+let domainName = 'https://www.unilance.co.uk';
 
 let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes;
 let freelancerAllowedPages = $('.freelancer-page-allowed')[0].childNodes;

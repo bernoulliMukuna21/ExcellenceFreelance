@@ -7,8 +7,8 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 
 //let domainName = 'http://localhost:3000';
-let domainName = 'https://www.nxtdue.com';
-let nxtDueLoginURL=`${domainName}/users/login`;
+let domainName = 'https://www.unilance.co.uk';
+let unilanceLoginURL = `${domainName}/users/login`;
 
 const endpointSecret = process.env.stripe_webhookEndpointLive;
 
@@ -119,16 +119,16 @@ function server_io(io) {
                             '<p>Hello '+bookingUpdated.customer.name.split(' ')[0]+',</p><p>This is a confirmation' +
                             ' of the successful pay for your new booking ('+bookingUpdated.service+' - '
                             +bookingUpdated.projectName+'). Please note the unique identification of your project: '+
-                            bookingUpdated._id+'</p>'+'<p>Thank you,<br>The NxtDue Team' +
+                            bookingUpdated._id+'</p>'+'<p>Thank you,<br>The Unilance Team' +
                             '<br>07448804768</p>';
 
                         let successPayMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Paid</h1>'+
                             '<p>Hello '+bookingUpdated.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
                             ' the following booking ('+ bookingUpdated.service+' - ' +bookingUpdated.projectName +') has' +
                             ' now been paid. Please <a target="_blank" style="text-decoration: underline;' +
-                            ' color: #0645AD; cursor: pointer" href='+nxtDueLoginURL+'> login </a>' +
+                            ' color: #0645AD; cursor: pointer" href='+unilanceLoginURL+'> login </a>' +
                             ' to your account to access the details of this booking and, possibly beginning working on it.</p>'+
-                            '<p>Thank you,<br>The NxtDue Team <br>07448804768</p>';
+                            '<p>Thank you,<br>The Unilance Team <br>07448804768</p>';
 
                         let successPayMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Payment Successful</h1>'+
                             '<p>Hello,</p>'+'<p> The following booking has now been paid for: </p>'+
@@ -141,25 +141,25 @@ function server_io(io) {
                             '<li>Due Date: '+bookingUpdated.dueDateTime.toLocaleString()+' </li>' +
                             '<li>Description: '+bookingUpdated.projectDescription+' </li>' +
                             '</ul>'+
-                            '<p>Thank you<br>The NxtDue Team<br>07448804768</p>';
+                            '<p>Thank you<br>The Unilance Team<br>07448804768</p>';
 
                         bookingUpdated.save(err => {
                             if(err){
                                 throw err;
                             }
 
-                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction('unilance.admnistration@gmail.com',
                                 'Client Booking Payment Successful', successPayMessageToAdminHTML), function (err) {
                                 if(err){console.log(err)}
                                 else{
                                     console.log('Client success payment Message has been sent to Admin')
                                     // emailDecode(bookingDetailUpdate.customer.uuid)
-                                    mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                    mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                         'Client Booking Payment Successful', successPayMessageToFreelancerHTML), function (err) {
                                         if(err){console.log(err)}
                                         else{
                                             console.log('Client success payment Message has been sent to Freelancer');
-                                            mailer.smtpTransport.sendMail(mailer.mailerFunction('mukunabernoulli@yahoo.com',
+                                            mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                                 'Booking Payment Successful', successPayMessageToClientHTML), function (err) {
                                                 if(err){console.log(err)}
                                                 else{console.log('Client success payment Message has been sent to Client')}

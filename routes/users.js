@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
     res.redirect('/users/login');
 });
 
-// ~~~~~~~~~~~~~~~~~ NxtDue users helper functions  ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ Unilance users helper functions  ~~~~~~~~~~~~~~~~~~~
 
 // The variable will be used to track if a user is signing up as client or freelancer
 let userType_Oauth = {};
@@ -46,7 +46,7 @@ function loginSystem(req, res, user, userType, flash_message){
         else{
             if(userType==='client'){
                 // if sign up as a client, then direct to the homepage
-                //'Welcome to NxtDue.' +
+                //'Welcome to Unilance.' +
                 //                     ' Thank you for joining us!'
                 req.flash('success_message', flash_message);
                 res.redirect('/');
@@ -58,7 +58,7 @@ function loginSystem(req, res, user, userType, flash_message){
     });
 }
 
-// ~~~~~~~~~~~~~~~~~ Joining NxtDue gets and posts ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ Joining Unilance gets and posts ~~~~~~~~~~~~~~~~~~~
 
 // get the join view page
 router.get('/join', forwardAuthentication, function(req, res, next) {
@@ -118,7 +118,7 @@ router.post('/join/:userType', function (req, res) {
                             res.send(err)
                         }
                         else{
-                            let flash_message = `Welcome to NxtDue.com, ${newUser.name} ${newUser.surname}.` +
+                            let flash_message = `Welcome to Unilance.com, ${newUser.name} ${newUser.surname}.` +
                                 ' Thank you for joining us!'
                             loginSystem(req, res, newUser, userType, flash_message);
                         }
@@ -193,7 +193,7 @@ let smtpTransport = nodemailer.createTransport(
         auth:{
             //type: "login",
             type: 'OAuth2',
-            user: 'mmbernoulli@gmail.com',
+            user: 'unilance.admnistration@gmail.com',
             clientId: process.env.google_clientID,
             clientSecret: process.env.google_secretID,
             refreshToken: process.env.google_refreshToken,
@@ -239,10 +239,10 @@ router.post('/forgot', function (req, res, next) {
             let reset_link = "http://"+ req.headers.host+"/users/reset/"+ token;
             let mailOptions = {
                 to: req.body.email,
-                from: 'mmbernoulli@gmail.com',
+                from: 'unilance.admnistration@gmail.com',
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',
-                html: '<h1 style="color: #213e53; font-size: 1.1rem">NxtDue Password Reset</h1>'+
+                html: '<h1 style="color: #213e53; font-size: 1.1rem">Unilance Password Reset</h1>'+
                     '<p> Your are receiving this email because you (or someone else) have' +
                     ' requested to reset the password of your account.<br><i> Please click the ' +
                     'following, or paste this into your browser to complete this process.</i>' +
@@ -323,10 +323,10 @@ router.post('/reset/:token', function (req, res) {
         }, function (user, done) {
             let mailOptions = {
                 to: user.email,
-                from: 'mmbernoulli@gmail.com',
+                from: 'unilance.admnistration@gmail.com',
                 subject: 'Password Reset',
                 text: 'Password Successfully Updated. If you do not recognise this, Please contact us as' +
-                    ' soon as possible on mmbernoulli@gmail.com or 07448804768'
+                    ' soon as possible on unilance.admnistration@gmail.com or 07448804768'
             };
             smtpTransport.sendMail(mailOptions, function (err) {
                 req.flash('success_message', 'Your email has been sent')
@@ -387,7 +387,7 @@ function passportUser(req, res, user, info, current_user){
                 res.send(err)
             }
             else{
-                let flash_message = `Welcome to NxtDue, ${newUser.name} ${newUser.surname}.` +
+                let flash_message = `Welcome to Unilance, ${newUser.name} ${newUser.surname}.` +
                     ' Thank you for joining us!';
                 loginSystem(req, res, newUser, current_user, flash_message);
             }

@@ -4,7 +4,7 @@ import {createBookingHTML, moveProjectBooking} from "./account_operate.js";
 import BookingInsertionIndex from './BookingInsertionIndex.js'
 
 let allServicesPrices;
-let domainName = 'https://www.nxtdue.com';
+let domainName = 'https://www.unilance.co.uk';
 //let domainName = 'http://localhost:3000';
 
 var locale = 'en-GB'; //window.navigator.userLanguage || window.navigator.language;
