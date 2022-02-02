@@ -8,11 +8,11 @@ header
             else
                 if(loggedInUser.user_stature === 'client')
                     a(href='/account/switch/freelancer/'+emailEncode(loggedInUser.email))
-                        button(class='nav-btn', id='be-freelancer') Switch to Freelancer
+                        button(class='nav-btn', id='be-freelancer') Become A Freelancer
                     a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
                 else if(loggedInUser.user_stature === 'freelancer')
                     a(href='/account/switch/client/' + emailEncode(loggedInUser.email))
-                        button(class='nav-btn', id='be-client') Switch to Client
+                        button(class='nav-btn', id='be-client') Switch To Client
                     a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
 
                 a(href='/'): button(class='nav-btn') Home
@@ -36,7 +36,7 @@ header
                         a(href='/') Home
                         a(href='/users/logout') Logout
                         a(href='/account/switch/freelancer/' + emailEncode(loggedInUser.email))
-                            button(class='nav-btn', id='be-freelancer') Switch to Freelancer
+                            button(class='nav-btn', id='be-freelancer') Become A Freelancer
 
                 else if(loggedInUser.user_stature === 'freelancer')
                     .mobileheaderLinks
@@ -44,6 +44,6 @@ header
                         a(href='/') Home
                         a(href='/users/logout') Logout
                         a(href='/account/switch/client/' + emailEncode(loggedInUser.email))
-                            button(class='nav-btn', id='be-client') Switch to Client
+                            button(class='nav-btn', id='be-client') Switch To Client
             a.headerburger-icon(href='javascript:void(0)')
                 i.fa.fa-bars

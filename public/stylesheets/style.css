@@ -169,6 +169,7 @@ h2:after{
   border: .1rem solid #8d2874;
   padding: 1rem;
   cursor: pointer;
+  border-radius: 1rem;
 }
 .client-bottom a:hover, #joinAsClient:hover{
   box-shadow: .05rem .1rem #8d2874;

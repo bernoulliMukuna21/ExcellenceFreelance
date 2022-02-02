@@ -293,7 +293,7 @@ function deleteItem(containerHtml, buttonHtml){
                     parentOfContainer.remove();
                 }else{
                     $('.freelancer-update-infos').empty();
-                    let errors = [[{label: 'updateError', message: 'Service cannot be empty!'}]];
+                    let errors = [[{label: 'updateError', message: 'Service cannot be empty! Please add more services to delete this.'}]];
                     ajaxFormMessage_generator(errors, '.freelancer-update-infos');
                     $("html, body").animate({ scrollTop: 0 }, "slow");
                     $('.single-update-container').delay(5000).hide(1000);

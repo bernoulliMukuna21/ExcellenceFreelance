@@ -13,6 +13,7 @@ var fs = require('fs');
 var router = express.Router();
 var formChecker = require('../public/javascripts/formChecker');
 var UserModel = require('../models/UserModel');
+var mailer = require('../bin/mailer');
 var {forwardAuthentication} = require('../bin/authentication');
 var {emailEncode, emailDecode} = require('../bin/encodeDecode');
 
@@ -26,6 +27,7 @@ router.get('/', function(req, res, next) {
 
 // The variable will be used to track if a user is signing up as client or freelancer
 let userType_Oauth = {};
+let domainName = 'https://www.unilance.co.uk';
 
 function loginSystem(req, res, user, userType, flash_message){
     console.log('Inside login system')
@@ -118,6 +120,18 @@ router.post('/join/:userType', function (req, res) {
                             res.send(err)
                         }
                         else{
+                            let welcomeEmail = '<h1 style="color: #213e53; font-size: 1.1rem">Welcome to Unilance</h1>'+
+                                '<p>You have successfully signed up to '+' <a target="_blank" style="text-decoration: underline;' +
+                                ' color: #0645AD; cursor: pointer" href='+domainName+'> Unilance.co.uk</a>'+
+                                ' . Well done!</p><p> We are looking to working' +
+                                'with you.</p><p>Thank you<br>The Unilance Team<br>07448804768</p>';
+
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction(email,
+                                "Welcome to Unilance", welcomeEmail), function (err) {
+                                if(err){console.log(err)}
+                                else{console.log('user successfully signed up!')}
+                            });
+
                             let flash_message = `Welcome to Unilance.com, ${newUser.name} ${newUser.surname}.` +
                                 ' Thank you for joining us!'
                             loginSystem(req, res, newUser, userType, flash_message);

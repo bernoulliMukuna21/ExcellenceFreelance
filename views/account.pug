@@ -148,7 +148,8 @@ block content
                                             section
                                                 label(for='phone-number') Phone Number: #[br]
                                                 input(id='phone-number', type='tel', placeholder='Enter Phone Number', name='phone_number',
-                                                    value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '')
+                                                    value=typeof (freelancerUser.phone_number) != 'undefined' ? freelancerUser.phone_number: '',
+                                                    required)
                                                 input(type='text', style='display: none;')
                                     section
                                         .general-information-section-three
@@ -250,7 +251,7 @@ block content
                                                     section
                                                         label(for='freelancer_description') Description (Maximum 600 characters) #[br]
                                                         textarea(id='freelancer_description', placeholder='Write your Description (max 600 characters)...',
-                                                            name='freelancer_description', maxlength="600")
+                                                            name='freelancer_description', maxlength="600", required)
                                                             | #{typeof (freelancerUser.description) != 'undefined' ? freelancerUser.description : ''}
 
                                                     section
