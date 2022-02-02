@@ -191,6 +191,131 @@ input:focus{
 
 /*********************************************************************************************************************/
 /********************************************** Footer  **********************************************/
+#unilance-feeback-form{
+    position: sticky;
+    width: 0;
+    border: .1rem solid #213e53;
+    display: flex;
+    justify-content: end;
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+#feeback-text{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: absolute;
+    align-items: center;
+    left: 1vw;
+    top: 95.9vw;
+}
+.feedbackText{
+    border: .1rem solid #213e53;
+    border-radius: .5rem;
+    padding: 1rem;
+    color: #213e53;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+.feedbackText:hover{
+    border: .1rem solid #213e53;
+    color: white;
+    background-color: #213e53;
+}
+
+.feedback-modal-container{
+    display: flex;
+    justify-content: end;
+    border: .2rem solid #213e53;
+    border-radius: .5rem;
+    position: absolute;
+    bottom: -4vw;
+    right: 3.5vw;
+    width: 24vw;
+    display: none;
+}
+.feedback-modal-container:after{
+    content: "";
+    border-bottom: 1rem solid transparent;
+    border-left: 1rem solid #213e53;
+    border-top: 1rem solid transparent;
+    position: absolute;
+    right: -1rem;
+    bottom: 5%;
+    border-radius: .5rem;
+}
+.feedback-container-contents{
+    width: 100%;
+    border-radius: .5rem;
+}
+form#feeback-form{
+    background: white;
+    border-radius: .5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.3rem;
+    color: #213e53;
+}
+form#feeback-form h4{
+    text-align: center;
+    text-decoration: underline;
+    margin-bottom: 2rem;
+}#form#feeback-form div section{
+    margin: 1rem 0;
+ }
+form#feeback-form div section:nth-child(1) input,
+form#feeback-form div section:nth-child(2) input{
+    border: none;
+    padding: .5rem;
+    border: .1rem solid #213e53;
+    border-radius: .5rem;
+}
+form#feeback-form div section:nth-child(1) input:focus,
+form#feeback-form div section:nth-child(2) input:focus{
+    outline: none;
+}
+form#feeback-form div section:nth-child(1),
+form#feeback-form div section:nth-child(2){
+    display: grid;
+    grid-template-columns: 21% 78%;
+    gap: 1%;
+    align-items: center;
+    margin: 1rem 0;
+}
+form#feeback-form div textarea{
+    width: 100%;
+    height: 15rem;
+    resize: none;
+    border: none;
+    padding: .5rem;
+    border: .1rem solid #213e53;
+    border-radius: .5rem;
+    margin-top: .5rem;
+}
+form#feeback-form div textarea:focus{
+    outline: none;
+}
+form#feeback-form div section:nth-child(4){
+    text-align: center;
+    margin-top: 2rem;
+}
+form#feeback-form div section:nth-child(4) input{
+    padding: .75rem;
+    width: 10rem;
+    background-color: #213e53;
+    border-radius: .5rem;
+    border-color: #213e53;
+    color: white;
+    cursor: pointer;
+}
+form#feeback-form div section:nth-child(4) input:first-child{
+    margin-right: 1rem;
+}
+form#feeback-form div section:nth-child(4) input:last-child{
+    margin-left: 1rem;
+    background-color: #308634;
+    border-color: #308634;
+}
+
 #contact{
     background-color: #213e53;
     font-size: 1.3rem;

@@ -456,10 +456,15 @@ $('.update-general-information').submit(function (event) {
         contentType: false,
         processData: false,
         success: function (data) {
-
+            console.log('profile image update: ', data.profileImageSrc);
             /***** display the updated profile picture of the freelancer *****/
-            $('.account-profile-image img').attr('src',
-                data.profileImageSrc);
+            if(data.profileImageSrc === ''){
+                $('.account-profile-image img').attr('src',
+                    '/images/userDefaultImage.png');
+            }else{
+                $('.account-profile-image img').attr('src',
+                    data.profileImageSrc);
+            }
 
             /********* display names of the freelancer *********/
             accountsOperation.showNames(data.name, data.surname,

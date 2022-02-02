@@ -312,9 +312,16 @@ $('#client-profile-update-form').submit(function (event) {
         contentType: false,
         processData: false,
         success: function (data) {
+
             // display the updated profile picture of the client
-            $('.client-profile-details img').attr('src',
-                data.profileImageSrc);
+            if(data.profileImageSrc === ''){
+                $('.client-profile-details img').attr('src',
+                    '/images/userDefaultImage.png');
+            }else{
+                $('.client-profile-details img').attr('src',
+                    data.profileImageSrc);
+            }
+
             $('default-profile-image p').innerText = '+ Update Profile Picture';
 
             // display the updated names of te client
