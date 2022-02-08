@@ -73,6 +73,10 @@ function booking_form_show(title, allServicesPrices) {
     //First, clear the form of any input
     emptyForm();
 
+    // Clear request and instant booking price
+    let buttonInnerText = $('#service-booking-submit-bttn')[0].innerText;
+    $('#service-booking-submit-bttn')[0].innerText = buttonInnerText.split('(')[0].trim();
+
     // Create title for the current Pop Up form
     let formHeader = document.createElement('h1');
     formHeader.classList.add('booktitle');
