@@ -117,7 +117,6 @@ router.get('/freelancer/:this_user', async function (req, res) {
     let stripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
     let isLogged = req.isAuthenticated();
 
-
     if (isLogged) {
         loggedInUser = req.user;
 
@@ -136,7 +135,7 @@ router.get('/freelancer/:this_user', async function (req, res) {
                         messageIdHTML = 'show-user-messages'
                     }
                 }catch (e) {
-                    res.send('An Error occurred!');
+                    res.send('1- An Error occurred!');
                 }
             }
 
@@ -163,52 +162,41 @@ router.get('/freelancer/:this_user', async function (req, res) {
                     ]
                 )
             }catch (e) {
-                res.send('An Error occurred!');
+                res.send('2-An Error occurred!');
             }
 
             // Group the project by statuses
             allBookingToFreelancer = groupByKey(allBookingToFreelancer, 'freelancer');
         }
-
-
     }
     try {
         freelancerUser = await UserModel.find({email: currentFreelancerEmail});
         freelancerUser = freelancerUser[0];
 
         loggedInUser_imageSrc = imageToDisplay(freelancerUser);
+        let trailDays = 30;
 
-        let numberOfDays = numberOfDaysSince(freelancerUser.date, new Date());
-        if(!stripeCustomer){
-            /* The freelancer has never made a booking nor subscribed
-             In this case, we keep track of the number of days that
-             they have been on the site. */
-            if(numberOfDays <= 3000){
-                /* Although they are yet to make any payment on the website.
-                As a freelancer, they have a 30 days free trial before they
-                are start being charged for being on the website. */
-                freelancerSubscriptionStatus = 'trialing';
-            }
+        if(freelancerUser.is_subscribed){
+            trailDays = 0;
+            freelancerSubscriptionStatus = 'active';
         }else{
+            let numberOfDaysSinceJoining = numberOfDaysSince(freelancerUser.joiningDate);
 
-            let stripeCustomerSub = await stripeCustomerSubscription(stripeCustomer.id);
+            if(numberOfDaysSinceJoining > trailDays){
+                // They have used their trial days
 
-            if(!stripeCustomerSub){
-                /* The freelancer has made a booking on the website before
-                * but is yet to subscribe. Similarly, even though the users
-                * are yet to subscribe, they have a 30 days trial period. */
+                trailDays = 0;
+                freelancerSubscriptionStatus = 'not-available';
 
-                if(numberOfDays <= 3000){
-                    freelancerSubscriptionStatus = 'trialing';
-                }
-            }
-            else{
-                /* The freelancer is subscribed to the website. Now, we need
-                * to check what is their subscription status. */
-                freelancerSubscriptionStatus = stripeCustomerSub.data[0].status;
+            }else{
+                // They are yet to use their trail period.
+
+                trailDays = trailDays - numberOfDaysSinceJoining;
+                freelancerSubscriptionStatus = 'trial';
+
             }
         }
-        console.log('Freelancer bookings: ', allBookingToFreelancer);
+
         res.render('account', {
             isLogged, // The user accessing this page is logged in?
             freelancerUser, // The freelancer - profile owner
@@ -221,17 +209,16 @@ router.get('/freelancer/:this_user', async function (req, res) {
             userToMessage,
             userToMessageImageSrc,
             freelancerSubscriptionStatus,
-            numberOfDays,
+            trailDays,
             allBookingToFreelancer
         });
     }catch (e) {
-        res.send('An Error occurred!');
+        res.send('3-An Error occurred!');
     }
 });
 
 // client information update
 router.put('/client/update', ensureAuthentication, multerUserProfilePicture, async function (req, res) {
-    console.log('Inside client put function');
     let clientInformationChecker = new UpdateProfileChecker(req.user, req.body,
         req.file, 'client');
 

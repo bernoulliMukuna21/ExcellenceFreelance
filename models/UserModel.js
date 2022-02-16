@@ -45,11 +45,14 @@ let UserSchema = new mongoose.Schema({
             default: Date.now()
         }
     }],
-    date:{
+    joiningDate:{
         type: Date,
-        default: Date.now()
     },
     user_stature: String,
+    is_subscribed: {
+        type: Boolean,
+        default: false
+    },
     resetPasswordToken: String,
     resetPasswordExpires: Date
 });

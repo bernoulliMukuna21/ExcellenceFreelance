@@ -1,7 +1,7 @@
 extends layout
 
 block content
-
+  - let minimumPriceOfService = 10.00;
   include partials/form_message
   .index-page-one
     .index-page-one-left
@@ -44,9 +44,11 @@ block content
         .middle-side
           div
             each service_price in freelancer.serviceAndPrice
-              .index-serviceAndPrice
-                p #{service_price.service}
-                p #{'£'+service_price.price}
+              - let price = service_price.price
+              if price >= minimumPriceOfService
+                .index-serviceAndPrice
+                  p #{service_price.service}
+                  p #{'£'+price}
         .bottom-side
           if (!isLogged)
             button Instant Book

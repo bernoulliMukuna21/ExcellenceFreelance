@@ -1,11 +1,14 @@
 extends layout
 
 block content
+    - let domainName = 'http://localhost:3000'; //'https://www.unilance.co.uk'
     - let this_title = 'Kunta Kinte and the 40 Thieves Book Reviews';
     - let currentYear = (new Date()).getFullYear();
     - let startYear = currentYear - 50;
     - let rangeOfYears = [];
     - for(let i=currentYear+6; i>=startYear; i--){ rangeOfYears.push(i)}
+
+    include partials/form_message
 
     .freelancer-page-main-container
         .freelancer-update-infos
@@ -15,6 +18,14 @@ block content
                 p Profile#{' '}
                     span(style='text-decoration: underline; font-weight: bold') Not
                     | #{' '}available for bookings. Please add service(s) and price(s) to become visible
+
+        if (isLogged && (freelancerUser.email === loggedInUser.email) && freelancerSubscriptionStatus === 'not-available')
+            .freelancer-subscription-notAvailable-message
+                p Unfortunately, account is#{' '}
+                    span  Not Available
+                    | #{' '}for bookings.#{' '}
+                    span ( Trial period used and Not Subscribed )
+
         div.main-account-page
             .freelancer_account_left_side
                 .account-profile-details
@@ -27,17 +38,16 @@ block content
                         else
                             img(src=loggedInUser_imageSrc)
                     p.account-profile-name #{freelancerUser.name + ' ' + freelancerUser.surname}
-                        //
-                            if (isLogged && (freelancerUser.email === loggedInUser.email))
-                                .freelancer-payment-buttons
-                                    if freelancerSubscriptionStatus !== 'active'
-                                        form(action='http://localhost:3000/payment/create-checkout-session/subscription' method='POST')
-                                            input(type='hidden' name='lookup_key' value='standard')
-                                            button.suscription-bttn(class='checkout-and-portal-button') Subscribe £1/Month
-                                    else
-                                        form(action='http://localhost:3000/payment/create-portal-session' method='POST')
-                                            input(type='hidden' id='session-id' name='session_id' value='')
-                                            button.payment-details-update Manage billing information
+                    if (isLogged && (freelancerUser.email === loggedInUser.email))
+                        .freelancer-payment-buttons
+                            if freelancerSubscriptionStatus !== 'active'
+                                form(action=`${domainName}/payment/create-checkout-session/subscription` method='POST')
+                                    input#trial_days(type='hidden' name='trial_days' value=trailDays)
+                                    button.suscription-bttn(class='checkout-button') Subscribe £1/Month
+                            else
+                                form(action=`${domainName}/payment/create-portal-session` method='POST')
+                                    input(type='hidden' id='freelancer-stripe-id' name='freelancerStripeID' value=loggedInUser.email)
+                                    button.payment-details-update Manage billing information
                     if (isLogged && (freelancerUser.email !== loggedInUser.email))
                         div.public-service-enquiry
                             - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
@@ -57,7 +67,6 @@ block content
                                     p(style='font-weight: bold') Service and Prices Empty
                         else
                             each servicePrice in freelancerUser.serviceAndPrice
-                                - console.log(servicePrice)
                                 .freelancer-serviceAndPrice-profile
                                     h4 #{servicePrice.service}
                                     h4 £#{servicePrice.price}
@@ -233,7 +242,6 @@ block content
                                                     button#servicePriceBttn: i.fas.fa-plus-square
                                             .saved-serviceAndPrice
                                                 each serviceAndPrice in freelancerUser.serviceAndPrice
-                                                    - console.log(serviceAndPrice)
                                                     .single-serviceAndPrice
                                                         .show-serviceAndPrice
                                                             h4 #{serviceAndPrice.service}
@@ -279,8 +287,7 @@ block content
                             include ./partials/message
 
     include ./partials/booking_form
-        //
-            include ./partials/freelancer-specific-details/payment-sub-infos
+    include ./partials/freelancer-specific-details/payment-sub-infos
         //
             - let pageStatus = 'allowed';
             if isLogged

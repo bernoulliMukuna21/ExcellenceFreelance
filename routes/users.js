@@ -110,7 +110,7 @@ router.post('/join/:userType', function (req, res) {
                     })
                 }else{
                     //User is not in the database, so creat user
-                    let newUser = new UserModel({name, surname, email, password,user_stature: userType});
+                    let newUser = new UserModel({name, surname, email, password, joiningDate: Date.now(), user_stature: userType});
                     // Save user in the database
                     newUser.save(function (err) {
                         if(err){

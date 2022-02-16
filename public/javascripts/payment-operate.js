@@ -1,7 +1,7 @@
 import * as accountsOperation from './account_operate.js';
 import * as socketConnection from './socketio-connection-client-side.js'
 
-/*
+
 $('.cancel-subscription-popup').click(event => {
     $('.subscription-payment').hide();
 })
@@ -23,9 +23,8 @@ $(document).ready(function () {
         }
     }
     else{
-
         $(".subscription-payment").hide();
     }
 })
-*/
+
 
