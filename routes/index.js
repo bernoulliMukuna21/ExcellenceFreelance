@@ -16,30 +16,54 @@ router.get('/', async function (req, res, next) {
     try{
         let loggedInUser;
         let loggedInUser_imageSrc;
+        let allFreelancers;
 
-        let allFreelancers = await UserModel.find({
-            $and: [{
-                user_stature: 'freelancer'
-            },{
-                "serviceAndPrice.0": { $exists: true }
-            }]
-        });
+        let trial_days = 1000;
+        let findFreelancersQuery = [{
+            user_stature: 'freelancer'
+        },{
+            "serviceAndPrice.0": { $exists: true }
+        },{
+            $or:[
+                {is_subscribed: true},
+                {
+                    $and:[
+                        {is_subscribed: false},
+                        {
+                            $expr:{
+                                $lte: [
+                                    {
+                                        $trunc: {
+                                            $divide: [{"$subtract":["$$NOW","$date"]}, 1000 * 60 * 60 * 24]
+                                        }
+                                    },
+                                    trial_days
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }];
 
         if (req.isAuthenticated()) {
             loggedInUser = req.user;
             loggedInUser_imageSrc = imageToDisplay(loggedInUser);
 
             if(loggedInUser.user_stature === 'freelancer'){
-                allFreelancers = await UserModel.find({
-                    $and: [{
-                        user_stature: 'freelancer'
-                    }, {
+                findFreelancersQuery.push(
+                    {
                         email: { $ne: loggedInUser.email }
-                    },{
-                        "serviceAndPrice.0": { $exists: true }
-                    }]
+                    }
+                );
+                allFreelancers = await UserModel.find({
+                    $and: findFreelancersQuery
                 });
             }
+        }else{
+            allFreelancers = await UserModel.find({
+                $and: findFreelancersQuery
+            });
         }
 
         res.render('index', {

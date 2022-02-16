@@ -15,6 +15,7 @@ let domainName = 'https://www.unilance.co.uk';
 let freelancerProfileSections = $('.freelancer_account_main_side')[0].childNodes;
 let freelancerAllowedPages = $('.freelancer-page-allowed')[0].childNodes;
 let freelancersectionNames = $('.account-profile-information ul li');
+let minimumPriceOfService = 10.00;
 
 $(document).ready(function(){
     $('.freelancer-update-infos').empty();
@@ -283,7 +284,7 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
 
         // The first check to be carried on the price of the current service is
         // to find out whether the field was left empty
-        if((isNaN(priceValue) && !Number(priceValue))){
+        if((isNaN(priceValue) && !Number(priceValue) && priceValue < minimumPriceOfService)){
             $('#userServicesPriceField input').css('border-color', 'red');
         }else{
             currentService_priceValue = priceValue;

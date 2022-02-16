@@ -11,19 +11,30 @@
     color: black;
     font: 1rem "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-.freelancer-emptySericeAndPricesMessage{
-    display: flex;
+.freelancer-emptySericeAndPricesMessage, .freelancer-subscription-notAvailable-message{
     font-size: 1.3rem;
     border: .1rem solid red;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
     background-color: #FF0000;
     color: white;
     padding: .5rem 0;
 }
+.freelancer-emptySericeAndPricesMessage{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .freelancer-emptySericeAndPricesMessage i.fas.fa-exclamation-circle{
     margin: 0 .5rem;
     font-size: 2rem;
+}
+.freelancer-subscription-notAvailable-message p span:first-child{
+    font-weight: bold;
+    text-decoration: underline;
+}
+.freelancer-subscription-notAvailable-message p span:last-child{
+    font-style: italic;
+    font-weight: bold;
 }
 /*margin: 1rem 1rem 1rem 5rem; Left side margin*/
 /*margin: 1rem 5rem 1rem 1rem; Right side margin*/

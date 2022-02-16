@@ -100,6 +100,7 @@ class ProfileUpdateController{
 
     checkFreelancerInformation(){
         let education, description, servicesAndPrices, skills;
+        let minimumPriceOfService = 10.00;
 
         // description
         if(this.userUpdateData.freelancer_description){
@@ -125,9 +126,14 @@ class ProfileUpdateController{
                 this.user.serviceAndPrice=[];
                 for(let i=0; i<servicesAndPrices.length; i++){
                     let singleServiceAndPrice = new Object();
-                    singleServiceAndPrice.service = servicesAndPrices[i][0];
-                    singleServiceAndPrice.price = servicesAndPrices[i][1];
-                    this.user.serviceAndPrice.push(singleServiceAndPrice);
+                    let service = servicesAndPrices[i][0];
+                    let priceOfService = servicesAndPrices[i][1];
+
+                    if(priceOfService >= minimumPriceOfService){
+                        singleServiceAndPrice.service = service;
+                        singleServiceAndPrice.price = priceOfService;
+                        this.user.serviceAndPrice.push(singleServiceAndPrice);
+                    }
                 }
             }else{this.user.serviceAndPrice=[]}
         }

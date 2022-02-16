@@ -4,6 +4,7 @@
 * information) on both the client and freelancer section.
 * */
 var locale = "en-GB"; //window.navigator.language|| window.navigator.userLanguage;
+let minimumPriceOfService = 10.00;
 
 function pageNavigation(pageToShow, name_of_pages, different_pages){
     /*
@@ -139,19 +140,24 @@ function showNames(name, surname, htmlContainer){
 
 function showServicesAndPrices(elements, htmlcontainer) {
     elements.forEach(singleServiceAndPrice=>{
-        let serviceTag = document.createElement('h4');
-        serviceTag.innerText = singleServiceAndPrice.service;
+        let priceOfService = singleServiceAndPrice.price;
+        let service = singleServiceAndPrice.service;
 
-        let priceTag = document.createElement('h4');
-        priceTag.innerText = '£'+singleServiceAndPrice.price;
+        if(priceOfService >= minimumPriceOfService){
+            let serviceTag = document.createElement('h4');
+            serviceTag.innerText = service;
 
-        let singleServicePriceClass = document.createElement('div');
-        singleServicePriceClass.classList.add('freelancer-serviceAndPrice-profile');
+            let priceTag = document.createElement('h4');
+            priceTag.innerText = '£'+priceOfService;
 
-        singleServicePriceClass.appendChild(serviceTag);
-        singleServicePriceClass.appendChild(priceTag);
+            let singleServicePriceClass = document.createElement('div');
+            singleServicePriceClass.classList.add('freelancer-serviceAndPrice-profile');
 
-        $(htmlcontainer).append(singleServicePriceClass);
+            singleServicePriceClass.appendChild(serviceTag);
+            singleServicePriceClass.appendChild(priceTag);
+
+            $(htmlcontainer).append(singleServicePriceClass);
+        }
     });
 }
 
@@ -198,7 +204,6 @@ function emptyDescription(defaultText, htmlContainer) {
 }
 
 function priceValidation(characterTyped, currentPriceTyped) {
-    console.log('running')
     if(characterTyped === '.'){
         if(currentPriceTyped.includes('.') || currentPriceTyped === ''){
             return false;
