@@ -50,16 +50,14 @@ router.get('/', async function (req, res, next) {
             loggedInUser = req.user;
             loggedInUser_imageSrc = imageToDisplay(loggedInUser);
 
-            if(loggedInUser.user_stature === 'freelancer'){
-                findFreelancersQuery.push(
-                    {
-                        email: { $ne: loggedInUser.email }
-                    }
-                );
-                allFreelancers = await UserModel.find({
-                    $and: findFreelancersQuery
-                });
-            }
+            findFreelancersQuery.push(
+                {
+                    email: { $ne: loggedInUser.email }
+                }
+            );
+            allFreelancers = await UserModel.find({
+                $and: findFreelancersQuery
+            });
         }else{
             allFreelancers = await UserModel.find({
                 $and: findFreelancersQuery
