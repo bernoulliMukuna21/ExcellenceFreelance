@@ -229,10 +229,9 @@ input:focus{
     border: .2rem solid #213e53;
     border-radius: .5rem;
     position: absolute;
-    bottom: -4vw;
+    bottom: -6vw;
     right: 3.5vw;
     width: 24vw;
-    display: none;
 }
 .feedback-modal-container:after{
     content: "";

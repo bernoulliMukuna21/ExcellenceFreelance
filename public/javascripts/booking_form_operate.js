@@ -135,24 +135,34 @@ $('.bottom-side button').click(event => {
     var windowsize = $(window).width();
 
     /* Get the clicked Freelancer*/
-    let parentContainer = event.target.parentNode.parentNode
+    let parentContainer = event.target.parentNode.parentNode;
+
     let currentFreelancerName =  parentContainer.childNodes[0].
         childNodes[1].childNodes[0].innerText;
 
     // Create Booking Form Title
     let currentPopTitle = 'Book Service with '+ currentFreelancerName;
+    if(Object.keys($('#service-booking-form')).length === 0){
+        $('.booking').css({
+            'display': 'flex',
+            'justifyContent': 'center',
+            'alignItems': 'center'
+        });
+        $('.booking').show();
 
-    // Get the clicked freelancer services and their respective prices
-    allServicesPrices = parentContainer.childNodes[1].childNodes[0].childNodes;
+    }else{
+        // Get the clicked freelancer services and their respective prices
+        allServicesPrices = parentContainer.childNodes[1].childNodes[0].childNodes;
 
-    // Date & Time for mobile version
-    mobileVersionFunctionality(windowsize);
+        // Date & Time for mobile version
+        mobileVersionFunctionality(windowsize);
 
-    // Hide/Show either Book or Enquire button
-    buttonToShow(event.target.innerText)
+        // Hide/Show either Book or Enquire button
+        buttonToShow(event.target.innerText)
 
-    // Show the dynamic booking form
-    booking_form_show(currentPopTitle, allServicesPrices)
+        // Show the dynamic booking form
+        booking_form_show(currentPopTitle, allServicesPrices)
+    }
 })
 
 $('.public-service-enquiry .book-btn').click(event => {
@@ -229,7 +239,7 @@ $(document).on('submit', '#service-booking-form', function(event) {
     for (var value of formData.entries()) {
         bookingDataJSON[value[0]] = value[1];
     }
-    console.log('Booking Data: ', bookingDataJSON);
+
     if(bookingDataJSON.servicename.trim() === '' || bookingDataJSON.projectdescription.trim() === '' ||
         bookingDataJSON.projectdueTimeHour.trim() === '' || bookingDataJSON.projectdueTimeMinute.trim() === '' ||
         bookingDataJSON.projectduedate.trim() === ''){

@@ -18,7 +18,9 @@ router.get('/', async function (req, res, next) {
         let loggedInUser_imageSrc;
         let allFreelancers;
 
+        let isLogged = req.isAuthenticated();
         let trial_days = 1000;
+
         let findFreelancersQuery = [{
             user_stature: 'freelancer'
         },{
@@ -46,31 +48,31 @@ router.get('/', async function (req, res, next) {
             ]
         }];
 
-        if (req.isAuthenticated()) {
+        if (isLogged) {
             loggedInUser = req.user;
             loggedInUser_imageSrc = imageToDisplay(loggedInUser);
 
-            if(loggedInUser.user_stature === 'freelancer'){
-                findFreelancersQuery.push(
-                    {
-                        email: { $ne: loggedInUser.email }
-                    }
-                );
-                allFreelancers = await UserModel.find({
-                    $and: findFreelancersQuery
-                });
-            }
+            findFreelancersQuery.push(
+                {
+                    email: { $ne: loggedInUser.email }
+                }
+            );
+
+            allFreelancers = await UserModel.find({
+                $and: findFreelancersQuery
+            });
+
         }else{
             allFreelancers = await UserModel.find({
                 $and: findFreelancersQuery
             });
         }
-
+        console.log(allFreelancers)
         res.render('index', {
             allFreelancers,
             loggedInUser,
             loggedInUser_imageSrc,
-            isLogged: req.isAuthenticated(),
+            isLogged,
             emailEncode
         });
     }catch (e) {
