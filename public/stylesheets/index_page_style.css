@@ -246,10 +246,18 @@ input:focus{
 .feedback-container-contents{
     width: 100%;
     border-radius: .5rem;
-}
-form#feeback-form{
     background: white;
     border-radius: .5rem;
+}
+.feedback-form-mailer-message p{
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    padding: 1rem .5rem;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+form#feeback-form{
     padding: 1rem 1.5rem;
     font-size: 1.3rem;
     color: #213e53;

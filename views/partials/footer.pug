@@ -5,7 +5,8 @@ div#unilance-feeback-form
 
 div.feedback-modal-container(style='display: none;')
     .feedback-container-contents
-        form#feeback-form(action='#' method='post' enctype='text/plain')
+        .feedback-form-mailer-message(style='display: none;')
+        form#feeback-form(action='/feedback' method='post' enctype='text/plain')
             h4 Feedback Form
             div
                 section
@@ -15,7 +16,7 @@ div.feedback-modal-container(style='display: none;')
                     input(type='text' name='name' placeholder='Type your name ...' required)
                 section
                     | E-mail:
-                    input(type='text' name='mail' placeholder='Type your email address ...')
+                    input(type='email' name='mail' placeholder='Type your email address ...')
                 section
                     label Feeback Comment(
                         span(style='color: red') *

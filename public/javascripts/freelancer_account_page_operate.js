@@ -270,6 +270,7 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
     // price or the skill, it must be ensure that the border of the
     // input field is in its default color.
     $(inputIdName+ ' input').css('border-color', 'lightgrey');
+    $('#userServicesPriceField').css('border-color', 'lightgrey');
 
     if(inputHtmlName==='service'){
         // Each service must have its own price. This loop
@@ -284,8 +285,9 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
 
         // The first check to be carried on the price of the current service is
         // to find out whether the field was left empty
-        if((isNaN(priceValue) && !Number(priceValue) && priceValue < minimumPriceOfService)){
-            $('#userServicesPriceField input').css('border-color', 'red');
+        if((isNaN(priceValue) && !Number(priceValue)) || priceValue < minimumPriceOfService
+        || priceValue.split('.')[1].length > 2){
+            $('#userServicesPriceField').css('border-color', 'red');
         }else{
             currentService_priceValue = priceValue;
         }
@@ -433,6 +435,9 @@ function getInputValues(mainContainerHtml){
 
 $('.update-general-information').submit(function (event) {
     event.preventDefault();
+
+    accountsOperation.disbaleButton('#update-page-submission', 'Wait - Profile Updating <span id="wait">.</span>');
+
     let startTime = Date.now();
     let freelancerErrorInfos = '.freelancer-update-infos';
 
@@ -457,7 +462,6 @@ $('.update-general-information').submit(function (event) {
         contentType: false,
         processData: false,
         success: function (data) {
-            console.log('profile image update: ', data.profileImageSrc);
             /***** display the updated profile picture of the freelancer *****/
             if(data.profileImageSrc === ''){
                 $('.account-profile-image img').attr('src',
@@ -471,12 +475,11 @@ $('.update-general-information').submit(function (event) {
             accountsOperation.showNames(data.name, data.surname,
                 '.account-profile-name');
 
-            /******** display services and skills of the freelancer ********
-            *
+            /******** display services and skills of the freelancer *********/
+            /**
             * The service cannot be empty. Therefore, all the
             * children under the section that the service can
-            * be hidden to show the updated services.
-            */
+            * be hidden to show the updated services.*/
             let freelancerServicesAndPrices = data.serviceAndPrice;
             if ( freelancerServicesAndPrices.length > 0 ){
                 $('.freelancer-services').children().hide();
@@ -486,18 +489,15 @@ $('.update-general-information').submit(function (event) {
                 $('.freelancer-emptySericeAndPricesMessage').hide();
             }
 
-            /*
-            * On the other hand, it is possible to have empty skills.
+            /** On the other hand, it is possible to have empty skills.
             * In this situation, before updating the visuals, checkings
             * must be carried to see whether the freelancer has any skills
             * listed.
-            * */
+            **/
             let freelancerSkills = data.skill;
             if(freelancerSkills.length>0){
-               /*
-               * Only update the skills frontend when the freelancer
-               * has at least 1 registered
-               */
+               /** Only update the skills frontend when the freelancer
+               * has at least 1 registered*/
                 $('.user-account-skills section').children().hide();
                 $('.user-account-skills h1').show();
                 accountsOperation.showSkills(data.skill,
@@ -509,7 +509,7 @@ $('.update-general-information').submit(function (event) {
                     '.user-account-skills');
             }
 
-            /*************** display the description of the freelancer ***********/
+           /*************** display the description of the freelancer ***********/
             let freelancerDescription = data.description;
             if(freelancerDescription){
                 $('.account-first-side').children().hide();
@@ -537,13 +537,17 @@ $('.update-general-information').submit(function (event) {
                     '.account-third-side');
             }
 
+            accountsOperation.enableButton('#update-page-submission', 'Save Profile');
             $('.user-main-page').trigger('click');
 
             let successMessages = [[{label: 'successMessage',
                 message: 'Profile successfully saved!'}]];
+
             accountsOperation.ajaxFormMessage_generator(successMessages,
                 '.freelancer-update-infos');
+
             $("html, body").animate({ scrollTop: 0 }, "slow");
+
             $('.single-update-container').delay(2000).hide(500);
         },
         error: function (error) {

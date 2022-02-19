@@ -61,14 +61,14 @@ block content
 
                        div(data-role='fieldcontain')
                            //
-                           input.web-submission(type='submit', value=`Sign Up As ${userType[0].toUpperCase() + userType.slice(1).toLowerCase()}`, data-transition='fade',
-                               data-theme='c', id='submit-button')
+                           button.web-submission(type='submit' data-transition='fade',
+                               data-theme='c', id='submit-button') Sign Up As #{userType[0].toUpperCase() + userType.slice(1).toLowerCase()}
                            if userType === 'client'
-                               input.mobile-submission(type='submit', value='Sign Up as Client', data-transition='fade',
-                                   data-theme='c', id='submit-button')
+                               button.mobile-submission(type='submit', data-transition='fade',
+                                   data-theme='c', id='submit-button') Sign Up as Client
                            else if userType === 'freelancer'
-                               input.mobile-submission(type='submit', value='Sign Up as Freelancer', data-transition='fade',
-                                   data-theme='c', id='submit-button')
+                               button.mobile-submission(type='submit', data-transition='fade',
+                                   data-theme='c', id='submit-button') Sign Up as Freelancer
                    p.mobile-signup-oroperator or
                    .mobilefreelancerAndclientBottom
                        if userType === 'client'

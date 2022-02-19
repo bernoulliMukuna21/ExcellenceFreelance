@@ -204,20 +204,13 @@ function emptyDescription(defaultText, htmlContainer) {
 }
 
 function priceValidation(characterTyped, currentPriceTyped) {
-    if(characterTyped === '.'){
-        if(currentPriceTyped.includes('.') || currentPriceTyped === ''){
-            return false;
-        }
+
+    if(!(/^[0-9.]$/.test(characterTyped))){
+        return false
     }
-    else{
-        if(!(/\d/.test(characterTyped))){
-            return false
-        }else{
-            if(currentPriceTyped.includes('.')){
-                if(currentPriceTyped.split('.')[1].length>=2){
-                    return false
-                }
-            }
+    if(characterTyped === '.'){
+        if(currentPriceTyped.includes('.')){
+            return false;
         }
     }
 }
@@ -362,6 +355,30 @@ function ajaxFormMessage_generator(dataJSON, htmlContainer){
     });
     deleteItem('.single-update-container', 'update-delete-btn');
 }
+
+function disbaleButton(buttonHTMl, disableButtonHTML){
+    if($(buttonHTMl).is(':visible')){
+        $(buttonHTMl).prop('disabled', true);
+        $(buttonHTMl)[0].innerHTML = disableButtonHTML;
+    }
+}
+
+function enableButton(buttonHTMl, enableButtonHTML){
+    if($(buttonHTMl).is(':visible')){
+        $(buttonHTMl).prop('disabled', false);
+        $(buttonHTMl)[0].innerHTML = enableButtonHTML;
+    }
+}
+
+var dots = window.setInterval( function() {
+    if ($('#wait').is(':visible')){
+        var wait = document.getElementById("wait");
+        if ( wait.innerHTML.length > 2 )
+            wait.innerHTML = "";
+        else
+            wait.innerHTML += ".";
+    }
+}, 500);
 
 /**** Message Helper Functions ****/
 
@@ -808,7 +825,7 @@ export{ pageDispalyStyle, pageNavigation, profileImageChange, profileImageEmpty,
     dataCollection, showNames, showServicesAndPrices, showSkills,
     emptySkills, countServices, showDescription, emptyDescription, priceValidation,
     showPrice, showEducations, emptyEducation, deleteItem, keyBoardAction,
-    ajaxFormMessage_generator, createNewRoom, createNewConversationContainer,
-    roomConversationsNavigation, createMessageHTML, createBookingHTML,
-    createBookingTopHTML, createBookingModificationHTML, bookingModificationClientSide,
-    moveProjectBooking }
+    ajaxFormMessage_generator, disbaleButton, enableButton, createNewRoom,
+    createNewConversationContainer, roomConversationsNavigation, createMessageHTML,
+    createBookingHTML, createBookingTopHTML, createBookingModificationHTML,
+    bookingModificationClientSide, moveProjectBooking }

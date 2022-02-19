@@ -674,7 +674,7 @@ button.like{
     margin: 1rem 0;
     opacity: 50%;
 }
-.update-general-information input{
+.update-general-information input, .update-page-submit button{
     width: 100%;
     margin-top: .5rem;
     margin-bottom: 1.5rem;
@@ -980,10 +980,13 @@ button.like{
 .update-page-submit #update-page-submission{
     color: white;
     background-color: #213e53;
+    cursor: pointer;
+    border-color: #213e53;
 }
 .update-page-submit #update-page-submission:hover{
     color: white;
-    background-color: #091b28;
+    background-color: #0d3349;
+    border-color: #0d3349;
 }
 /*##### Page Errors #####*/
 
@@ -996,7 +999,7 @@ button.like{
     margin-bottom: .5rem;
     font-size: 1.3rem;
     color: white;
-    background-color: #ca1212;
+    background-color: #FF0000;
     font-weight: bolder;
 }
 .single-error:last-child, .single-update-container:last-child{

@@ -215,7 +215,7 @@ h2:after{
   font-size: 1.3rem;
 }
 
-.join-right-container input{
+.join-right-container input, button.web-submission, button.mobile-submission{
   width: 100%;
   margin-bottom: 1.5rem;
   background-color: white;
@@ -238,6 +238,9 @@ h2:after{
 
 #submit-button:hover{
   background-color: #308634;
+}
+#submit-button:focus{
+  outline: none;
 }
 
 .join-form-left p, .join-form-left a{

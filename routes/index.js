@@ -6,11 +6,13 @@ var express = require('express');
 var router = express.Router();
 var url = require('url');
 var UserModel = require('../models/UserModel');
+var mailer = require('../bin/mailer');
 var {ensureAuthentication} = require('../bin/authentication');
 var {emailEncode, emailDecode} = require('../bin/encodeDecode');
 var {base64ToImageSrc, imageToDisplay} = require('../bin/imageBuffer');
 var BinData = require('bindata');
 
+let domainEmail = 'unilance.admnistration@gmail.com';
 /* GET home page. */
 router.get('/', async function (req, res, next) {
     try{
@@ -67,7 +69,7 @@ router.get('/', async function (req, res, next) {
                 $and: findFreelancersQuery
             });
         }
-        console.log(allFreelancers)
+
         res.render('index', {
             allFreelancers,
             loggedInUser,
@@ -89,6 +91,36 @@ router.get('/login', function(req, res, next) {
 router.get('/join', function(req, res, next) {
   res.redirect('/users/join');
 });
+
+router.post('/feedback', function(req, res, next){
+    let mailerBody = req.body
+
+    if( !mailerBody.mail ){
+        mailerBody.mail = 'empty'
+    }
+
+    if(mailerBody.name && mailerBody.mail && mailerBody.comment){
+        console.log('Sending Email')
+        try{
+            let feedbackHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Feeback Received</h1>'+
+                `<p><span style="font-weight: bold">Sender:</span> ${mailerBody.name}</p>`+
+                `<p><span style="font-weight: bold">Email:</span> ${mailerBody.mail}</p>`+
+                `<p><span style="font-weight: bold">Comment:</span> ${mailerBody.comment}</p>`;
+
+            mailer.smtpTransport.sendMail(mailer.mailerFunction(domainEmail,
+                "Unilance - Feedback", feedbackHTML), function (err) {
+                if(err){console.log(err)}
+                else{
+                    console.log('Feeback Email sent to Administration');
+                    res.sendStatus(200);
+                }
+            });
+        }catch (e) {
+            res.sendStatus(404);
+        }
+
+    }
+})
 
 
 module.exports = router;

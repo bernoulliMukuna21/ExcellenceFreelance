@@ -7,6 +7,7 @@ block content
     - let startYear = currentYear - 50;
     - let rangeOfYears = [];
     - for(let i=currentYear+6; i>=startYear; i--){ rangeOfYears.push(i)}
+    - let minimumPriceOfService = 10.00
 
     include partials/form_message
 
@@ -231,7 +232,7 @@ block content
                                             .user-servicePrice-container
                                                 div
                                                     label Service #[br]
-                                                    label(for='price') Price #[br]
+                                                    label(for='price') Price  ( £#{minimumPriceOfService.toFixed(2)} < ) #[br]
                                                 div
                                                     section#userServiceField
                                                         input(type='text', name='service', id='service', value='',
@@ -279,7 +280,7 @@ block content
 
 
                                 .update-page-submit
-                                    input#update-page-submission(type='submit', value='Save Profile')
+                                    button#update-page-submission(type='submit') Save Profile
 
                         .freelancer-booking-page(style='display: none;')
                             include ./partials/freelancer-specific-details/freelancer-bookings-section

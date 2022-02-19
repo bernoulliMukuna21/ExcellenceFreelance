@@ -416,7 +416,7 @@ input:focus{
 .client-profile-update label{
     font-size: 1.3rem;
 }
-.client-profile-update  input{
+.client-profile-update  input, .client-profile-update-options button{
     width: 100%;
     margin-top: .5rem;
     background-color: white;
@@ -472,38 +472,17 @@ input:focus{
 .client-profile-update-options{
     margin-top: 1rem;
 }
-.client-profile-update-options input{
+.client-profile-update-options button{
     background-color: #213e53;
     color: white;
     border-color: #213e53;
     cursor: pointer;
 }
-.client-profile-update-options input:hover{
+.client-profile-update-options button:hover{
     background-color: #2a4f69;
 }
-.client-profile-update-options input:focus{
+.client-profile-update-options button:focus{
     border-color: #213e53;
     border-radius: .5rem;
     outline: none;
-}
-.client-profile-update-options section{
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-gap: 10%;
-    margin-top: 5rem;
-}
-.client-profile-update-options section button{
-    padding: 1rem;
-    border-radius: .5rem;
-    width: 100%;
-    color: white;
-    font-weight: bolder;
- }
-.client-profile-update-options section a:first-child button{
-    background-color: #8d2874;
-    border-color: #8d2874;
-}
-.client-profile-update-options section a:last-child button{
-    background-color: red;
-    border-color: red;
 }

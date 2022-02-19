@@ -14,9 +14,9 @@ block content
             div.center-element OR
             div
         form.login(action='/users/login', method='POST')
-            input(name='email', type='email', placeholder='Email')
-            input(name='password', type='password', placeholder='Password')
-            button(type='submit') Login
+            input(name='email', type='email', placeholder='Email' required)
+            input(name='password', type='password', placeholder='Password' required)
+            button#unilance-login-bttn(type='submit') Login
             section
                 a(href='/users/join') Don't Have an Account?
                 a(href='/users/forgot') Forgotten Password?

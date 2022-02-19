@@ -290,7 +290,9 @@ accountsOperation.profileImageEmpty('#client-imagePreview')
 
 $('#client-profile-update-form').submit(function (event) {
     event.preventDefault();
-    console.log('Client profile update profile submission');
+
+    accountsOperation.disbaleButton('#clientUpdate', 'Wait - Profile Updating <span id="wait">.</span>');
+
     let clientErrorSection = '.client-update-errors';
 
     // on submit of information, any of the errors display during the
@@ -303,6 +305,7 @@ $('#client-profile-update-form').submit(function (event) {
     // Get the profile picture uploaded by the client
     let saved_clientProfile = $('#client-profile-picture')[0].files[0];
     formData.append('user_profile_picture', saved_clientProfile);
+
 
     $.ajax({
         type: 'PUT',
@@ -328,6 +331,7 @@ $('#client-profile-update-form').submit(function (event) {
             accountsOperation.showNames(data.name, data.surname,
                 '.client-profile-name');
 
+            accountsOperation.enableButton('#clientUpdate', 'Save Profile');
             $('.client-profile-information ul li:first-child').trigger('click');
         },
         error: function (error) {
