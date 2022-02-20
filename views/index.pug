@@ -45,11 +45,11 @@ block content
             .middle-side
               div
                 each service_price in servicesPrices
-                  - let price = service_price.price
+                  - let price = parseFloat(service_price.price)
                   if price >= minimumPriceOfService
                     .index-serviceAndPrice
                       p #{service_price.service}
-                      p #{'£'+price}
+                      p #{'£'+price.toFixed(2)}
             .bottom-side
               if (!isLogged)
                 button Instant Book
