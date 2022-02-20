@@ -26,10 +26,9 @@
         display: block;
     }
     .mobile-freelancer-join-bottom, .mobile-client-bottom{
-        background-color: #8d2874;
-        padding: 1rem;
-        border-radius: .4rem;
         text-align: center;
+        display: inline-flex;
+        width: 100%;
     }
     .mobile-signup-oroperator{
         display: block;
@@ -41,8 +40,10 @@
     .mobile-freelancer-join-bottom a, .mobile-client-bottom a{
         font-size: 1.5rem;
         color: white;
-        margin: 0;
-        padding: 0;
+        background-color: #8d2874;
+        border-radius: .4rem;
+        padding: 1rem;
+        width: 100%;
     }
     .join-form-left{
         margin: 0;
