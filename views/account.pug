@@ -44,7 +44,7 @@ block content
                             if freelancerSubscriptionStatus !== 'active'
                                 form(action=`${domainName}/payment/create-checkout-session/subscription` method='POST')
                                     input#trial_days(type='hidden' name='trial_days' value=trailDays)
-                                    button.suscription-bttn(class='checkout-button') Subscribe £1/Month
+                                    button.suscription-bttn(class='checkout-button') Subscribe £1.20/Month
                             else
                                 form(action=`${domainName}/payment/create-portal-session` method='POST')
                                     input(type='hidden' id='freelancer-stripe-id' name='freelancerStripeID' value=loggedInUser.email)
