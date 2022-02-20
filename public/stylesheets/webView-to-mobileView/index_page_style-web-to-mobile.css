@@ -6,6 +6,9 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         grid-gap: 1rem;
     }
+    #unilance-feeback-form{
+        display: none;
+    }
 }
 @media (max-width:800px) {
     .index-page-one{
