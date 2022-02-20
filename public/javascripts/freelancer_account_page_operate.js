@@ -278,6 +278,7 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
         // because this loop is also used for the process of
         // extracting data for the skills.
         let priceValue = $('#userServicesPriceField input').val().trim();
+        priceValue = parseFloat(priceValue);
 
         // default color for the input field of the price
         $('#userServicesPriceField input').css('border-color', 'lightgrey');
@@ -285,11 +286,11 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
 
         // The first check to be carried on the price of the current service is
         // to find out whether the field was left empty
-        if((isNaN(priceValue) && !Number(priceValue)) || priceValue < minimumPriceOfService
-        || priceValue.split('.')[1].length > 2){
+
+        if((isNaN(priceValue) && !Number(priceValue)) || priceValue < minimumPriceOfService){
             $('#userServicesPriceField').css('border-color', 'red');
         }else{
-            currentService_priceValue = priceValue;
+            currentService_priceValue = priceValue.toFixed(2);
         }
     }
 

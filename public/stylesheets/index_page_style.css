@@ -229,7 +229,7 @@ input:focus{
     border: .2rem solid #213e53;
     border-radius: .5rem;
     position: absolute;
-    bottom: -6vw;
+    bottom: -10vw;
     right: 3.5vw;
     width: 24vw;
 }

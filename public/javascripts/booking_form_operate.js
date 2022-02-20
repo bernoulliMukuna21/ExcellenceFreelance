@@ -6,6 +6,7 @@ import BookingInsertionIndex from './BookingInsertionIndex.js'
 let allServicesPrices;
 let domainName = 'https://www.unilance.co.uk';
 //let domainName = 'http://localhost:3000';
+let minimumPriceOfService = 10.00;
 
 var locale = 'en-GB'; //window.navigator.userLanguage || window.navigator.language;
 let freelancerListOfStatus = ['booking ongoing', 'awaiting payment', 'accept / modify', 'awaiting response',
@@ -199,10 +200,12 @@ $('#service-booking-form>select').change(event => {
     }
 })
 
+$('#service-enquiry-price').click(function(event){
+    $('.project-enquiry-price').css('border', 'none');
+});
+
 $('#service-enquiry-price').keypress(function(event){
-    let characterTyped = event.key
-    let currentPriceTyped = $(this).val();
-    return accountsOperation.priceValidation(characterTyped, currentPriceTyped);
+    return accountsOperation.priceValidation(event.key, $(this).val());
 });
 
 $('.closebook-form').click(event => {
@@ -242,7 +245,8 @@ $(document).on('submit', '#service-booking-form', function(event) {
 
     if(bookingDataJSON.servicename.trim() === '' || bookingDataJSON.projectdescription.trim() === '' ||
         bookingDataJSON.projectdueTimeHour.trim() === '' || bookingDataJSON.projectdueTimeMinute.trim() === '' ||
-        bookingDataJSON.projectduedate.trim() === ''){
+        bookingDataJSON.projectduedate.trim() === '' ||
+        (bookingDataJSON.projectenquiryprice !== '' && parseFloat(bookingDataJSON.projectenquiryprice) < minimumPriceOfService)){
         if(bookingDataJSON.servicename === ''){
             $('#service-booking-form>select').css('border', '.1rem solid red');
         }
@@ -256,6 +260,9 @@ $(document).on('submit', '#service-booking-form', function(event) {
         if(bookingDataJSON.projectdueTimeMinute===''){
             $('.booking-time-picker h5').css('color', 'red');
             $('#bookingMinute').css('border', '.1rem solid red');
+        }
+        if(bookingDataJSON.projectenquiryprice !== '' && (parseFloat(bookingDataJSON.projectenquiryprice) < minimumPriceOfService)){
+            $('.project-enquiry-price').css('border', '.1rem solid red');
         }
     }else{
         if ($(bookingButtonHTML).is(':visible') && (bookingButtonHTML.innerText).includes('Instant Book')){
@@ -279,7 +286,9 @@ $(document).on('submit', '#service-booking-form', function(event) {
         }else if ($(requestButtonHTML).is(':visible') && (requestButtonHTML.innerText) === 'Request'){
             // If the user wants to make a request booking
 
-            let regex = /^\d*\.?\d{0,2}$/;
+            bookingDataJSON.projectenquiryprice = (parseFloat(bookingDataJSON.projectenquiryprice).toFixed(2)).toString();
+
+            let regex = /^\d*\.?\d{2}$/;
             if(regex.test(bookingDataJSON.projectenquiryprice)){
                 $(this).get(0).setAttribute('action',
                     `${domainName}/booking/service-booking/request_booking/${JSON.parse(bookingDataJSON.projectsupplier).freelancerEmail}`);
