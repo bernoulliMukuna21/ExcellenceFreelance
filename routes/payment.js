@@ -80,12 +80,12 @@ function server_io(io) {
 
         lineItems = {
             price_data: {
-                product: 'prod_L799Pmx0Dbc6Uj',
-                unit_amount: 100,
+                product: 'prod_LBh4E5qpUhiJEi',
+                unit_amount: 120,
                 currency: 'gbp',
                 recurring: {
                     interval: "day",
-                    interval_count: 1,
+                    interval_count: 30,
                 },
             },
             quantity: 1,
