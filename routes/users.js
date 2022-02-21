@@ -286,11 +286,15 @@ router.get('/reset/:token', function (req, res) {
         resetPasswordToken: req.params.token,
         resetPasswordExpires: {$gt: Date.now()}},
         function (err, user) {
-        if(!user){
-            req.flash('error_message', 'Passwod reset token is invalid or has expired.')
-            return res.redirect('/users/forgot');
-        }
-        res.render('reset', {token: req.params});
+            if(err){
+                res.send('Error occured')
+            }else{
+                if(!user){
+                    req.flash('error_message', 'Passwod reset token is invalid or has expired.')
+                    return res.redirect('/users/forgot');
+                }
+                res.render('reset', {token: req.params});
+            }
         }
      );
 });

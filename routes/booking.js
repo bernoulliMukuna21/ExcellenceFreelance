@@ -837,8 +837,7 @@ function server_io(io) {
             });
     })
 
-
-        return router;
+    return router;
 }
 
 module.exports = {router, server_io};

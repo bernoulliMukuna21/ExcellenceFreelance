@@ -46,21 +46,21 @@ function server_io(io) {
                 quantity: 1,
             };
             successURL = `${domainName}/payment/success/booking-checkout?bookingID=${bookingID}`;
+            const session = await stripe.checkout.sessions.create({
+                billing_address_collection: 'auto',
+                payment_method_types: ['card'],
+                line_items: [lineItems,],
+                customer_email: customer_client,
+                mode: mode,
+                success_url: successURL,
+                cancel_url: `${domainName}/payment/failure`,
+                metadata: {bookingID, paymentType: 'booking-checkout'}
+            });
+            res.redirect(303, session.url)
         }catch (e) {
             console.log(e)
+            res.send('An Occured during payment process. Sorry about this!')
         }
-
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            payment_method_types: ['card'],
-            line_items: [lineItems,],
-            customer_email: customer_client,
-            mode: mode,
-            success_url: successURL,
-            cancel_url: `${domainName}/payment/failure`,
-            metadata: {bookingID, paymentType: 'booking-checkout'}
-        });
-        res.redirect(303, session.url)
     });
 
     router.post('/create-checkout-session/subscription', ensureAuthentication, async function (req, res, next){
@@ -80,7 +80,7 @@ function server_io(io) {
 
         lineItems = {
             price_data: {
-                product: 'prod_LBh4E5qpUhiJEi',
+                product: process.env.stripe_subscriptionKey,
                 unit_amount: 120,
                 currency: 'gbp',
                 recurring: {
@@ -91,18 +91,21 @@ function server_io(io) {
             quantity: 1,
         };
         successURL = `${domainName}/payment/success/subscription`;
-
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            payment_method_types: ['card'],
-            line_items: [lineItems,],
-            customer_email: customer_client,
-            mode: mode,
-            subscription_data: subscription_data,
-            success_url: successURL,
-            cancel_url: `${domainName}/payment/failure`
-        });
-        res.redirect(303, session.url);
+        try {
+            const session = await stripe.checkout.sessions.create({
+                billing_address_collection: 'auto',
+                payment_method_types: ['card'],
+                line_items: [lineItems,],
+                customer_email: customer_client,
+                mode: mode,
+                subscription_data: subscription_data,
+                success_url: successURL,
+                cancel_url: `${domainName}/payment/failure`
+            });
+            res.redirect(303, session.url);
+        }catch (e) {
+            res.send('An occured during subscription process. We are really sorry for any inconveniences caused!')
+        }
     })
 
     router.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
@@ -188,7 +191,7 @@ function server_io(io) {
                                 bookingUpdated);
                         })
                     }catch (err) {
-                        throw err;
+                       res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
                     }
                 }
                 break;
@@ -218,7 +221,7 @@ function server_io(io) {
                         });
                     })
                 }catch (err) {
-                    throw err;
+                    res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
                 }
 
                 break;
@@ -249,7 +252,7 @@ function server_io(io) {
                         });
                     })
                 }catch (err) {
-                    throw err;
+                    res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
                 }
                 break;
             case 'invoice.payment_succeeded':
@@ -313,19 +316,23 @@ function server_io(io) {
     router.post('/create-portal-session', ensureAuthentication, async function(req, res, next) {
         let isStripeCustomerSub, isStripeCustomer;
 
-        let currentFreelancerEmail = req.body.freelancerStripeID;
-        isStripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
+        try{
+            let currentFreelancerEmail = req.body.freelancerStripeID;
+            isStripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
 
-        if(isStripeCustomer){
-            isStripeCustomerSub = await stripeCustomerSubscription(isStripeCustomer.id);
+            if(isStripeCustomer){
+                isStripeCustomerSub = await stripeCustomerSubscription(isStripeCustomer.id);
 
-            if(isStripeCustomerSub){
-                const session = await stripe.billingPortal.sessions.create({
-                    customer: isStripeCustomerSub.data[0].customer,
-                    return_url: `${domainName}/payment/success/billing-portal`,
-                });
-                res.redirect(303, session.url)
+                if(isStripeCustomerSub){
+                    const session = await stripe.billingPortal.sessions.create({
+                        customer: isStripeCustomerSub.data[0].customer,
+                        return_url: `${domainName}/payment/success/billing-portal`,
+                    });
+                    res.redirect(303, session.url)
+                }
             }
+        }catch (e) {
+            res.send('An error occured during billing information update!');
         }
     });
 

@@ -31,7 +31,7 @@ let multerUserProfilePicture = multer({
 router.get('/', ensureAuthentication, function (req, res) {
     console.log('I am inside the account function')
     req.flash('error_message', 'Please login to access your account');
-    res.send(req.user)//res.redirect('/users/login');
+    res.send(req.user);//res.redirect('/users/login');
 });
 
 router.get('/client/:this_user', ensureAuthentication , async (req,
