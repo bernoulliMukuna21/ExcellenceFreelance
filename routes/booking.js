@@ -90,6 +90,7 @@ function server_io(io) {
 
                 }).catch(err => console.log(err));
         })
+
         socket.on('Booking Acceptance - Client', bookingModified_AcceptedData => {
             console.log('Client accepted changes proposed by freelancer: ');
 
@@ -639,142 +640,163 @@ function server_io(io) {
     });
 
     router.post('/service-booking/:bookingType/:freelancerToBook', ensureAuthentication, async (req, res)=>{
+        let loggedInClient = req.user;
+        let loggedInClientStature = loggedInClient.user_stature.current;
 
-        let customer = emailEncode(req.user.email);
-        let bookingType = req.params.bookingType;
-        let freelancerToBook = req.params.freelancerToBook;
-        let bookingID = customer+':'+freelancerToBook+':'+Date.now();
-        let allowedToSaveBooking = true;
-        let bookingData = req.body;
-        bookingData.projectsupplier = JSON.parse(bookingData.projectsupplier);
+        if(loggedInClientStature === 'client'){
+            try {
+                let customer = emailEncode(loggedInClient.email);
+                let bookingType = req.params.bookingType;
+                let freelancerToBook = req.params.freelancerToBook;
+                let bookingID = customer + ':' + freelancerToBook + ':' + Date.now();
+                let allowedToSaveBooking = true;
+                let bookingData = req.body;
+                bookingData.projectsupplier = JSON.parse(bookingData.projectsupplier);
 
-        let timeTo24Hours =
-            convertTimeTo24Hours(
-                `${bookingData.projectdueTimeHour}:${bookingData.projectdueTimeMinute} ${bookingData.projectdueTimeMeridies}`);
-        let bookingDueDateTime = `${bookingData.projectduedate}T${timeTo24Hours}Z`
-        bookingDueDateTime = new Date(bookingDueDateTime);
+                let timeTo24Hours =
+                    convertTimeTo24Hours(
+                        `${bookingData.projectdueTimeHour}:${bookingData.projectdueTimeMinute} ${bookingData.projectdueTimeMeridies}`);
+                let bookingDueDateTime = `${bookingData.projectduedate}T${timeTo24Hours}Z`
+                bookingDueDateTime = new Date(bookingDueDateTime);
 
-        let newServiceInfos = {
-            bookingID: bookingID,
-            bookingType: bookingType,
-            customer: {
-                uuid: customer,
-                name: req.user.name+' '+req.user.surname
-            },
-            supplier: {
-                uuid: freelancerToBook,
-                name: bookingData.projectsupplier.freelancerName
-            },
-            service: bookingData.servicename,
-            projectName: bookingData.projectname,
-            projectDescription: bookingData.projectdescription,
-            creationDate: Date.now(),
-            dueDateTime: bookingDueDateTime,
-            price: bookingData.projectprice,
-            requestedPrice: bookingData.projectenquiryprice,
-            status:{
-                freelancer: 2, // 2 -> 'accept / modify'
-                client: 2 // 2 -> 'awaiting acceptance'
-
-            }
-        }
-
-        if (bookingType === 'instant_booking'){
-            /* instant booking check if there is another
-            booking already with this due date */
-            try{
-                let freelancerSameDateTimeBookings = await BookingModel.find({
+                let newServiceInfos = {
+                    bookingID: bookingID,
+                    bookingType: bookingType,
+                    customer: {
+                        uuid: customer,
+                        name: loggedInClient.name + ' ' + loggedInClient.surname
+                    },
+                    supplier: {
+                        uuid: freelancerToBook,
+                        name: bookingData.projectsupplier.freelancerName
+                    },
+                    service: bookingData.servicename,
+                    projectName: bookingData.projectname,
+                    projectDescription: bookingData.projectdescription,
+                    creationDate: Date.now(),
                     dueDateTime: bookingDueDateTime,
-                    'supplier.uuid': freelancerToBook,
-                    paid: true
-                });
-                if(freelancerSameDateTimeBookings.length>0){
-                    // there is at least one booking with the exact due date
-                    // the specified freelancer
-                    allowedToSaveBooking = false;
+                    price: bookingData.projectprice,
+                    requestedPrice: bookingData.projectenquiryprice,
+                    status: {
+                        freelancer: 2, // 2 -> 'accept / modify'
+                        client: 2 // 2 -> 'awaiting acceptance'
+
+                    }
                 }
-            }catch (e) {
-                throw e;
-            }
-        }
 
-        if (allowedToSaveBooking){
+                if (bookingType === 'instant_booking') {
+                    /* instant booking check if there is another
+                    booking already with this due date */
+                    try {
+                        let freelancerSameDateTimeBookings = await BookingModel.find({
+                            dueDateTime: bookingDueDateTime,
+                            'supplier.uuid': freelancerToBook,
+                            paid: true
+                        });
+                        if (freelancerSameDateTimeBookings.length > 0) {
+                            // there is at least one booking with the exact due date
+                            // the specified freelancer
+                            allowedToSaveBooking = false;
+                        }
+                    } catch (e) {
+                        throw e;
+                    }
+                }
 
-            // Save into booking DB
-            let newServiceBooking = new BookingModel(newServiceInfos);
+                if (allowedToSaveBooking) {
 
-            let newBookingMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking</h1>'+
-                '<p>Hello '+newServiceBooking.customer.name.split(' ')[0]+',</p><p>This is a confirmation' +
-                ' email that your booking enquiry ('+ newServiceBooking.service+' - ' +newServiceBooking.projectName
-                +') has successfully been sent to '+ newServiceBooking.supplier.name +'. Please do keep a close' +
-                ' eye on your emails and <a target="_blank" style="text-decoration: underline; color: #0645AD;' +
-                ' cursor: pointer" href='+ unilanceLoginURL +'> login </a> regulary to check for updates' +
-                ' on your booking (booking ID: '+ newServiceBooking._id +') </p>'+'<p>Thank you,<br>The Unilance Team' +
-                '<br>07448804768</p>';
+                    // Save into booking DB
+                    let newServiceBooking = new BookingModel(newServiceInfos);
 
-            let newBookingMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking Received</h1>'+
-                '<p>Hello '+newServiceBooking.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
-                ' you have a new booking on your Unilance account. The booking ID is: '+ newServiceBooking._id +' .' +
-                ' Please <a target="_blank" style="text-decoration: underline;' +
-                ' color: #0645AD; cursor: pointer" href='+ unilanceLoginURL +'> login </a>' +
-                ' to your account to access the details of this booking and accept or reject it.</p>'+
-                '<p>Thank you,<br>The Unilance Team <br>07448804768</p>';
+                    let newBookingMessageToClientHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking</h1>' +
+                        '<p>Hello ' + newServiceBooking.customer.name.split(' ')[0] + ',</p><p>This is a confirmation' +
+                        ' email that your booking enquiry (' + newServiceBooking.service + ' - ' + newServiceBooking.projectName
+                        + ') has successfully been sent to ' + newServiceBooking.supplier.name + '. Please do keep a close' +
+                        ' eye on your emails and <a target="_blank" style="text-decoration: underline; color: #0645AD;' +
+                        ' cursor: pointer" href='+unilanceLoginURL+'> login </a> regulary to check for updates' +
+                        ' on your booking (booking ID: ' + newServiceBooking._id + ') </p>' + '<p>Thank you,<br>The Unilance Team' +
+                        '<br>07448804768</p>';
 
-            let newBookingMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking Made</h1>'+
-                '<p>Hello,</p>'+'<p> There has been a new booking made, please do find details below: </p>'+
-                '<ul style="list-style-type:none;">' +
-                `<li>Project ID: ${newServiceBooking._id}</li>`+
-                '<li>Project Name: '+newServiceBooking.service+' - '+newServiceBooking.projectName+' </li>' +
-                '<li>Client Name: '+newServiceBooking.customer.name+' </li>' +
-                '<li>Freelancer Name: '+newServiceBooking.supplier.name+' </li>' +
-                '<li>Creation Date: '+newServiceBooking.creationDate.toLocaleString()+' </li>' +
-                '<li>Due Date: '+newServiceBooking.dueDateTime.toLocaleString()+' </li>' +
-                '<li>Description: '+newServiceBooking.projectDescription+' </li>' +
-                '</ul>'+
-                '<p>Thank you<br>The Unilance Team<br>07448804768</p>';
+                    let newBookingMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking Received</h1>' +
+                        '<p>Hello ' + newServiceBooking.supplier.name.split(' ')[0] + ',</p><p> I am pleased to inform you that' +
+                        ' you have a new booking on your Unilance account. The booking ID is: ' + newServiceBooking._id + ' .' +
+                        ' Please <a target="_blank" style="text-decoration: underline;' +
+                        ' color: #0645AD; cursor: pointer" href='+unilanceLoginURL+'> login </a>' +
+                        ' to your account to access the details of this booking and accept or reject it.</p>' +
+                        '<p>Thank you,<br>The Unilance Team <br>07448804768</p>';
 
-            newServiceBooking.save(err =>{
-                if (err) {throw err}
-                else{
-                    if(bookingType === 'instant_booking'){
-                        // go to payment
-                        let paymentRoute = `${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
-                        res.status(200).json({paymentRoute: paymentRoute})
+                    let newBookingMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">New Booking Made</h1>' +
+                        '<p>Hello,</p>' + '<p> There has been a new booking made, please do find details below: </p>' +
+                        '<ul style="list-style-type:none;">' +
+                        `<li>Project ID: ${newServiceBooking._id}</li>` +
+                        '<li>Project Name: ' + newServiceBooking.service + ' - ' + newServiceBooking.projectName + ' </li>' +
+                        '<li>Client Name: ' + newServiceBooking.customer.name + ' </li>' +
+                        '<li>Freelancer Name: ' + newServiceBooking.supplier.name + ' </li>' +
+                        '<li>Creation Date: ' + newServiceBooking.creationDate.toLocaleString() + ' </li>' +
+                        '<li>Due Date: ' + newServiceBooking.dueDateTime.toLocaleString() + ' </li>' +
+                        '<li>Description: ' + newServiceBooking.projectDescription + ' </li>' +
+                        '</ul>' +
+                        '<p>Thank you<br>The Unilance Team<br>07448804768</p>';
 
-                    }else if (bookingType === 'request_booking'){
-                        // send booking details to freelancer and redirect to profile page
 
-                        mailer.smtpTransport.sendMail(mailer.mailerFunction('unilance.admnistration@gmail.com',
-                            'New Booking Made', newBookingMessageToAdminHTML), function (err) {
-                            if(err){console.log(err)}
-                            else{
-                                console.log('Client new booking Message has been sent to Admin')
-                                // emailDecode(bookingDetailUpdate.customer.uuid)
-                                mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(freelancerToBook),
-                                    'Client Booking Made', newBookingMessageToFreelancerHTML), function (err) {
-                                    if(err){console.log(err)}
+                    newServiceBooking.save(err =>{
+                        if (err) {throw err}
+                        else{
+                            if(bookingType === 'instant_booking'){
+                                // go to payment
+                                let paymentRoute = `${domainName}/payment/create-checkout-session/booking-checkout?bookingID=${bookingID}`;
+                                res.status(200).json({paymentRoute: paymentRoute})
+
+                            }else if (bookingType === 'request_booking'){
+                                // send booking details to freelancer and redirect to profile page
+
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction('unilance.admnistration@gmail.com',
+                                    'New Booking Made', newBookingMessageToAdminHTML), function (err) {
+                                    if (err) {throw err}
                                     else{
-                                        console.log('Client new booking Message has been sent to Freelancer');
-                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(req.user.email,
-                                            'Booking Successfully Made', newBookingMessageToClientHTML), function (err) {
-                                            if(err){console.log(err)}
-                                            else{console.log('Client new booking Message has been sent to Client')}
+                                        console.log('Client new booking Message has been sent to Admin')
+                                        // emailDecode(bookingDetailUpdate.customer.uuid)
+                                        mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(freelancerToBook),
+                                            'Client Booking Made', newBookingMessageToFreelancerHTML), function (err) {
+                                            if (err) {throw err}
+                                            else{
+                                                console.log('Client new booking Message has been sent to Freelancer');
+                                                mailer.smtpTransport.sendMail(mailer.mailerFunction(req.user.email,
+                                                    'Booking Successfully Made', newBookingMessageToClientHTML), function (err) {
+                                                    if (err) {throw err}
+                                                    else{console.log('Client new booking Message has been sent to Client')}
+                                                });
+                                            }
                                         });
                                     }
                                 });
-                            }
-                        });
 
-                        io.sockets.to(freelancerToBook).emit('Booking Data to Freelancer', newServiceInfos);
-                        res.redirect(`${domainName}/account/${req.user.user_stature}/${customer}`);
-                    }
+                                io.sockets.to(freelancerToBook).emit('Booking Data to Freelancer', newServiceInfos);
+                                res.redirect(`${domainName}/account/${req.user.user_stature}/${customer}`);
+                            }
+                        }
+                    })
+
                 }
-            })
-        }else{
-            // Error - Booking Not saved
-            res.status(404).json({error: `${bookingData.projectsupplier.freelancerName} is already booked for that time. (Please pick another time or send Request)!`})
+
+                else{
+                    // Error - Booking Not saved
+                    res.status(404).json({error: `${bookingData.projectsupplier.freelancerName} is already booked for that time. (Please pick another time or send Request)!`});
+                }
+
+            }
+
+            catch (e) {
+                res.status(404).json({error: `An error during booking. Please try again!!`})
+            }
         }
+
+        else{
+            res.status(404).json({error: `Swicth Profile to Client to make booking, Thank you!`})
+        }
+
     })
+
 
     router.post('/project-modification/:bookingToModifyID', ensureAuthentication, async (req, res)=>{
         let dataToModify = req.body;

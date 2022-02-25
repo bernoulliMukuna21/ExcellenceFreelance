@@ -48,7 +48,10 @@ let UserSchema = new mongoose.Schema({
     joiningDate:{
         type: Date,
     },
-    user_stature: String,
+    user_stature: {
+        initial: String,
+        current: String
+    },
     is_subscribed: {
         type: Boolean,
         default: false

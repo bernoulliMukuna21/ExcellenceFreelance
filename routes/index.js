@@ -24,7 +24,7 @@ router.get('/', async function (req, res, next) {
         let trial_days = 1000;
 
         let findFreelancersQuery = [{
-            user_stature: 'freelancer'
+            'user_stature.initial': 'freelancer'
         },{
             "serviceAndPrice.0": { $exists: true }
         },{
@@ -59,17 +59,15 @@ router.get('/', async function (req, res, next) {
                     email: { $ne: loggedInUser.email }
                 }
             );
-
             allFreelancers = await UserModel.find({
                 $and: findFreelancersQuery
             });
-
         }else{
             allFreelancers = await UserModel.find({
                 $and: findFreelancersQuery
             });
         }
-
+        console.log(allFreelancers)
         res.render('index', {
             allFreelancers,
             loggedInUser,
@@ -78,8 +76,7 @@ router.get('/', async function (req, res, next) {
             emailEncode
         });
     }catch (e) {
-        console.log('This An error occured!');
-        throw e;
+        res.send('An error has occured')
     }
 });
 

@@ -112,7 +112,10 @@ router.post('/join/:userType', function (req, res) {
                     })
                 }else{
                     //User is not in the database, so creat user
-                    let newUser = new UserModel({name, surname, email, password, joiningDate: Date.now(), user_stature: userType});
+                    let newUser = new UserModel({name, surname, email, password,
+                        joiningDate: Date.now(),
+                        user_stature: {initial: userType, current: userType}});
+
                     // Save user in the database
                     newUser.save(function (err) {
                         if(err){
@@ -157,7 +160,7 @@ router.post('/login', (req, res, next)=>{
             passport.authenticate('local', (err, user, info)=>{
                 if(typeof info === 'undefined'){
                     let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
-                    loginSystem(req, res, user, user.user_stature, flash_message);
+                    loginSystem(req, res, user, user.user_stature.initial, flash_message);
                 }
                 else{
                     let errorMessage = '';
@@ -351,7 +354,7 @@ router.post('/reset/:token', function (req, res) {
                 done(err, 'done');
             });
             let flash_message = 'Password successfully Reset! Well done, ' + user.name + ' '+user.surname;
-            loginSystem(req, res, user, user.user_stature, flash_message);
+            loginSystem(req, res, user, user.user_stature.initial, flash_message);
         }
     ],  function (err) {
         res.send('An error has occurred');
@@ -396,7 +399,10 @@ function passportUser(req, res, user, info, current_user){
             email: user.emails[0].value,
             profile_picture: oauthProfilePicture,
             authentication: user.authDetails,
-            user_stature: current_user
+            user_stature: {
+                initial: current_user,
+                current: current_user
+            }
         });
 
         newUser.save(function (err) {

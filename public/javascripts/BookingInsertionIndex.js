@@ -60,7 +60,6 @@ export default class BookingInsertionIndex {
         if(time.includes(',')){
             time = time.split(',');
             time = time[0].trim().split("/").reverse().join("-")+'T'+time[1].trim()+'Z';
-            console.log(time)
         }
         return Date.parse(time);
     }

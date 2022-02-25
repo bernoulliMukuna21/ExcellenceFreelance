@@ -31,14 +31,6 @@ require('../routes/payment').server_io(io);
 /**
  * Listen on provided port, on all network interfaces.
  */
-/*
-mongo.someone.fgColor(function (err) {
-  if(err) console.log(err);
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
-  //console.log(mongo.someone.getA());
-});*/
 
 server.listen(port);
 server.on('error', onError);

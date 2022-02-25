@@ -663,9 +663,9 @@ $(document).on('click', '.freelancer-booking-finish-button', function(event) {
 })
 
 $(document).on('click', '#freelancer-booking-delete-button', function(event) {
-    console.log(event.target)
+
     if(event.target.className === 'far fa-trash-alt'){
-        console.log('Inside class name section')
+
         let trashIconContainer = event.target.parentNode;
         let projectStatus = trashIconContainer.previousSibling.innerText;
         console.log(projectStatus)
@@ -673,7 +673,7 @@ $(document).on('click', '#freelancer-booking-delete-button', function(event) {
         if(projectStatus === 'paid' || projectStatus === 'cancelled'){
            let deleteBttn = trashIconContainer.parentNode.nextSibling
                .childNodes[1].lastChild;
-            console.log('Trigger delete bttn: ', deleteBttn);
+
            $(deleteBttn).trigger("click");
         }
     }else{
@@ -685,8 +685,9 @@ $(document).on('click', '#freelancer-booking-delete-button', function(event) {
 
         if(projectStatus.innerText === 'booking ongoing'){
             projectCompletionShow(event)
+
         }else{
-            console.log('Please go ahead and delete project');
+
             socketConnection.socket.emit('Delete project - Freelancer Request',
                 {projectToCancelID, clientThatBooked, status: projectStatus});
         }

@@ -298,7 +298,7 @@ function server_io(io) {
         else if(paymentType === 'billing-portal'){
             flash_message = 'Card Details Updated. Thank you!'
         }
-        let user_stature = req.user.user_stature;
+        let user_stature = req.user.user_stature.current;
         let userUUID = emailEncode(req.user.email);
 
         req.flash('success_message', flash_message );
@@ -306,7 +306,7 @@ function server_io(io) {
     })
 
     router.get('/failure', ensureAuthentication, function(req, res, next) {
-        let user_stature = req.user.user_stature;
+        let user_stature = req.user.user_stature.current;
         let userUUID = emailEncode(req.user.email);
         req.flash('error_message', 'Payment Failure!');
         res.redirect(`${domainName}/account/${user_stature}/${userUUID}`);
