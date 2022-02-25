@@ -1,4 +1,5 @@
 header
+    - let clientToFreelancerMessage;
     div.top-container
         h1.web-title: a(href='/') nxtDue
         div.top-navbar(style='color:#213e53;')
@@ -6,11 +7,18 @@ header
                 a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
                 a(href='/users/login'): button(class='nav-btn') Login
             else
-                if(loggedInUser.user_stature === 'client')
-                    a(href='/account/switch/freelancer/'+emailEncode(loggedInUser.email))
-                        button(class='nav-btn', id='be-freelancer') Switch to Freelancer
+                if(loggedInUser.user_stature.current === 'client')
+
+                    if(loggedInUser.user_stature.initial === 'client')
+                        - clientToFreelancerMessage = 'Become a Freelancer'
+                    if(loggedInUser.user_stature.initial === 'freelancer')
+                        - clientToFreelancerMessage = 'Switch to Freelancer'
+
+                    a(href='/account/switch/freelancer/' + emailEncode(loggedInUser.email))
+                        button(class='nav-btn', id='be-freelancer') #{clientToFreelancerMessage}
                     a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
-                else if(loggedInUser.user_stature === 'freelancer')
+
+                else if(loggedInUser.user_stature.current === 'freelancer')
                     a(href='/account/switch/client/' + emailEncode(loggedInUser.email))
                         button(class='nav-btn', id='be-client') Switch to Client
                     a(href='/account/freelancer/' + emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
@@ -18,7 +26,7 @@ header
                 a(href='/'): button(class='nav-btn') Home
                 a(href='/users/logout'): button(class='nav-btn') Logout
 
-                - let loggedinUser_Mssg = {type: loggedInUser.user_stature, uniqueKey: emailEncode(loggedInUser.email)}
+                - let loggedinUser_Mssg = {type: loggedInUser.user_stature.current, uniqueKey: emailEncode(loggedInUser.email)}
                 input(style='display: none;' id='sender-unique-key' value=JSON.stringify(loggedinUser_Mssg))
 
     div.top-mobilenavcontainer
@@ -30,15 +38,15 @@ header
                     a(href='/users/join') Join For Free
                     a(href='/users/login') Login
             else
-                if(loggedInUser.user_stature === 'client')
+                if(loggedInUser.user_stature.current === 'client')
                     .mobileheaderLinks
                         a(href='/account/client/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
                         a(href='/') Home
                         a(href='/users/logout') Logout
                         a(href='/account/switch/freelancer/' + emailEncode(loggedInUser.email))
-                            button(class='nav-btn', id='be-freelancer') Switch to Freelancer
+                            button(class='nav-btn', id='be-freelancer') #{clientToFreelancerMessage}
 
-                else if(loggedInUser.user_stature === 'freelancer')
+                else if(loggedInUser.user_stature.current === 'freelancer')
                     .mobileheaderLinks
                         a(href='/account/freelancer/' + emailEncode(loggedInUser.email)) My Account, #{loggedInUser.name} #{loggedInUser.surname}
                         a(href='/') Home

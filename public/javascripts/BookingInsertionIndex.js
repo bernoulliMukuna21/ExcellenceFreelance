@@ -60,7 +60,6 @@ export default class BookingInsertionIndex {
         if(time.includes(',')){
             time = time.split(',');
             time = time[0].trim().split("/").reverse().join("-")+'T'+time[1].trim()+'Z';
-            console.log(time)
         }
         return Date.parse(time);
     }
@@ -124,18 +123,12 @@ export default class BookingInsertionIndex {
         let lastStatusOccurence = this.findEndIndex(listOfProjectsStatusesIndexes,
             this.firstIndex, this.sizeOfList, this.statusToInteger(status));
 
-        console.log('All projects: ', listOfProjectsStatusesIndexes);
-        console.log('Status: ', status);
-        console.log('First and Last Index: ', this.firstIndex, this.sizeOfList);
-        console.log('First Occurrence: ', firstStatusOccurence);
-        console.log('Last Occurrence: ', lastStatusOccurence);
-
         if(firstStatusOccurence === -1 || lastStatusOccurence === -1){
             /* There no project in the list of all the projects that has the same
             status as the new project. The bext step becomes to be find the current
              index to insert it, based on the order the projects are expected to
              appear*/
-            console.log(this.statusToInteger(status))
+
             insertIndex = this.correctInsertionIndex(listOfProjectsStatusesIndexes,
                 this.statusToInteger(status));
         }else{
@@ -144,12 +137,12 @@ export default class BookingInsertionIndex {
 
             // Get only projects with the same status as the new project.
             let listOfProjectsWithCurrentStatuses = listOfProjects.slice(firstStatusOccurence, lastStatusOccurence+1);
-            console.log('List of projects(status): ', listOfProjectsWithCurrentStatuses);
+
             // For all the proejcts of the same status as the new one, compare the time in ascending order to find
             // insertion index for the new project.
             insertIndex = this.earliestDueTimeIndex(listOfProjectsWithCurrentStatuses, this.firstIndex,
                 listOfProjectsWithCurrentStatuses.length, insertTime, firstStatusOccurence);
-            console.log(insertIndex);
+
         }
 
         return insertIndex;

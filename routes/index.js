@@ -20,7 +20,7 @@ router.get('/', async function (req, res, next) {
 
         let trial_days = 228;
         let findFreelancersQuery = [{
-            user_stature: 'freelancer'
+            'user_stature.initial': 'freelancer'
         },{
             "serviceAndPrice.0": { $exists: true }
         },{
@@ -63,7 +63,7 @@ router.get('/', async function (req, res, next) {
                 $and: findFreelancersQuery
             });
         }
-
+        console.log(allFreelancers)
         res.render('index', {
             title: 'Excellence.Freelance',
             allFreelancers,
@@ -73,8 +73,7 @@ router.get('/', async function (req, res, next) {
             emailEncode
         });
     }catch (e) {
-        console.log('This An error occured!');
-        throw e;
+        res.send('An error has occured')
     }
 });
 

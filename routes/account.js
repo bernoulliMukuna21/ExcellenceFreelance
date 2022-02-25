@@ -15,6 +15,8 @@ var { base64ToImageSrc, imageToDisplay } = require('../bin/imageBuffer');
 var { stripeFindCustomerByEmail, stripeCustomerSubscription } = require('../bin/stripe-config');
 var { numberOfDaysSince, groupByKey } = require('../bin/general-helper-functions');
 
+let domain = 'http://localhost:3000';
+
 // Set Storage Engine
 //destination: './public/images/uploads',
 let storage = multer.diskStorage({
@@ -290,20 +292,35 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
 // Profile Switch
 /*** Freelancer -> Client ***/
 router.get('/switch/client/:user_email', ensureAuthentication, async function (req, res) {
-    UserModel.findOne({email:emailDecode(req.params.user_email)})
+    let userUUID = req.params.user_email;
+    UserModel.findOne({email:emailDecode(userUUID)})
         .then( user => {
-            user.user_stature = 'client';
+            user.user_stature.current = 'client';
+
             user.save(err => {
                 if(err){
                     throw err;
                 }
-                res.redirect('/');
 
+                let previousURL = req.get('referer');
+
+                req.flash('success_message', 'Switch to client was successful' );
+
+                if(!previousURL.includes('receiverKey')){
+
+                    if(previousURL === `${domain}/`)
+                        res.redirect(`back`);
+                    else
+                        res.redirect(`/account/client/${userUUID}`);
+
+                }
+                else
+                    res.redirect(`/account/client/${userUUID}`);
             })
         })
         .catch( err => {
             if( err ){
-                throw err;
+                res.send('An error occured!')
             }
         })
 })
@@ -311,23 +328,83 @@ router.get('/switch/client/:user_email', ensureAuthentication, async function (r
 /*** Client -> Freelancer ***/
 router.get('/switch/freelancer/:user_email', ensureAuthentication, async function (req, res) {
     let userUUID = req.params.user_email;
+    let flash_message;
     UserModel.findOne({email:emailDecode(userUUID)})
         .then( user => {
-            user.user_stature = 'freelancer';
+
+            if (user.user_stature.initial === 'client')
+                flash_message = 'Request to become Freelancer was successful'
+            else
+                flash_message = 'Switch to Freelancer was successful'
+
+            user.user_stature = {
+                initial: 'freelancer',
+                current: 'freelancer'
+            };
+
             user.save(err => {
                 if(err){
                     throw err;
                 }
-                res.redirect(`/account/freelancer/${userUUID}`);
+
+                let previousURL = req.get('referer');
+
+                req.flash('success_message', flash_message);
+
+                if(!previousURL.includes('receiverKey')){
+
+                    if(previousURL === `${domain}/`)
+                        res.redirect(`back`);
+                    else
+                        res.redirect(`/account/freelancer/${userUUID}`);
+
+                }
+                else
+                    res.redirect(`/account/freelancer/${userUUID}`);
             })
 
         })
         .catch( err => {
             if( err ){
-                throw err;
+                res.send('An error occured!');
             }
         })
 })
 
+router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
+    if(req.params.uniqueKey === 'wehg484NWJBN24@qewq--4gwnlgkWFINJ'){
+        console.log('-------------- Freelancer -------------------')
+        var allFreelancerUsers = await UserModel.find({
+            $or: [
+                {"serviceAndPrice.0": { $exists: true }},
+                {user_stature: 'freelancer'}
+            ]
+        });
+        allFreelancerUsers.forEach( singleUser => {
+            singleUser.user_stature = {
+                initial: 'freelancer',
+                current: 'freelancer'
+            }
+            singleUser.save();
+        });
+
+        console.log('-------------- Client -------------------')
+        var allClientUsers = await UserModel.find({
+            $and: [
+                {"serviceAndPrice.0": { $exists: false }},
+                {user_stature: 'client'}
+            ]
+        });
+        allClientUsers.forEach( singleUser => {
+            singleUser.user_stature = {
+                initial: 'client',
+                current: 'client'
+            }
+            singleUser.save();
+        });
+        console.log('Data Successfully updated!')
+        res.send('done')
+    }
+})
 
 module.exports = router;

@@ -103,7 +103,6 @@ function server_io(io) {
 
                 }).catch(error => {
                     console.log('Message An error occurred!');
-                    throw error;
                 });
             }
         })
