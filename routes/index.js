@@ -67,7 +67,7 @@ router.get('/', async function (req, res, next) {
                 $and: findFreelancersQuery
             });
         }
-        console.log(allFreelancers)
+
         res.render('index', {
             allFreelancers,
             loggedInUser,
@@ -97,7 +97,7 @@ router.post('/feedback', function(req, res, next){
     }
 
     if(mailerBody.name && mailerBody.mail && mailerBody.comment){
-        console.log('Sending Email')
+
         try{
             let feedbackHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Feeback Received</h1>'+
                 `<p><span style="font-weight: bold">Sender:</span> ${mailerBody.name}</p>`+

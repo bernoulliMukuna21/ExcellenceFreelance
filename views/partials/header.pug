@@ -7,11 +7,6 @@ header
                 a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
                 a(href='/users/login'): button(class='nav-btn') Login
             else
-<<<<<<< HEAD
-                if(loggedInUser.user_stature === 'client')
-                    a(href='/account/switch/freelancer/'+emailEncode(loggedInUser.email))
-                        button(class='nav-btn', id='be-freelancer') Become A Freelancer
-=======
                 if(loggedInUser.user_stature.current === 'client')
 
                     if(loggedInUser.user_stature.initial === 'client')
@@ -21,7 +16,7 @@ header
 
                     a(href='/account/switch/freelancer/' + emailEncode(loggedInUser.email))
                         button(class='nav-btn', id='be-freelancer') #{clientToFreelancerMessage}
->>>>>>> development
+
                     a(href='/account/client/'+emailEncode(loggedInUser.email)): button(class='nav-btn') My Account, #{loggedInUser.name} #{loggedInUser.surname}
 
                 else if(loggedInUser.user_stature.current === 'freelancer')
@@ -50,11 +45,8 @@ header
                         a(href='/') Home
                         a(href='/users/logout') Logout
                         a(href='/account/switch/freelancer/' + emailEncode(loggedInUser.email))
-<<<<<<< HEAD
-                            button(class='nav-btn', id='be-freelancer') Become A Freelancer
-=======
+
                             button(class='nav-btn', id='be-freelancer') #{clientToFreelancerMessage}
->>>>>>> development
 
                 else if(loggedInUser.user_stature.current === 'freelancer')
                     .mobileheaderLinks

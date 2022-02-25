@@ -368,7 +368,7 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
         })
 })
 
-router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
+/*router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
     if(req.params.uniqueKey === 'wehg484NWJBN24@qewq--4gwnlgkWFINJ'){
         console.log('-------------- Freelancer -------------------')
         var allFreelancerUsers = await UserModel.find({
@@ -402,6 +402,6 @@ router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
         console.log('Data Successfully updated!')
         res.send('done')
     }
-})
+})*/
 
 module.exports = router;

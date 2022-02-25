@@ -23,7 +23,7 @@ block content
         p Find a Freelancer
         p Book Freelance Service
   .index-page-three
-<<<<<<< HEAD
+
     if allFreelancers
       each freelancer in allFreelancers
         - let servicesPrices = freelancer.serviceAndPrice;
@@ -59,42 +59,8 @@ block content
                 if(loggedInUser.user_stature === 'client')
                   button Instant Book
                   button Request
-=======
-    each freelancer in allFreelancers
-      .single-user-index-details
-        .top-side
-          if !freelancer.profile_picture.data
-            img(src='/images/userDefaultImage.png')
-          else
-            - let imageSource;
-            if freelancer.profile_picture.name === 'oauth_picture'
-              - imageSource = freelancer.profile_picture.data.toString();
-            else
-              - imageSource = "data:image/"+freelancer.profile_picture.contentType+";base64,"+freelancer.profile_picture.data.toString('base64')
-            img(src=imageSource)
-          section
-            span
-              a(href='/account/freelancer/'+emailEncode(freelancer.email)): p #{freelancer.name+' '+freelancer.surname}
-        .middle-side
-          div
-            each service_price in freelancer.serviceAndPrice
-              - let price = service_price.price
-              if price >= minimumPriceOfService
-                .index-serviceAndPrice
-                  p #{service_price.service}
-                  p #{'£'+price}
-        .bottom-side
-          if (!isLogged)
-            button Instant Book
-            button Request
-          else
-            if(loggedInUser.user_stature.current === 'client')
-              button Instant Book
-              button Request
-
-        input(type='hidden', value=emailEncode(freelancer.email))
->>>>>>> development
 
             input(type='hidden', value=emailEncode(freelancer.email))
+
     include ./partials/booking_form
   include ./partials/footer
