@@ -772,7 +772,7 @@ function server_io(io) {
                                 });
 
                                 io.sockets.to(freelancerToBook).emit('Booking Data to Freelancer', newServiceInfos);
-                                res.redirect(`${domainName}/account/${req.user.user_stature}/${customer}`);
+                                res.redirect(`${domainName}/account/${loggedInClientStature}/${customer}`);
                             }
                         }
                     })
