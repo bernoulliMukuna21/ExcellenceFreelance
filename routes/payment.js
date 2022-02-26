@@ -44,67 +44,74 @@ function server_io(io) {
                 quantity: 1,
             };
             successURL = `${domain}/payment/success/booking-checkout?bookingID=${bookingID}`;
-        }catch (e) {
-            console.log(e)
-        }
 
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            payment_method_types: ['card'],
-            line_items: [lineItems,],
-            customer_email: customer_client,
-            mode: mode,
-            success_url: successURL,
-            cancel_url: `${domain}/payment/failure`,
-            metadata: {bookingID, paymentType: 'booking-checkout'}
-        });
-        res.redirect(303, session.url)
+            const session = await stripe.checkout.sessions.create({
+                billing_address_collection: 'auto',
+                payment_method_types: ['card'],
+                line_items: [lineItems,],
+                customer_email: customer_client,
+                mode: mode,
+                success_url: successURL,
+                cancel_url: `${domain}/payment/failure`,
+                metadata: {bookingID, paymentType: 'booking-checkout'}
+            });
+            res.redirect(303, session.url)
+
+        }catch ( error ) {
+            next(error)
+        }
     });
 
     router.post('/create-checkout-session/subscription', ensureAuthentication, async function (req, res, next){
-        console.log('Subscription route activated')
-        let customer_client = req.user.email;
-        let lineItems, mode, subscription_data, successURL;
+        try{
 
-        let trial_days = req.body.trial_days;
-        mode = 'subscription';
+            let customer_client = req.user.email;
+            let lineItems, mode, subscription_data, successURL;
 
-        subscription_data = {
-            metadata: {"UUID": emailEncode(customer_client),"paymentType": 'subscription'}
-        };
+            let trial_days = req.body.trial_days;
+            mode = 'subscription';
 
-        if(trial_days > 0){
-            subscription_data.trial_period_days = trial_days;
+            subscription_data = {
+                metadata: {"UUID": emailEncode(customer_client),"paymentType": 'subscription'}
+            };
+
+            if(trial_days > 0){
+                subscription_data.trial_period_days = trial_days;
+            }
+
+            lineItems = {
+                price_data: {
+                    product: 'prod_L799Pmx0Dbc6Uj',
+                    unit_amount: 100,
+                    currency: 'gbp',
+                    recurring: {
+                        interval: "day",
+                        interval_count: 1,
+                    },
+                },
+                quantity: 1,
+            };
+            successURL = `${domain}/payment/success/subscription`;
+
+            const session = await stripe.checkout.sessions.create({
+                billing_address_collection: 'auto',
+                payment_method_types: ['card'],
+                line_items: [lineItems,],
+                customer_email: customer_client,
+                mode: mode,
+                subscription_data: subscription_data,
+                success_url: successURL,
+                cancel_url: `${domain}/payment/failure`
+            });
+            res.redirect(303, session.url);
+
+        }catch (error) {
+            next(error)
         }
 
-        lineItems = {
-            price_data: {
-                product: 'prod_L799Pmx0Dbc6Uj',
-                unit_amount: 100,
-                currency: 'gbp',
-                recurring: {
-                    interval: "day",
-                    interval_count: 1,
-                },
-            },
-            quantity: 1,
-        };
-        successURL = `${domain}/payment/success/subscription`;
-
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            payment_method_types: ['card'],
-            line_items: [lineItems,],
-            customer_email: customer_client,
-            mode: mode,
-            subscription_data: subscription_data,
-            success_url: successURL,
-            cancel_url: `${domain}/payment/failure`
-        });
-        res.redirect(303, session.url);
     })
 
-    router.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    router.post('/webhook', express.raw({type: 'application/json'}), async (req, res, next) => {
         console.log('Webhook listener')
         const sig = req.headers['stripe-signature'];
         let event, subscrptionData, userUUID;
@@ -112,8 +119,7 @@ function server_io(io) {
         try {
             event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
         } catch (err) {
-            res.status(400).send(`Webhook Error: ${err.message}`);
-            return;
+            throw err
         }
 
         // Handle the event
@@ -186,8 +192,8 @@ function server_io(io) {
                             io.sockets.to(freelancerBooked).emit('Successful Payment - send to Freelancer',
                                 bookingUpdated);
                         })
-                    }catch (err) {
-                        throw err;
+                    }catch ( error ) {
+                        next(error);
                     }
                 }
                 break;
@@ -215,8 +221,8 @@ function server_io(io) {
                             else{console.log('Successful Subscription sent to freelancer user')}
                         });
                     })
-                }catch (err) {
-                    throw err;
+                }catch ( error ) {
+                    next(error);
                 }
 
                 break;
@@ -245,8 +251,8 @@ function server_io(io) {
                             else{console.log('Subscription cancellation sent to freelancer user')}
                         });
                     })
-                }catch (err) {
-                    throw err;
+                }catch ( error ) {
+                    next(error);
                 }
                 break;
             case 'invoice.payment_succeeded':
@@ -280,7 +286,7 @@ function server_io(io) {
         res.status(200).send('Payment successful');
     });
 
-    router.get('/success/:paymentType', ensureAuthentication, (req, res)=>{
+    router.get('/success/:paymentType', ensureAuthentication, (req, res, next)=>{
 
         let paymentType = req.params.paymentType;
         let flash_message;
@@ -311,21 +317,26 @@ function server_io(io) {
 
     router.post('/create-portal-session', ensureAuthentication, async function(req, res, next) {
         let isStripeCustomerSub, isStripeCustomer;
+        try{
+            let currentFreelancerEmail = req.body.freelancerStripeID;
+            isStripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
 
-        let currentFreelancerEmail = req.body.freelancerStripeID;
-        isStripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
+            if(isStripeCustomer){
+                isStripeCustomerSub = await stripeCustomerSubscription(isStripeCustomer.id);
 
-        if(isStripeCustomer){
-            isStripeCustomerSub = await stripeCustomerSubscription(isStripeCustomer.id);
-
-            if(isStripeCustomerSub){
-                const session = await stripe.billingPortal.sessions.create({
-                    customer: isStripeCustomerSub.data[0].customer,
-                    return_url: `${domain}/payment/success/billing-portal`,
-                });
-                res.redirect(303, session.url)
+                if(isStripeCustomerSub){
+                    const session = await stripe.billingPortal.sessions.create({
+                        customer: isStripeCustomerSub.data[0].customer,
+                        return_url: `${domain}/payment/success/billing-portal`,
+                    });
+                    res.redirect(303, session.url)
+                }
             }
+
+        }catch (error) {
+            next(error);
         }
+
     });
 
     return router;

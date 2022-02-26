@@ -19,7 +19,12 @@ var {emailEncode, emailDecode} = require('../bin/encodeDecode');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.redirect('/users/login');
+    try {
+        res.redirect('/users/login');
+    }catch (error) {
+        next(error);
+    }
+
 });
 
 // ~~~~~~~~~~~~~~~~~ Excellence Freelancer users helper functions  ~~~~~~~~~~~~~~~~~~~
@@ -62,19 +67,33 @@ function loginSystem(req, res, user, userType, flash_message){
 
 // get the join view page
 router.get('/join', forwardAuthentication, function(req, res, next) {
-    res.redirect('/users/join/client');
+    try {
+
+        res.redirect('/users/join/client');
+
+    }catch (error) {
+        next(error);
+    }
+
 });
 
 // get the join view page for freelances
 router.get('/join/:userType', function(req, res, next) {
-    let userType = req.params.userType;
-    userType_Oauth.this_user = userType;
-    console.log('I am inside here');
-    res.render('joinFree', {userType: userType});
+    try{
+
+        let userType = req.params.userType;
+        userType_Oauth.this_user = userType;
+        console.log('I am inside here');
+        res.render('joinFree', {userType: userType});
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // Sign Up users to the database
-router.post('/join/:userType', function (req, res) {
+router.post('/join/:userType', function (req, res, next) {
     let userType = req.params.userType;
 
     let {name, surname, email, password, password2} = req.body;
@@ -128,7 +147,7 @@ router.post('/join/:userType', function (req, res) {
                     });
                 }
             })
-            .catch(err=>res.render('error'))
+            .catch( error => next( error ) )
     }
 });
 
@@ -136,13 +155,20 @@ router.post('/join/:userType', function (req, res) {
 
 // get the view page for users to login
 router.get('/login', forwardAuthentication, function(req, res, next) {
-    res.render('login');
+    try{
+
+        res.render('login');
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // Login User to the application
 router.post('/login', (req, res, next)=>{
-    UserModel.findOne({email:req.body.email})
-        .then(user=>{
+    UserModel.findOne({ email:req.body.email })
+        .then( user =>{
             passport.authenticate('local', (err, user, info)=>{
                 if(typeof info === 'undefined'){
                     let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
@@ -165,22 +191,35 @@ router.post('/login', (req, res, next)=>{
                 }
             }
             )(req, res, next);
-        })
+        }).catch( error => next(error))
 });
 
 // ~~~~~~~~~~~~~~~~ Logout gets and posts ~~~~~~~~~~~~~~~~~~
 
-router.get('/logout', function (req, res) {
-    req.logout();
-    req.flash('success_message', 'You are logged out!');
-    res.redirect('/users/login');
+router.get('/logout', function (req, res, next) {
+    try{
+
+        req.logout();
+        req.flash('success_message', 'You are logged out!');
+        res.redirect('/users/login');
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // ~~~~~~~~~~~~~~~~ Forgot Password gets and posts ~~~~~~~~~~~~~~~~~~
 
 // get the view page for the email forgot of the user (Should probably be deleted)
 router.get('/forgot', function (req, res, next) {
-    res.render('forgot')
+    try{
+
+        res.render('forgot')
+
+    }catch (error) {
+        next(error)
+    }
 });
 
 /*
@@ -260,7 +299,12 @@ router.post('/forgot', function (req, res, next) {
             });
         }
     ], function (err) {
-        if (err) return next(err);
+
+        if(err){
+            next(err);
+            return;
+        }
+
         res.redirect('/users/forgot');
     })
 })
@@ -275,11 +319,18 @@ router.get('/reset/:token', function (req, res) {
         resetPasswordToken: req.params.token,
         resetPasswordExpires: {$gt: Date.now()}},
         function (err, user) {
-        if(!user){
-            req.flash('error_message', 'Passwod reset token is invalid or has expired.')
-            return res.redirect('/users/forgot');
-        }
-        res.render('reset', {token: req.params});
+
+            if(err){
+                next(err);
+                return;
+            }
+
+            if(!user){
+                req.flash('error_message', 'Passwod reset token is invalid or has expired.')
+                return res.redirect('/users/forgot');
+            }
+
+            res.render('reset', {token: req.params});
         }
      );
 });
@@ -339,19 +390,28 @@ router.post('/reset/:token', function (req, res) {
             loginSystem(req, res, user, user.user_stature.initial, flash_message);
         }
     ],  function (err) {
-        res.send('An error has occurred');
+            if(err){
+                next(err);
+                return;
+            }
     });
 });
 
 // ~~~~~~~~~~~~~~~~ User Account ~~~~~~~~~~~~~~~~~~
 // redirect user to the account url if they do come here
 router.get('/account', function(req, res, next) {
-    res.redirect('/account');
+    try{
+
+        res.redirect('/account');
+
+    }catch (error) {
+        next(error)
+    }
 });
 
 // ~~~~~~~ User OAuthentication: Facebook, Google, twitter and LinkendIn ~~~~~~~~
 
-function passportUser(req, res, user, info, current_user){
+function passportUser(req, res, user, info, current_user, next){
     /*
     * This function is used to take appropriate actions based on
     * the information provided for the current user.
@@ -389,8 +449,8 @@ function passportUser(req, res, user, info, current_user){
 
         newUser.save(function (err) {
             if(err){
-                console.log(err);
-                res.send(err)
+                next(err);
+                return;
             }
             else{
                 let flash_message = `Welcome to Excellence.Freelancer, ${newUser.name} ${newUser.surname}.` +
@@ -452,7 +512,7 @@ router.get('/facebook-authentication/callback', (req, res, next)=>{
         current_user = userType_Oauth.this_user;
     }
     passport.authenticate('facebook', (err, user, info)=>{
-        passportUser(req, res, user, info, current_user)
+        passportUser(req, res, user, info, current_user, next)
     })(req, res, next);
 })
 
@@ -475,117 +535,8 @@ router.get('/google-authentication/callback', (req, res, next)=>{
     }
 
     passport.authenticate('google', (err, user, info)=>{
-        passportUser(req, res, user, info, current_user)
+        passportUser(req, res, user, info, current_user, next)
     })(req, res, next);
 });
 
 module.exports = router;
-
-
-
-/*
-res.redirect(url.format({
-                    pathname: '/',
-                    query: {
-                        this_user: user.name+'.'+user.surname
-                    }
-                }))
-*/
-/*
-        console.log('Inside callback authenticate')
-        if (err) {
-            if(err == 'email-required') res.redirect('/users/facebook-authentication/rerequest');
-            else if(err == 'email-in-use'){
-                let fields_errors = [{label:'facebook', message:'Facebook signup FAILED - ' +
-                        'Email is already being used. PLease Login!'}]
-                res.render('login', {fields_errors})
-            }
-            else{
-                let fields_errors = [{label:'facebook', message:'Facebook signup Failed. ' +
-                        'Please try again!'}]
-                res.render('joinFree', {fields_errors})
-            }
-            return;
-        }
-        if (!user) {
-            req.flash('error_message', 'Error Occurred! Please try again');
-            return res.redirect('back');
-        }
-        else{
-
-              If there are not any errors and the user is correctly returned,
-             the next thing before logging them is to check if they will rather
-             sign in as a freelancer. This behave is obtained from the url
-             clicked to trigger this facebook authentication. The variable
-             'current_user' contains this information
-
-             /*if(current_user === 'freelancer' && !user.user_stature){
-                user.user_stature = 'freelancer';
-                user.save(function (err) {
-                    if(err) throw err;
-                })
-            }
-}
-    req.logIn(user, function(err) {
-        if (err) { next(err); }
-        else if(current_user === 'client'){
-            req.flash('success_message', 'Welcome to Excellence.Freelancer.' +
-                ' Thank you for joining us!');
-            res.redirect(url.format({
-                pathname: '/',
-                query: {
-                    this_user: user.name+'.'+user.surname
-                }
-            }))
-        }
-        else if(current_user === 'freelancer'){
-            res.redirect('/account/freelancer/'+user.name+'.'+user.surname)
-        }
-    });
-}*/
-
-/* if(err){
-     if(err=='email-in-use'){
-         let fields_errors = [{label:'facebook', message:'Google signup FAILED - ' +
-                 'Email is already being used. PLease Login!'}]
-         res.render('login', {fields_errors})
-     }
-     else{
-         let fields_errors = [{label:'facebook', message:'Facebook signup Failed. ' +
-                 'Please try again!'}]
-         res.render('joinFree', {fields_errors})
-     }
-     return;
- }
-
- if (!user) {
-     req.flash('error_message', 'Error Occurred! Please try again');
-     return res.redirect('back');
- }
-
- else{
-
-     if(current_user === 'freelancer' && !user.user_stature){
-         user.user_stature = 'freelancer';
-         user.save(function (err) {
-             if(err) throw err;
-         })
-     }
-
-     req.logIn(user, function(err) {
-         if (err) { return next(err); }
-         else if(current_user === 'client'){
-             req.flash('success_message', 'Welcome to Excellence.Freelancer.' +
-                 ' Thank you for joining us!');
-             res.redirect(url.format({
-                 pathname: '/',
-                 query: {
-                     this_user: user.name+'.'+user.surname
-                 }
-             }))
-         }
-         else if(current_user === 'freelancer'){
-             res.redirect('/account/freelancer/'+user.name+'.'+user.surname)
-         }
-     });
- }*/

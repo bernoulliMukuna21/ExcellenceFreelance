@@ -72,8 +72,8 @@ router.get('/', async function (req, res, next) {
             isLogged: req.isAuthenticated(),
             emailEncode
         });
-    }catch (e) {
-        res.send('An error has occured')
+    }catch ( error ) {
+        next(error)
     }
 });
 

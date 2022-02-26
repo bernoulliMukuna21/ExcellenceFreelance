@@ -183,23 +183,24 @@ input:focus{
 /********************************************** Footer  **********************************************/
 #contact{
     background-color: #213e53;
-    font-size: 1.5rem;
-    /*font-family: Matrice;*/
-}
-#contact .container{
+    font-size: 1.3rem;
     color: white;
-    text-align: center;
     padding: 2rem 0;
+    text-align: center;
 }
-
-#contact .container .top-footer p{
-    width: fit-content;
-    margin: 0 20rem 2rem 20rem;
-    font-size: 1.7rem;
-    font-family: Matrice;
+.container .top-footer{
+    margin: 0 20%;
+    padding-bottom: 1rem;
+}
+.container  .middle-footer{
+    margin: 0 5%;
+    padding-bottom: 1rem;
+}
+.container .bottom-footer{
+    margin: 0 5%;
 }
 #contact .container .middle-footer .first-contact-section h6, .container .second-contact-section h6{
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 #contact .container .middle-footer .first-contact-section h6{
     border-top: .2rem solid white;
@@ -210,7 +211,6 @@ input:focus{
     font-size: 1.5rem;
     margin: 1rem 0;
 }
-
 .container .second-contact-section span{
     margin: 0 1rem;
 }
@@ -218,13 +218,6 @@ input:focus{
     display: flex;
     justify-content: center;
     list-style: none;
-}
-#contact .contact-social ul li{
-
-}
-#contact .contact-social ul li a{
-    transition: all 0.4s ease 0s;
-
 }
 #contact .contact-social ul li a i{
     cursor: pointer;
@@ -236,7 +229,4 @@ input:focus{
     border-top: .1rem solid white;
     margin: 1rem 3rem 0 3rem;
     padding-top: 1rem;
-}
-.bottom-footer p{
-
 }

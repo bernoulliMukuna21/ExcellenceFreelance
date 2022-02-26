@@ -31,14 +31,14 @@ let multerUserProfilePicture = multer({
 }).single('user_profile_picture');
 
 
-router.get('/', ensureAuthentication, function (req, res) {
+router.get('/', ensureAuthentication, function (req, res, next) {
     console.log('I am inside the account function')
     req.flash('error_message', 'Please login to access your account');
     res.send(req.user)//res.redirect('/users/login');
 });
 
 router.get('/client/:this_user', ensureAuthentication , async (req,
-                                                               res) => {
+                                                               res, next) => {
     let loggedInUser = req.user;
     let loggedInUser_imageSrc = '';
 
@@ -67,7 +67,7 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 messageIdHTML= 'show-user-messages';
             }
         } catch (error) {
-            res.send('An Error occurred!');
+            next(error);
         }
     }
 
@@ -101,13 +101,13 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 userToMessage,
                 userToMessageImageSrc
             });
-        }).catch (e => {
-            res.send('An Error occurred!');
+        }).catch ( error => {
+            next(error);
         })
     }
 })
 
-router.get('/freelancer/:this_user', async function (req, res) {
+router.get('/freelancer/:this_user', async function (req, res, next) {
     let loggedInUser, freelancerUser;
     let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
     let freelancerSubscriptionStatus;
@@ -136,8 +136,8 @@ router.get('/freelancer/:this_user', async function (req, res) {
                         userToMessageImageSrc = imageToDisplay(userToMessage);
                         messageIdHTML = 'show-user-messages'
                     }
-                }catch (e) {
-                    res.send('1- An Error occurred!');
+                }catch ( error ) {
+                    next(error);
                 }
             }
 
@@ -163,8 +163,8 @@ router.get('/freelancer/:this_user', async function (req, res) {
                         { $sort: { dueDateTime : 1} }
                     ]
                 )
-            }catch (e) {
-                res.send('2-An Error occurred!');
+            }catch ( error ) {
+                next(error);
             }
 
             // Group the project by statuses
@@ -214,84 +214,96 @@ router.get('/freelancer/:this_user', async function (req, res) {
             trailDays,
             allBookingToFreelancer
         });
-    }catch (e) {
-        res.send('3-An Error occurred!');
+    }catch ( error ) {
+        next(error);
     }
 });
 
 // client information update
-router.put('/client/update', ensureAuthentication, multerUserProfilePicture, async function (req, res) {
-    let clientInformationChecker = new UpdateProfileChecker(req.user, req.body,
-        req.file, 'client');
+router.put('/client/update', ensureAuthentication, multerUserProfilePicture, async function (req, res, next) {
+    try{
 
-    let updateInfos = await clientInformationChecker.checkLoginStrategyAndReturnInformation();
+        let clientInformationChecker = new UpdateProfileChecker(req.user, req.body,
+            req.file, 'client');
 
-    if(Object.keys(updateInfos.updateErrors).length>0){
-        /*
-        * If the object of the errors is bigger than 0, the update form
-        * contains some errors.
-        * */
+        let updateInfos = await clientInformationChecker.checkLoginStrategyAndReturnInformation();
 
-        res.status(404).send(Object.values(updateInfos.updateErrors));
+        if(Object.keys(updateInfos.updateErrors).length>0){
+            /*
+            * If the object of the errors is bigger than 0, the update form
+            * contains some errors.
+            * */
 
-    }else{
-        /*
-        * When there are no errors, the next thing that happens is updating
-        * the database for the using the user's current details.
-        * */
+            res.status(404).send(Object.values(updateInfos.updateErrors));
 
-        let upgradeUser = updateInfos.updateUser;
-        let this_object = JSON.stringify(upgradeUser);
-        this_object = JSON.parse(this_object);
-        this_object.profileImageSrc = imageToDisplay(upgradeUser);
+        }else{
+            /*
+            * When there are no errors, the next thing that happens is updating
+            * the database for the using the user's current details.
+            * */
 
-        upgradeUser.save(function (error) {
-            if (error) throw error;
-            else{
-                res.json(this_object);
-            }
-        });
+            let upgradeUser = updateInfos.updateUser;
+            let this_object = JSON.stringify(upgradeUser);
+            this_object = JSON.parse(this_object);
+            this_object.profileImageSrc = imageToDisplay(upgradeUser);
+
+            upgradeUser.save(function (error) {
+                if (error) throw error;
+                else{
+                    res.json(this_object);
+                }
+            });
+        }
+
+    }catch ( error ) {
+        next(error);
     }
+
 })
 
 // freelancer information update
-router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture, async function (req, res) {
+router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture, async function (req, res, next) {
+    try{
 
-    let freelancerInformationChecker = new UpdateProfileChecker(req.user, req.body,
-        req.file, 'freelancer');
+        let freelancerInformationChecker = new UpdateProfileChecker(req.user, req.body,
+            req.file, 'freelancer');
 
-    let updateInfos = await freelancerInformationChecker.checkLoginStrategyAndReturnInformation();
-    if(Object.keys(updateInfos.updateErrors).length>0){
-        /*
-        * If the object of the errors is bigger than 0, the update form
-        * contains some errors.
-        *  */
+        let updateInfos = await freelancerInformationChecker.checkLoginStrategyAndReturnInformation();
+        if(Object.keys(updateInfos.updateErrors).length>0){
+            /*
+            * If the object of the errors is bigger than 0, the update form
+            * contains some errors.
+            *  */
 
-        res.status(404).send(Object.values(updateInfos.updateErrors));
+            res.status(404).send(Object.values(updateInfos.updateErrors));
 
 
-    }else{
-        /*
-        * When there are no errors, the next thing that happens is updating
-        * the database for the using the user's current details.
-        * */
-        let upgradeFreelancer = updateInfos.updateUser;
-        let freelancerObject = JSON.stringify(upgradeFreelancer);
-        freelancerObject = JSON.parse(freelancerObject);
-        freelancerObject.profileImageSrc = imageToDisplay(upgradeFreelancer);
+        }else{
+            /*
+            * When there are no errors, the next thing that happens is updating
+            * the database for the using the user's current details.
+            * */
+            let upgradeFreelancer = updateInfos.updateUser;
+            let freelancerObject = JSON.stringify(upgradeFreelancer);
+            freelancerObject = JSON.parse(freelancerObject);
+            freelancerObject.profileImageSrc = imageToDisplay(upgradeFreelancer);
 
-        upgradeFreelancer.save(function (error) {
-            if (error) throw error;
-            else{
-                res.json(freelancerObject);
-            }
-        });
+            upgradeFreelancer.save(function (error) {
+                if (error) throw error;
+                else{
+                    res.json(freelancerObject);
+                }
+            });
+        }
+
+    }catch ( error ) {
+        next(error);
     }
 });
 
 // Profile Switch
 /*** Freelancer -> Client ***/
-router.get('/switch/client/:user_email', ensureAuthentication, async function (req, res) {
+router.get('/switch/client/:user_email', ensureAuthentication, async function (req, res, next) {
     let userUUID = req.params.user_email;
     UserModel.findOne({email:emailDecode(userUUID)})
         .then( user => {
@@ -318,15 +330,13 @@ router.get('/switch/client/:user_email', ensureAuthentication, async function (r
                     res.redirect(`/account/client/${userUUID}`);
             })
         })
-        .catch( err => {
-            if( err ){
-                res.send('An error occured!')
-            }
+        .catch( error => {
+            next(error)
         })
 })
 
 /*** Client -> Freelancer ***/
-router.get('/switch/freelancer/:user_email', ensureAuthentication, async function (req, res) {
+router.get('/switch/freelancer/:user_email', ensureAuthentication, async function (req, res, next) {
     let userUUID = req.params.user_email;
     let flash_message;
     UserModel.findOne({email:emailDecode(userUUID)})
@@ -364,14 +374,12 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
             })
 
         })
-        .catch( err => {
-            if( err ){
-                res.send('An error occured!');
-            }
+        .catch( error => {
+            next(error)
         })
 })
 
-router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
+/*router.get('/adminstration/all-users/:uniqueKey', async function (req, res, next) {
     if(req.params.uniqueKey === 'wehg484NWJBN24@qewq--4gwnlgkWFINJ'){
         console.log('-------------- Freelancer -------------------')
         var allFreelancerUsers = await UserModel.find({
@@ -405,6 +413,6 @@ router.get('/adminstration/all-users/:uniqueKey', async function (req, res) {
         console.log('Data Successfully updated!')
         res.send('done')
     }
-})
+})*/
 
 module.exports = router;
