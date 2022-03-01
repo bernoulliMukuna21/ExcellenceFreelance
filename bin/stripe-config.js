@@ -10,7 +10,7 @@ const stripeFindCustomerByEmail = async (email) => {
             return customer.data[0];
         }
     } catch (e) {
-        return (e);
+        throw e;
     }
 };
 
@@ -21,7 +21,7 @@ const stripeCustomerSubscription = async (customerId) => {
             return stripeSub;
         }
     } catch (e) {
-        return (e);
+        throw e;
     }
 };
 

@@ -21,7 +21,7 @@ router.get('/', async function (req, res, next) {
         let allFreelancers;
 
         let isLogged = req.isAuthenticated();
-        let trial_days = 1000;
+        let trial_days = 30;
 
         let findFreelancersQuery = [{
             'user_stature.initial': 'freelancer'
@@ -75,8 +75,8 @@ router.get('/', async function (req, res, next) {
             isLogged,
             emailEncode
         });
-    }catch (e) {
-        res.send('An error has occured')
+    }catch ( error ) {
+        return next(error)
     }
 });
 

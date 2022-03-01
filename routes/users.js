@@ -20,7 +20,12 @@ var {emailEncode, emailDecode} = require('../bin/encodeDecode');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.redirect('/users/login');
+    try {
+        res.redirect('/users/login');
+    }catch (error) {
+        next(error);
+    }
+
 });
 
 // ~~~~~~~~~~~~~~~~~ Unilance users helper functions  ~~~~~~~~~~~~~~~~~~~
@@ -28,6 +33,7 @@ router.get('/', function(req, res, next) {
 // The variable will be used to track if a user is signing up as client or freelancer
 let userType_Oauth = {};
 let domainName = 'https://www.unilance.co.uk';
+let administrationEmail = 'unilance.admnistration@gmail.com';
 
 function loginSystem(req, res, user, userType, flash_message){
     console.log('Inside login system')
@@ -43,7 +49,7 @@ function loginSystem(req, res, user, userType, flash_message){
 
     req.login(user, function (error) {
         if(error){
-            res.render('error');
+            throw error;
         }
         else{
             if(userType==='client'){
@@ -64,19 +70,33 @@ function loginSystem(req, res, user, userType, flash_message){
 
 // get the join view page
 router.get('/join', forwardAuthentication, function(req, res, next) {
-    res.redirect('/users/join/client');
+    try {
+
+        res.redirect('/users/join/client');
+
+    }catch (error) {
+        next(error);
+    }
+
 });
 
 // get the join view page for freelances
 router.get('/join/:userType', function(req, res, next) {
-    let userType = req.params.userType;
-    userType_Oauth.this_user = userType;
-    console.log('I am inside here');
-    res.render('joinFree', {userType: userType});
+    try{
+
+        let userType = req.params.userType;
+        userType_Oauth.this_user = userType;
+        console.log('I am inside here');
+        res.render('joinFree', {userType: userType});
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // Sign Up users to the database
-router.post('/join/:userType', function (req, res) {
+router.post('/join/:userType', function (req, res, next) {
     let userType = req.params.userType;
 
     let {name, surname, email, password, password2} = req.body;
@@ -119,20 +139,32 @@ router.post('/join/:userType', function (req, res) {
                     // Save user in the database
                     newUser.save(function (err) {
                         if(err){
-                            console.log(err);
-                            res.send(err)
+                            throw err;
                         }
                         else{
-                            let welcomeEmail = '<h1 style="color: #213e53; font-size: 1.1rem">Welcome to Unilance</h1>'+
+                            let welcomeEmailToUser = '<h1 style="color: #213e53; font-size: 1.1rem">Welcome to Unilance</h1>'+
                                 '<p>You have successfully signed up to '+' <a target="_blank" style="text-decoration: underline;' +
                                 ' color: #0645AD; cursor: pointer" href='+domainName+'> Unilance.co.uk</a>'+
                                 ' . Well done!</p><p> We are looking to working' +
                                 'with you.</p><p>Thank you<br>The Unilance Team<br>07448804768</p>';
 
+                            let signUpNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">New Joiner - Notification</h1>'+
+                                '<p> I am happy to announce to you that there has been a new joiner.</p>'+
+                                `<ul><li>Name:${name}</li><li>Surname: ${surname}</li></ul>`+
+                                `<p>Thank you,<br>Unilance Development Team</p>`
+
                             mailer.smtpTransport.sendMail(mailer.mailerFunction(email,
-                                "Welcome to Unilance", welcomeEmail), function (err) {
-                                if(err){console.log(err)}
-                                else{console.log('user successfully signed up!')}
+                                "Welcome to Unilance", welcomeEmailToUser), function (err) {
+                                if(err){ throw err }
+                                else{
+                                    console.log('user successfully signed up!');
+
+                                    mailer.smtpTransport.sendMail(mailer.mailerFunction(administrationEmail,
+                                        "New Joiner Alert", signUpNotificationToAdmin), function (err) {
+                                        if(err){ throw err }
+                                        else{console.log('sign up notification sent to Administration!')}
+                                    });
+                                }
                             });
 
                             let flash_message = `Welcome to Unilance.com, ${newUser.name} ${newUser.surname}.` +
@@ -142,7 +174,7 @@ router.post('/join/:userType', function (req, res) {
                     });
                 }
             })
-            .catch(err=>res.render('error'))
+            .catch( error => next( error ) )
     }
 });
 
@@ -150,13 +182,20 @@ router.post('/join/:userType', function (req, res) {
 
 // get the view page for users to login
 router.get('/login', forwardAuthentication, function(req, res, next) {
-    res.render('login');
+    try{
+
+        res.render('login');
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // Login User to the application
 router.post('/login', (req, res, next)=>{
-    UserModel.findOne({email:req.body.email})
-        .then(user=>{
+    UserModel.findOne({ email:req.body.email })
+        .then( user =>{
             passport.authenticate('local', (err, user, info)=>{
                 if(typeof info === 'undefined'){
                     let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
@@ -179,22 +218,37 @@ router.post('/login', (req, res, next)=>{
                 }
             }
             )(req, res, next);
+        }).catch( error => {
+            return next(error)
         })
 });
 
 // ~~~~~~~~~~~~~~~~ Logout gets and posts ~~~~~~~~~~~~~~~~~~
 
-router.get('/logout', function (req, res) {
-    req.logout();
-    req.flash('success_message', 'You are logged out!');
-    res.redirect('/users/login');
+router.get('/logout', function (req, res, next) {
+    try{
+
+        req.logout();
+        req.flash('success_message', 'You are logged out!');
+        res.redirect('/users/login');
+
+    }catch (error) {
+        next(error)
+    }
+
 });
 
 // ~~~~~~~~~~~~~~~~ Forgot Password gets and posts ~~~~~~~~~~~~~~~~~~
 
 // get the view page for the email forgot of the user (Should probably be deleted)
 router.get('/forgot', function (req, res, next) {
-    res.render('forgot')
+    try{
+
+        res.render('forgot')
+
+    }catch (error) {
+        next(error)
+    }
 });
 
 /*
@@ -210,7 +264,7 @@ let smtpTransport = nodemailer.createTransport(
         auth:{
             //type: "login",
             type: 'OAuth2',
-            user: 'unilance.admnistration@gmail.com',
+            user: administrationEmail,
             clientId: process.env.google_clientID,
             clientSecret: process.env.google_secretID,
             refreshToken: process.env.google_refreshToken,
@@ -256,7 +310,7 @@ router.post('/forgot', function (req, res, next) {
             let reset_link = "http://"+ req.headers.host+"/users/reset/"+ token;
             let mailOptions = {
                 to: req.body.email,
-                from: 'unilance.admnistration@gmail.com',
+                from: administrationEmail,
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',
                 html: '<h1 style="color: #213e53; font-size: 1.1rem">Unilance Password Reset</h1>'+
@@ -269,12 +323,23 @@ router.post('/forgot', function (req, res, next) {
                     'style="margin-top: 5rem">Admnistration Team<br>07448804768</p>'
             };
             smtpTransport.sendMail(mailOptions, function (err) {
+
+                if(err){
+                    next(err);
+                    return;
+                }
+
                 req.flash('success_message', 'Your email has been sent')
                 done(err, 'done');
             });
         }
     ], function (err) {
-        if (err) return next(err);
+
+        if(err){
+            next(err);
+            return;
+        }
+
         res.redirect('/users/forgot');
     })
 })
@@ -290,14 +355,17 @@ router.get('/reset/:token', function (req, res) {
         resetPasswordExpires: {$gt: Date.now()}},
         function (err, user) {
             if(err){
-                res.send('Error occured')
-            }else{
-                if(!user){
-                    req.flash('error_message', 'Passwod reset token is invalid or has expired.')
-                    return res.redirect('/users/forgot');
-                }
-                res.render('reset', {token: req.params});
+                next(err);
+                return;
             }
+
+            if(!user){
+                req.flash('error_message', 'Passwod reset token is invalid or has expired.')
+                return res.redirect('/users/forgot');
+            }
+
+            res.render('reset', {token: req.params});
+
         }
      );
 });
@@ -307,7 +375,7 @@ router.get('/reset/:token', function (req, res) {
 * and then an email is sent back to the user to confirm the completion of this
 * process.
 * */
-router.post('/reset/:token', function (req, res) {
+router.post('/reset/:token', function (req, res, next) {
     let rstPassword = req.body.password_reset,
         rstcPassword = req.body.password_confirm;
     let resetPassordError = formChecker.passwordChecker(rstPassword, rstcPassword);
@@ -334,7 +402,7 @@ router.post('/reset/:token', function (req, res) {
                     user.password = rstPassword;
                     user.resetPasswordToken = undefined;
                     user.resetPasswordExpires = undefined;
-                    console.log('I reach the stage before saving')
+
                     user.save(function(err){
                         if (err) throw err;
                         done(null, user);
@@ -344,12 +412,17 @@ router.post('/reset/:token', function (req, res) {
         }, function (user, done) {
             let mailOptions = {
                 to: user.email,
-                from: 'unilance.admnistration@gmail.com',
+                from: administrationEmail,
                 subject: 'Password Reset',
                 text: 'Password Successfully Updated. If you do not recognise this, Please contact us as' +
-                    ' soon as possible on unilance.admnistration@gmail.com or 07448804768'
+                    ' soon as possible on '+administrationEmail+' or 07448804768'
             };
             smtpTransport.sendMail(mailOptions, function (err) {
+                if(err){
+                    next(err);
+                    return;
+                }
+
                 req.flash('success_message', 'Your email has been sent')
                 done(err, 'done');
             });
@@ -357,19 +430,28 @@ router.post('/reset/:token', function (req, res) {
             loginSystem(req, res, user, user.user_stature.initial, flash_message);
         }
     ],  function (err) {
-        res.send('An error has occurred');
+            if(err){
+                next(err);
+                return;
+            }
     });
 });
 
 // ~~~~~~~~~~~~~~~~ User Account ~~~~~~~~~~~~~~~~~~
 // redirect user to the account url if they do come here
 router.get('/account', function(req, res, next) {
-    res.redirect('/account');
+    try{
+
+        res.redirect('/account');
+
+    }catch (error) {
+        next(error)
+    }
 });
 
 // ~~~~~~~ User OAuthentication: Facebook, Google, twitter and LinkendIn ~~~~~~~~
 
-function passportUser(req, res, user, info, current_user){
+function passportUser(req, res, user, info, current_user, next){
     /*
     * This function is used to take appropriate actions based on
     * the information provided for the current user.
@@ -407,13 +489,20 @@ function passportUser(req, res, user, info, current_user){
 
         newUser.save(function (err) {
             if(err){
-                console.log(err);
-                res.send(err)
+                next(err);
+                return;
             }
             else{
                 let flash_message = `Welcome to Unilance, ${newUser.name} ${newUser.surname}.` +
                     ' Thank you for joining us!';
-                loginSystem(req, res, newUser, current_user, flash_message);
+
+                try{
+                    loginSystem(req, res, newUser, current_user, flash_message);
+                }catch (error) {
+                    next(err);
+                    return;
+                }
+
             }
         });
     }
@@ -426,7 +515,12 @@ function passportUser(req, res, user, info, current_user){
             * */
             let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
 
-            loginSystem(req, res, user, current_user, flash_message);
+            try{
+                loginSystem(req, res, user, current_user, flash_message);
+            }catch (error) {
+                next(err);
+                return;
+            }
         }
 
         else if(info.message === 'email-required'){
@@ -450,7 +544,7 @@ function passportUser(req, res, user, info, current_user){
             res.render('login', {fields_errors})
         }
         else{
-            let fields_errors = [{label:'socialN', message:'Social Network signup Failed. ' +
+            let fields_errors = [{label:'socialN', message:'Google signup Failed. ' +
                     'Please try again!'}]
             res.render('joinFree', {fields_errors})
         }
@@ -472,7 +566,7 @@ router.get('/facebook-authentication/callback', (req, res, next)=>{
         current_user = userType_Oauth.this_user;
     }
     passport.authenticate('facebook', (err, user, info)=>{
-        passportUser(req, res, user, info, current_user)
+        passportUser(req, res, user, info, current_user, next)
     })(req, res, next);
 })
 
@@ -495,7 +589,7 @@ router.get('/google-authentication/callback', (req, res, next)=>{
     }
 
     passport.authenticate('google', (err, user, info)=>{
-        passportUser(req, res, user, info, current_user)
+        passportUser(req, res, user, info, current_user, next)
     })(req, res, next);
 });
 

@@ -108,19 +108,20 @@ function server_io(io) {
         })
     })
     
-    router.get('/get-profile/:senderID', ensureAuthentication, async (req, res) => {
+    router.get('/get-profile/:senderID', ensureAuthentication, async (req, res, next) => {
         let sender = req.params.senderID;
 
         try {
             let userProfileData = await getUserProfile(sender);
             res.json(userProfileData)
-        } catch (e) {
-            res.status(400).send('Error in Receiving message');
+        } catch (error) {
+            next(error);
+            return;
         }
 
     })
 
-    router.get('/get-messages-rooms/:loggedInUserUniqueKey', ensureAuthentication, (req, res) => {
+    router.get('/get-messages-rooms/:loggedInUserUniqueKey', ensureAuthentication, (req, res, next) => {
         let loggedInUserUniqueKey = req.params.loggedInUserUniqueKey;
         let loggedInUser = req.user;
         let allRoomsDetails = [];
@@ -161,11 +162,11 @@ function server_io(io) {
             }
             else res.json(undefined);
 
-        }).catch(error=> res.status(400).send('Error in retrieving message'));
+        }).catch( error => {return next(error)});
 
     });
 
-    router.get('/get-user-messages/:loggedInUserUniqueKey/:receiverUserUniqueKey', ensureAuthentication, (req, res) => {
+    router.get('/get-user-messages/:loggedInUserUniqueKey/:receiverUserUniqueKey', ensureAuthentication, (req, res, next) => {
         console.log('Get all room messages');
         let loggedInUserKey = req.params.loggedInUserUniqueKey;
         let receivingUserKey = req.params.receiverUserUniqueKey;
@@ -184,9 +185,9 @@ function server_io(io) {
             ]
         ).then(allMessages => {
             res.json(allMessages);
-        }).catch(error => {
-            res.status(400).send('Error in retrieving message')
-        });
+        }).catch( error => {
+            return next(error)
+        } );
 
     })
 

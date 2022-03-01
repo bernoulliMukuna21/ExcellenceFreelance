@@ -12,7 +12,7 @@ module.exports = {
         if(!req.isAuthenticated()){
             return next();
         }
-        console.log(req.user)
-        res.redirect(`/account/${req.user.user_stature.current()}/${emailEncode(req.user.email)}`);
+
+        return res.redirect(`/account/${req.user.user_stature.current()}/${emailEncode(req.user.email)}`);
     }
 }

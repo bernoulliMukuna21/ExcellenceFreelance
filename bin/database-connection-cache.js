@@ -22,8 +22,17 @@ let connection_Options = {
     useUnifiedTopology: true
 }
 
-EF_DB_conn.excellence_freelanceDB = mongoose.createConnection(connection_URI, connection_Options);
-console.log('Mongo Connection Established!');
+try{
+    EF_DB_conn.excellence_freelanceDB = mongoose.createConnection(connection_URI, connection_Options);
+    console.log('Mongo Connection Established!');
+
+}catch (err) {
+    //if there is any problem
+
+    console.log(err);
+    process.exit(1);
+}
+
 
 
 /*

@@ -8,9 +8,9 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { stripeFindCustomerByEmail, stripeCustomerSubscription } = require('../bin/stripe-config');
 
-//let domainName = 'http://localhost:3000';
 let domainName = 'https://www.unilance.co.uk';
 let unilanceLoginURL = `${domainName}/users/login`;
+let administrationEmail = 'unilance.admnistration@gmail.com';
 
 const endpointSecret = process.env.stripe_webhookEndpointLive;
 
@@ -46,6 +46,7 @@ function server_io(io) {
                 quantity: 1,
             };
             successURL = `${domainName}/payment/success/booking-checkout?bookingID=${bookingID}`;
+
             const session = await stripe.checkout.sessions.create({
                 billing_address_collection: 'auto',
                 payment_method_types: ['card'],
@@ -57,9 +58,9 @@ function server_io(io) {
                 metadata: {bookingID, paymentType: 'booking-checkout'}
             });
             res.redirect(303, session.url)
-        }catch (e) {
-            console.log(e)
-            res.send('An Occured during payment process. Sorry about this!')
+        }
+        catch ( error ) {
+            return next(error)
         }
     });
 
@@ -67,31 +68,33 @@ function server_io(io) {
         let customer_client = req.user.email;
         let lineItems, mode, subscription_data, successURL;
 
-        let trial_days = req.body.trial_days;
-        mode = 'subscription';
+        try{
+            let trial_days = req.body.trial_days;
+            mode = 'subscription';
 
-        subscription_data = {
-            metadata: {"UUID": emailEncode(customer_client),"paymentType": 'subscription'}
-        };
+            subscription_data = {
+                metadata: {"UUID": emailEncode(customer_client),"paymentType": 'subscription'}
+            };
 
-        if(trial_days > 0){
-            subscription_data.trial_period_days = trial_days;
-        }
+            if(trial_days > 0){
+                subscription_data.trial_period_days = trial_days;
+            }
 
-        lineItems = {
-            price_data: {
-                product: process.env.stripe_subscriptionKey,
-                unit_amount: 120,
-                currency: 'gbp',
-                recurring: {
-                    interval: "day",
-                    interval_count: 30,
+            lineItems = {
+                price_data: {
+                    product: process.env.stripe_subscriptionKey,
+                    unit_amount: 120,
+                    currency: 'gbp',
+                    recurring: {
+                        interval: "day",
+                        interval_count: 30,
+                    },
                 },
-            },
-            quantity: 1,
-        };
-        successURL = `${domainName}/payment/success/subscription`;
-        try {
+                quantity: 1,
+            };
+
+            successURL = `${domainName}/payment/success/subscription`;
+
             const session = await stripe.checkout.sessions.create({
                 billing_address_collection: 'auto',
                 payment_method_types: ['card'],
@@ -103,12 +106,13 @@ function server_io(io) {
                 cancel_url: `${domainName}/payment/failure`
             });
             res.redirect(303, session.url);
-        }catch (e) {
-            res.send('An occured during subscription process. We are really sorry for any inconveniences caused!')
+
+        }catch (error) {
+            return next(error)
         }
     })
 
-    router.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    router.post('/webhook', express.raw({type: 'application/json'}), async (req, res, next) => {
         console.log('Webhook listener')
         const sig = req.headers['stripe-signature'];
         let event, subscrptionData, userUUID, userEmail;
@@ -166,20 +170,20 @@ function server_io(io) {
                                 throw err;
                             }
 
-                            mailer.smtpTransport.sendMail(mailer.mailerFunction('unilance.admnistration@gmail.com',
+                            mailer.smtpTransport.sendMail(mailer.mailerFunction(administrationEmail,
                                 'Client Booking Payment Successful', successPayMessageToAdminHTML), function (err) {
-                                if(err){console.log(err)}
+                                if(err){throw err}
                                 else{
                                     console.log('Client success payment Message has been sent to Admin')
                                     // emailDecode(bookingDetailUpdate.customer.uuid)
                                     mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.supplier.uuid),
                                         'Client Booking Payment Successful', successPayMessageToFreelancerHTML), function (err) {
-                                        if(err){console.log(err)}
+                                        if(err){throw err}
                                         else{
                                             console.log('Client success payment Message has been sent to Freelancer');
                                             mailer.smtpTransport.sendMail(mailer.mailerFunction(emailDecode(bookingDetailUpdate.customer.uuid),
                                                 'Booking Payment Successful', successPayMessageToClientHTML), function (err) {
-                                                if(err){console.log(err)}
+                                                if(err){throw err}
                                                 else{console.log('Client success payment Message has been sent to Client')}
                                             });
                                         }
@@ -190,11 +194,13 @@ function server_io(io) {
                             io.sockets.to(freelancerBooked).emit('Successful Payment - send to Freelancer',
                                 bookingUpdated);
                         })
-                    }catch (err) {
-                       res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
+
+                    }catch ( error ) {
+                        return next(error);
                     }
                 }
                 break;
+
             case 'customer.subscription.created':
                 subscrptionData = event.data.object;
                 userUUID = subscrptionData.metadata.UUID;
@@ -210,21 +216,35 @@ function server_io(io) {
                         '<p>Thank you,<br>The Unilance Team' +
                         '<br>07448804768</p>';
 
+                    let newSubscriptionNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">New Subscription Notification</h1>'+
+                        '<p>Hello,</p><p>This is a notification to inform you of a new subscription to Unilance. Please find the user below:</p>'+
+                        `<ul><li>Name: ${freelancerUser.name}</li><li>Surname: ${freelancerUser.surname}</li></ul>`+
+                        `<p>Thank you,<br>Unilance Development Team</p>`;
+
                     freelancerUser.save(err => {
                         if(err){
                             throw err;
                         }
                         mailer.smtpTransport.sendMail(mailer.mailerFunction(userEmail,
                             'Successful Subscription', activeSubscriptionMessageToUserHTML), function (err) {
-                            if(err){console.log(err)}
-                            else{console.log('Successful Subscription sent to freelancer user')}
+                            if(err){throw err}
+                            else{
+                                console.log('Successful Subscription sent to freelancer user');
+
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(administrationEmail,
+                                    'New Subscription Alert', newSubscriptionNotificationToAdmin), function (err) {
+                                    if(err){throw err}
+                                    else{console.log('Successful Subscription sent to Administration Team')}
+                                });
+
+                            }
                         });
                     })
-                }catch (err) {
-                    res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
+                }catch ( error ) {
+                    return next(error);
                 }
-
                 break;
+
             case 'customer.subscription.deleted':
                 subscrptionData = event.data.object;
                 userUUID = subscrptionData.metadata.UUID;
@@ -241,20 +261,34 @@ function server_io(io) {
                         '<p>Thank you,<br>The Unilance Team' +
                         '<br>07448804768</p>';
 
+                    let subscriptionCancelledNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">Subscription Cancelled Notification</h1>'+
+                        '<p>Hello,</p><p>We are sorry to announce that the following user is no longer subscribed to unilance:</p>'+
+                        `<ul><li>Name: ${freelancerUser.name}</li><li>Surname: ${freelancerUser.surname}</li></ul>`+
+                        `<p>Thank you,<br>Unilance Development Team</p>`;
+
                     freelancerUser.save(err => {
                         if(err){
                             throw err;
                         }
                         mailer.smtpTransport.sendMail(mailer.mailerFunction(userEmail,
                             'Subscription Cancelled', cancelSubscriptionMessageToUserHTML), function (err) {
-                            if(err){console.log(err)}
-                            else{console.log('Subscription cancellation sent to freelancer user')}
+                            if(err){throw err}
+                            else{
+                                console.log('Subscription cancellation sent to freelancer user')
+
+                                mailer.smtpTransport.sendMail(mailer.mailerFunction(administrationEmail,
+                                    'Subscription Cancelled Alert', subscriptionCancelledNotificationToAdmin), function (err) {
+                                    if(err){throw err}
+                                    else{console.log('Subscription cancellation sent to Administration')}
+                                });
+                            }
                         });
                     })
-                }catch (err) {
-                    res.send('An occured during payment. We are truly sorry for any incoveniences caused!')
+                }catch ( error ) {
+                    return next(error);
                 }
                 break;
+
             case 'invoice.payment_succeeded':
                 console.log('Subscription is paid for');
                 console.log('--------------------------------------------------------------------');
@@ -285,7 +319,7 @@ function server_io(io) {
         res.status(200).send('Payment successful');
     });
 
-    router.get('/success/:paymentType', ensureAuthentication, (req, res)=>{
+    router.get('/success/:paymentType', ensureAuthentication, (req, res, next)=>{
 
         let paymentType = req.params.paymentType;
         let flash_message;
@@ -331,8 +365,8 @@ function server_io(io) {
                     res.redirect(303, session.url)
                 }
             }
-        }catch (e) {
-            res.send('An error occured during billing information update!');
+        }catch (error) {
+            return next(error);
         }
     });
 
