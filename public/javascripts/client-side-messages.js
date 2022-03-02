@@ -65,7 +65,7 @@ $( document ).ready(function() {
     }else{
         console.log('Page load - just get the rooms');
         roomsFromDB({requirement: 'getRooms'});
-        /*mobileVersionFunctionality(windowsize);*/
+        mobileVersionFunctionality(windowsize);
     }
 });
 
