@@ -37,6 +37,7 @@ $(window).resize(function() {
 });*/
 
 $( document ).ready(function() {
+    console.log('Page load message initializer');
     let currentURL = window.location.href;
     let previousURL = document.referrer;
     if(previousURL === '' && currentURL.includes('?receiverKey=')){
@@ -52,6 +53,7 @@ $( document ).ready(function() {
     $('.user-messages-main-container-box').show();
 
     if($('#clicked-receiver-key')[0]){
+        console.log('Page load - user wants to message another user');
         receiver = $('#clicked-receiver-key').val();
         receiver = JSON.parse(receiver);
 
@@ -61,6 +63,7 @@ $( document ).ready(function() {
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
         mobileVersionFunctionality(windowsize, 'showRoomMessages');
     }else{
+        console.log('Page load - just get the rooms');
         roomsFromDB({requirement: 'getRooms'});
         /*mobileVersionFunctionality(windowsize);*/
     }
@@ -289,13 +292,15 @@ socket.on('Receive Message', outputData => {
 /********************* Third: Retrieving Rooms from DB ***********************/
 
 function roomsFromDB(roomRequirement, receiver, sourceImage){
-
+    console.log('Ajax Call - get the rooms');
     let requirement = roomRequirement.requirement;
 
     $.ajax({
         type: 'GET',
         url: '/messages/get-messages-rooms/'+loggedInUser.uniqueKey+'?requirement='+requirement+'&roomIndex='+roomRequirement.roomIndex,
         success: function (data) {
+            console.log('Ajax Call - successful');
+            console.log(data)
             if(requirement === 'getRooms'){
 
                 if(data.length > 0){
@@ -307,7 +312,6 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
                          // Create a new room
                         if(!userData.roomIsClicked && userData.lastMessageSender !== loggedInUser.uniqueKey){
-                            console.log('Coming here')
                             userData.messageReceivedClassName = 'messageReceived';
                             accountsOperation.createNewRoom(userData, sourceImage);
                             $('.newMessageReceived').show();
@@ -319,6 +323,9 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
                 }
 
+                console.log('Ajax - Inside get rooms');
+                console.log(receiver)
+                console.log(sourceImage)
 
                 let allMessageRooms = $('.user-messages-side')[0].childNodes;
                 let roomIdex;
@@ -366,6 +373,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
             }
         },
         error: function (error) {
+            console.log('Ajax Call - unsuccessful');
             console.log('Messages not retrieved - error: ', error)
         }
     })
