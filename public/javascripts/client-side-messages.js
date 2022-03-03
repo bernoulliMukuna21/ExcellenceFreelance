@@ -39,7 +39,7 @@ function mobileVersionFunctionality(windowsize, sideToShow){
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize)
 });*
-
+*/
 $( document ).ready(function() {
     console.log('Page load message initializer');
     let currentURL = window.location.href;
@@ -69,6 +69,8 @@ $( document ).ready(function() {
     }
 });
 
+/*
+>>>>>>> development
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
@@ -288,11 +290,13 @@ socket.on('Receive Message', outputData => {
         }
     })
 })
-
-********************* Third: Retrieving Rooms from DB ***********************
+*/
+/********************* Third: Retrieving Rooms from DB ***********************/
 
 function roomsFromDB(roomRequirement, receiver, sourceImage){
+
     console.log('Ajax Call - get the rooms');
+
     let requirement = roomRequirement.requirement;
     windowsize = $(window).width();
 
@@ -300,54 +304,53 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         type: 'GET',
         url: '/messages/get-messages-rooms/'+loggedInUser.uniqueKey+'?requirement='+requirement+'&roomIndex='+roomRequirement.roomIndex,
         success: function (data) {
+            console.log('Successful Ajax Call');
+            console.log(data)
 
             windowsize = $(window).width();
+            let numberOfRooms = data.length;
 
             if(requirement === 'getRooms'){
 
-                if(data.length > 0){
+                if(numberOfRooms > 0){
                     data.forEach((eachData, index) => {
 
                         let sourceImage = !eachData.userImageSrc ? '/images/userDefaultImage.png'
                             :eachData.userImageSrc;
                         let userData = eachData.userData;
 
-                         // Create a new room
                         if(!userData.roomIsClicked && userData.lastMessageSender !== loggedInUser.uniqueKey){
                             userData.messageReceivedClassName = 'messageReceived';
-                            accountsOperation.createNewRoom(userData, sourceImage);
                             $('.newMessageReceived').show();
-                        }else{
-                            accountsOperation.createNewRoom(userData, sourceImage);
                         }
+
+                        // Create rooms and conversation boxes
+                        accountsOperation.createNewRoom(userData, sourceImage);
                         accountsOperation.createNewConversationContainer(userData, sourceImage); // Create New Conversation holder
                     })
-
-                    mobileVersionFunctionality(windowsize, 'showRooms');
-                }else{
-                    mobileVersionFunctionality(windowsize, 'showRoomMessages');
-
+                    //mobileVersionFunctionality(windowsize, 'showRooms');
                 }
 
-                console.log('Ajax - Inside get rooms');
-                console.log(receiver)
-                console.log(sourceImage)
+                let roomIndex, allMessageRooms;
 
-                let allMessageRooms = [];
-                let roomIndex;
                 if(receiver && sourceImage){
                     // This bit handles the loading of the chat when the button
                     // Message on the freelancer side is clicked
 
-                    if( !$('.user-messages-side')[0] ){
-                        // There no messages yet
+                    if(numberOfRooms === 0){
+                        // There no rooms yet
 
                         accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
                         accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
+
                         roomIndex = 0;
+                        allMessageRooms = $('.user-messages-side')[0].childNodes;
+
                     }else{
-                        // There are already some messages going on. Now, we need to check if
+                        // There are already some rooms going on. Now, we need to check if
                         // the two current users already have a conversation going on
+
+                        allMessageRooms = $('.user-messages-side')[0].childNodes;
                         let roomExists = false;
                         let roomToShow;
                         allMessageRooms = $('.user-messages-side')[0].childNodes;
@@ -385,4 +388,3 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
-*/

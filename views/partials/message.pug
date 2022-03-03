@@ -10,32 +10,8 @@
             - console.log('Message Receiver Data: ', {userToMessageUniqueKey, userToMessage})
             input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(receiverData))
         .user-messages-side
-            div.message-single-room(class=receiverData.uniqueKey)
-                div.message-sender-image
-                    img(src='/images/eF3.jpg')
-                div.message-sender-details
-                    section
-                        p Name Surname
-                        input.receiver-unique-key(style="display:none", value=JSON.stringify(receiverData))
-
         .user-messages-main-container-box
             .default-message-content
                 h3 Start Messaging
                 i.far.fa-comments
             div.all-different-conversations-container(style="display: none")
-                div.single-message-main-container-box(class=receiverData.uniqueKey)
-                    div.message-container-top
-                        img(src='/images/eF3.jpg')
-                        h4 Name Surname
-                    div.message-container-main
-                        .user-single-receive-message
-                            div
-                                p How Excellent is Your Name by Loveworld singers and Pastor chris at the Healing stream
-                                p 01/02/2020
-                        .user-single-send-message
-                            div
-                                p Through its various storylines, the show explores and depicts a wide range of social issues affecting modern youth
-                                p 10/05/2020
-                    form.message-container-typeBox(method=POST autocomplete="off")
-                        input.chat-typing-area(name='chat_typeBox' type='text' placeholder='Write a message...')
-                        i.far.fa-paper-plane(type='submit')
