@@ -7,6 +7,7 @@
     .all-messages-container
         if userToMessageUniqueKey
             - receiverData = {uniqueKey: userToMessageUniqueKey, name: userToMessage.name , surname: userToMessage.surname, userToMessageImageSrc}
+            - console.log('Message Receiver Data: ', {userToMessageUniqueKey, userToMessage})
             input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(receiverData))
         .user-messages-side
             div.message-single-room(class=receiverData.uniqueKey)
