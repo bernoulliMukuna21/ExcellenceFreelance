@@ -334,9 +334,10 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                 let roomIndex, allMessageRooms;
 
                 if(receiver && sourceImage){
+                    console.log('Inside Ajax - Initialise message')
                     // This bit handles the loading of the chat when the button
                     // Message on the freelancer side is clicked
-
+                    console.log('Source Image: ', sourceImage)
                     if(numberOfRooms === 0){
                         // There no rooms yet
 
