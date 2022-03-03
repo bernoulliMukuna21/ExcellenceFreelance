@@ -1,3 +1,4 @@
+
 import * as accountsOperation from './account_operate.js';
 import * as socketConnection from './socketio-connection-client-side.js'
 
@@ -18,24 +19,26 @@ $('#freelance-mssg-btn').click(function (event) {
     window.location.href = '/account/'+loggedInUser.type+'/'+
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;
 });
-
-/*** Get all the rooms ***/
+/*
+*** Get all the rooms ***
 function mobileVersionFunctionality(windowsize, sideToShow){
-    $('.user-messages-main-container-box').show();
-    $('.user-messages-side').show();
     if (windowsize <= 500){
+
+        $('.user-messages-main-container-box').hide();
+        $('.user-messages-side').hide();
+
         if(sideToShow === 'showRoomMessages'){
-            $('.user-messages-side').hide();
-        }else {
-            $('.user-messages-main-container-box').hide();
+            $('.user-messages-main-container-box').show();
+        }else if(sideToShow === 'showRooms'){
+            $('.user-messages-side').show();
         }
     }
 }
 
-$(window).resize(function() {
+*$(window).resize(function() {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize)
-});
+});*
 
 $( document ).ready(function() {
 
@@ -43,8 +46,6 @@ $( document ).ready(function() {
         window.location.href = '/account/'+loggedInUser.type+'/'+
             loggedInUser.uniqueKey;
     }
-
-    windowsize = $(window).width();
 
     $('.user-messages-side').empty();
     $('.all-different-conversations-container').empty();
@@ -58,19 +59,17 @@ $( document ).ready(function() {
             :receiver.userToMessageImageSrc;
 
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
-        mobileVersionFunctionality(windowsize, 'showRoomMessages');
     }else{
         roomsFromDB({requirement: 'getRooms'});
-        mobileVersionFunctionality(windowsize);
     }
 });
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize);
+    mobileVersionFunctionality(windowsize, 'showRooms');
 })
 $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize);
+    mobileVersionFunctionality(windowsize, 'showRooms');
 })
 
 $(document).on('click', '#booking-side-message-bttn', function(event) {
@@ -92,7 +91,7 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
             roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
             $('.client-profile-information ul li:last-child').trigger('click');
 
-            mobileVersionFunctionality(windowsize);
+            mobileVersionFunctionality(windowsize, 'showRooms');
         },
         error: function (error) {
             console.log('Error occurred in Initialising Message');
@@ -100,7 +99,7 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
     })
 })
 
-/*** Get the conversations of a room ***/
+*** Get the conversations of a room ***
 // Ongoing conversation and restarted by opening the chat room
 $(document).on('click', '.message-single-room', function(currentRoom) {
     windowsize = $(window).width();
@@ -129,15 +128,15 @@ $(document).on('click', '.message-single-room', function(currentRoom) {
 
     mobileVersionFunctionality(windowsize, 'showRoomMessages');
 })
-/********************* Second: Sending Messages ***********************/
+********************* Second: Sending Messages ***********************
 
 let messageData = {}
 
 function messageController(receiverData, messageToSend) {
-    /*
+    *
     * This function deals with the construction of the necessary information
     * for sending message from one user to another.
-    * */
+    * *
 
     messageData.sender = loggedInUser.uniqueKey;
     messageData.receiver = receiverData.uniqueKey;
@@ -283,7 +282,7 @@ socket.on('Receive Message', outputData => {
     })
 })
 
-/********************* Third: Retrieving Rooms from DB ***********************/
+********************* Third: Retrieving Rooms from DB ***********************
 
 function roomsFromDB(roomRequirement, receiver, sourceImage){
 
@@ -293,6 +292,9 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         type: 'GET',
         url: '/messages/get-messages-rooms/'+loggedInUser.uniqueKey+'?requirement='+requirement+'&roomIndex='+roomRequirement.roomIndex,
         success: function (data) {
+
+            windowsize = $(window).width();
+
             if(requirement === 'getRooms'){
 
                 if(data.length > 0){
@@ -313,7 +315,9 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                         }
                         accountsOperation.createNewConversationContainer(userData, sourceImage); // Create New Conversation holder
                     })
-
+                    mobileVersionFunctionality(windowsize, 'showRooms');
+                }else{
+                    mobileVersionFunctionality(windowsize, 'showRoomMessages');
                 }
 
 
@@ -367,4 +371,4 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
-
+*/
