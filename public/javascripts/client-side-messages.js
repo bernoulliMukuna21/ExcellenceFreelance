@@ -39,7 +39,7 @@ function mobileVersionFunctionality(windowsize, sideToShow){
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize)
 });*
-
+*/
 $( document ).ready(function() {
 
     if(document.referrer === '' && window.location.href.includes('?receiverKey=')){
@@ -63,6 +63,7 @@ $( document ).ready(function() {
         roomsFromDB({requirement: 'getRooms'});
     }
 });
+/*
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
@@ -281,11 +282,11 @@ socket.on('Receive Message', outputData => {
         }
     })
 })
-
-********************* Third: Retrieving Rooms from DB ***********************
+*/
+/********************* Third: Retrieving Rooms from DB ***********************/
 
 function roomsFromDB(roomRequirement, receiver, sourceImage){
-
+    console.log('Get rooms')
     let requirement = roomRequirement.requirement;
 
     $.ajax({
@@ -294,55 +295,57 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         success: function (data) {
 
             windowsize = $(window).width();
+            let numberOfRooms = data.length;
 
             if(requirement === 'getRooms'){
 
-                if(data.length > 0){
+                if(numberOfRooms > 0){
                     data.forEach((eachData, index) => {
 
                         let sourceImage = !eachData.userImageSrc ? '/images/userDefaultImage.png'
                             :eachData.userImageSrc;
                         let userData = eachData.userData;
 
-                         // Create a new room
                         if(!userData.roomIsClicked && userData.lastMessageSender !== loggedInUser.uniqueKey){
                             console.log('Coming here')
                             userData.messageReceivedClassName = 'messageReceived';
-                            accountsOperation.createNewRoom(userData, sourceImage);
                             $('.newMessageReceived').show();
-                        }else{
-                            accountsOperation.createNewRoom(userData, sourceImage);
                         }
+
+                        // Create rooms and conversation boxes
+                        accountsOperation.createNewRoom(userData, sourceImage);
                         accountsOperation.createNewConversationContainer(userData, sourceImage); // Create New Conversation holder
                     })
-                    mobileVersionFunctionality(windowsize, 'showRooms');
-                }else{
-                    mobileVersionFunctionality(windowsize, 'showRoomMessages');
+                    //mobileVersionFunctionality(windowsize, 'showRooms');
                 }
 
+                let roomIndex, allMessageRooms;
 
-                let allMessageRooms = $('.user-messages-side')[0].childNodes;
-                let roomIdex;
                 if(receiver && sourceImage){
                     // This bit handles the loading of the chat when the button
                     // Message on the freelancer side is clicked
 
-                    if(allMessageRooms.length === 0){
-                        // There no messages yet
+                    if(numberOfRooms === 0){
+                        // There no rooms yet
 
                         accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
                         accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-                        roomIdex = 0;
+
+                        roomIndex = 0;
+                        allMessageRooms = $('.user-messages-side')[0].childNodes;
+
                     }else{
-                        // There are already some messages going on. Now, we need to check if
+                        // There are already some rooms going on. Now, we need to check if
                         // the two current users already have a conversation going on
+
+                        allMessageRooms = $('.user-messages-side')[0].childNodes;
                         let roomExists = false;
                         let roomToShow;
 
                         for (var i = 0; i < allMessageRooms.length; ++i) {
                             if(allMessageRooms[i].classList[1] === receiver.uniqueKey){
                                 roomExists = true;
-                                roomIdex = i;
+                                roomIndex = i;
                                 break;
                             }
                         }
@@ -352,12 +355,12 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
                             accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
                             accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-                            roomIdex = 0;
+                            roomIndex = 0;
                         }
                     }
                     $('.default-message-content').hide();
                     accountsOperation.roomConversationsNavigation(
-                        allMessageRooms[roomIdex],
+                        allMessageRooms[roomIndex],
                         '.all-different-conversations-container',
                         loggedInUser.uniqueKey, receiver.uniqueKey);
                 }
@@ -371,4 +374,3 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
-*/
