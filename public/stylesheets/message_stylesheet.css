@@ -1,13 +1,8 @@
-.message-contents{
-    height: 50rem;
-    max-height: 50rem;
-}
 .all-messages-container{
     display: grid;
     grid-template-columns: 50% 50%;
     font-family: Inter,sans-serif;
     font-size: 1.4rem;
-    height: 100%;
 }
 .all-messages-container img{
     width:4.5rem;
@@ -19,7 +14,7 @@
 
 .default-messages-container{
     display: flex;
-    height: 100%;
+    height: 56rem;
     justify-content: center;
     align-items: center;
 }
@@ -75,7 +70,7 @@
 }
 .message-container-top img{
     width: 6rem;
-    height: 6rem;
+    height:6rem;
 }
 .message-container-top h4{
     margin-left: 2rem;
@@ -172,7 +167,8 @@
 }
 
 .default-message-content{
-    height: 100%;
+    height: 55rem;
+    max-height: 55rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
