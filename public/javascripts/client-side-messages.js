@@ -1,3 +1,4 @@
+
 import * as accountsOperation from './account_operate.js';
 import * as socketConnection from './socketio-connection-client-side.js'
 
@@ -17,29 +18,27 @@ $('#freelance-mssg-btn').click(function (event) {
     window.location.href = '/account/'+loggedInUser.type+'/'+
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;
 });
-
-/*** Get all the rooms ***/
+/*
+*** Get all the rooms ***
 function mobileVersionFunctionality(windowsize, sideToShow){
-    $('.user-messages-main-container-box').show();
-    $('.user-messages-side').show();
 
     if (windowsize <= 500){
-        if(sideToShow === 'showContainerAndMessages'){
-            console.log('Hiding rooms')
-            $('.user-messages-main-container-box').hide();
-            //$('.user-messages-side').hide();
-        }else {
-            console.log('Hiding message container')
-            //$('.user-messages-main-container-box').hide();
-            $('.user-messages-side').hide();
+
+        $('.user-messages-main-container-box').hide();
+        $('.user-messages-side').hide();
+
+        if(sideToShow === 'showRoomMessages'){
+            $('.user-messages-main-container-box').show();
+        }else if(sideToShow === 'showRooms'){
+            $('.user-messages-side').show();
         }
     }
 }
-/*
-$(window).resize(function() {
+
+*$(window).resize(function() {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize)
-});*/
+});*
 
 $( document ).ready(function() {
     console.log('Page load message initializer');
@@ -63,7 +62,7 @@ $( document ).ready(function() {
             :receiver.userToMessageImageSrc;
 
         roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
-        //mobileVersionFunctionality(windowsize, 'showContainerAndMessages');
+
     }else{
         console.log('Page load - just get the rooms');
         roomsFromDB({requirement: 'getRooms'});
@@ -72,14 +71,14 @@ $( document ).ready(function() {
 
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize);
+    mobileVersionFunctionality(windowsize, 'showRooms');
 })
 $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize);
+    mobileVersionFunctionality(windowsize, 'showRooms');
 })
 
-/*** Booking Initialiser button is clicked ***/
+*** Booking Initialiser button is clicked ***
 $(document).on('click', '#booking-side-message-bttn', function(event) {
     let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
     $.ajax({
@@ -99,7 +98,7 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
             roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
             $('.client-profile-information ul li:last-child').trigger('click');
 
-            /*mobileVersionFunctionality(windowsize);*/
+            mobileVersionFunctionality(windowsize, 'showRooms');
         },
         error: function (error) {
             console.log('Error occurred in Initialising Message');
@@ -107,7 +106,7 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
     })
 })
 
-/*** Get the conversations of a room ***/
+*** Get the conversations of a room ***
 // Ongoing conversation and restarted by opening the chat room
 $(document).on('click', '.message-single-room', function(currentRoom) {
     windowsize = $(window).width();
@@ -136,15 +135,15 @@ $(document).on('click', '.message-single-room', function(currentRoom) {
 
     mobileVersionFunctionality(windowsize, 'showContainerAndMessages');
 })
-/********************* Second: Sending Messages ***********************/
+********************* Second: Sending Messages ***********************
 
 let messageData = {}
 
 function messageController(receiverData, messageToSend) {
-    /*
+    *
     * This function deals with the construction of the necessary information
     * for sending message from one user to another.
-    * */
+    * *
 
     messageData.sender = loggedInUser.uniqueKey;
     messageData.receiver = receiverData.uniqueKey;
@@ -290,7 +289,7 @@ socket.on('Receive Message', outputData => {
     })
 })
 
-/********************* Third: Retrieving Rooms from DB ***********************/
+********************* Third: Retrieving Rooms from DB ***********************
 
 function roomsFromDB(roomRequirement, receiver, sourceImage){
     console.log('Ajax Call - get the rooms');
@@ -301,8 +300,9 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         type: 'GET',
         url: '/messages/get-messages-rooms/'+loggedInUser.uniqueKey+'?requirement='+requirement+'&roomIndex='+roomRequirement.roomIndex,
         success: function (data) {
-            console.log('Ajax Call - successful');
-            console.log(data)
+
+            windowsize = $(window).width();
+
             if(requirement === 'getRooms'){
 
                 if(data.length > 0){
@@ -323,9 +323,10 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                         accountsOperation.createNewConversationContainer(userData, sourceImage); // Create New Conversation holder
                     })
 
-                }else if(data.length == 0){
-                    console.log('Coming to zero data')
-                    mobileVersionFunctionality(windowsize, 'showContainerAndMessages');
+                    mobileVersionFunctionality(windowsize, 'showRooms');
+                }else{
+                    mobileVersionFunctionality(windowsize, 'showRoomMessages');
+
                 }
 
                 console.log('Ajax - Inside get rooms');
@@ -384,3 +385,4 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
         }
     })
 }
+*/

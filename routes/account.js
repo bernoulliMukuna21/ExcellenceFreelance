@@ -126,6 +126,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             // Message Initiation setup
             userToMessageUniqueKey = req.query.receiverKey;
             if (userToMessageUniqueKey) {
+                console.log('There is a user to message')
                 try{
                     userToMessage = await UserModel.find({
                         email: emailDecode(userToMessageUniqueKey)}
@@ -135,6 +136,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
                         userToMessageImageSrc = imageToDisplay(userToMessage);
                         messageIdHTML = 'show-user-messages'
                     }
+                    console.log('message this user: ', userToMessage);
                 }catch ( error ) {
                     return next(error);
                 }
