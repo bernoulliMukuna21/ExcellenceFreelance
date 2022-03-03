@@ -9,7 +9,6 @@ let receiver, pageToGo, pagesNames, pagesSections;
 let loggedInUser = JSON.parse($('#sender-unique-key').val());
 socket.emit('join', loggedInUser);
 var windowsize = $(window).width();
-console.log = console.info
 
 /********************* First: find Receiver and right room of conversation ***********************/
 // Conversation initializer by clicking 'Message' button
