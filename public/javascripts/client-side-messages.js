@@ -300,8 +300,11 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
     let requirement = roomRequirement.requirement;
     windowsize = $(window).width();
     sourceImage = '/images/userDefaultImage.png';
+    $('.default-message-content').hide();
 
-    $.ajax({
+    $('.user-messages-side').append('<p>Rooms</p>');
+
+    /*$.ajax({
         type: 'GET',
         url: '/messages/get-messages-rooms/'+loggedInUser.uniqueKey+'?requirement='+requirement+'&roomIndex='+roomRequirement.roomIndex,
         success: function (data) {
@@ -388,5 +391,5 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
             console.log('Ajax Call - unsuccessful');
             console.log('Messages not retrieved - error: ', error)
         }
-    })
+    })*/
 }
