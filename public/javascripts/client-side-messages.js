@@ -310,7 +310,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
             windowsize = $(window).width();
             let numberOfRooms = data.length;
-
+            $('.default-message-content').hide();
             if(requirement === 'getRooms'){
 
                 if(numberOfRooms > 0){
@@ -379,7 +379,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
                         '.all-different-conversations-container',
                         loggedInUser.uniqueKey, receiver.uniqueKey);
                 }
-
+                $('.default-message-content').hide();
             }else if(requirement === 'update'){
                 console.log(data)
             }
