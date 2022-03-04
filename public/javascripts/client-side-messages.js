@@ -299,6 +299,7 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
 
     let requirement = roomRequirement.requirement;
     windowsize = $(window).width();
+    sourceImage = '/images/userDefaultImage.png';
 
     $.ajax({
         type: 'GET',
