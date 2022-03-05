@@ -2,6 +2,7 @@
     .default-messages-container(style='display: none;')
         h4 No Conversation
     .all-messages-container
+        - console.log('message pug: ', JSON.stringify(messageReceiverData))
         if messageReceiverData
             input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(messageReceiverData))
         .user-messages-side
