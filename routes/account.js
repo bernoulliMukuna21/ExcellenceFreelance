@@ -109,7 +109,7 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
 
 router.get('/freelancer/:this_user', async function (req, res, next) {
     let loggedInUser, freelancerUser;
-    let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
+    let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageReceiverData, messageIdHTML;
     let freelancerSubscriptionStatus;
     let allBookingToFreelancer;
 
@@ -134,6 +134,13 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
                         userToMessage = userToMessage[0];
                         userToMessageImageSrc = imageToDisplay(userToMessage);
                         messageIdHTML = 'show-user-messages'
+
+                        messageReceiverData = {
+                            uniqueKey: userToMessageUniqueKey,
+                            name: userToMessage.name , surname: userToMessage.surname,
+                            userToMessageImageSrc
+                        };
+
                     }
                 }catch ( error ) {
                     return next(error);
@@ -204,8 +211,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             imageToDisplay,
             userToMessageUniqueKey,
             messageIdHTML,
-            userToMessage,
-            userToMessageImageSrc,
+            messageReceiverData,
             freelancerSubscriptionStatus,
             trailDays,
             allBookingToFreelancer

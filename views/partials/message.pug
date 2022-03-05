@@ -1,14 +1,9 @@
-- let textMessage = 'I want to put this number of people into work by the year 3030';
-- let receiverData = {userToMessageUniqueKey: 'userToMessageUniqueKey', name: 'Sammy', surname: 'Larson', userToMessageImageSrc: 'lool'};
-
 .message-contents
     .default-messages-container(style='display: none;')
         h4 No Conversation
     .all-messages-container
-        if userToMessageUniqueKey
-            - receiverData = {uniqueKey: userToMessageUniqueKey, name: userToMessage.name , surname: userToMessage.surname, userToMessageImageSrc}
-            - console.log('Message Receiver Data: ', {userToMessageUniqueKey, userToMessage})
-            input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(receiverData))
+        if messageReceiverData.uniqueKey
+            input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(messageReceiverData))
         .user-messages-side
         .user-messages-main-container-box
             .default-message-content

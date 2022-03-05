@@ -52,7 +52,10 @@ $( document ).ready(function() {
     $('.user-messages-side').append('<p>Messages Coming Soon...</p>');
     $('.user-messages-side').show();
     $('.all-different-conversations-container').empty();
-    $('.user-messages-main-container-box').hide();
+
+    console.log($('#clicked-receiver-key'));
+    console.log($('#clicked-receiver-key').length);
+    console.log($('#clicked-receiver-key')[0]);
 
     if($('#clicked-receiver-key')[0]){
         console.log('Page load - user wants to message another user');
@@ -62,10 +65,13 @@ $( document ).ready(function() {
         let sourceImage = !receiver.userToMessageImageSrc ? '/images/userDefaultImage.png'
             :receiver.userToMessageImageSrc;
 
+        $('.user-messages-main-container-box').hide();
         //roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
 
     }else{
         console.log('Page load - just get the rooms');
+
+        //$('.user-messages-main-container-box').hide();
         //roomsFromDB({requirement: 'getRooms'});
     }
 });
