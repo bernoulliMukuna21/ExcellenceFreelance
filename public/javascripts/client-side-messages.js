@@ -56,8 +56,9 @@ $( document ).ready(function() {
     console.log($('#clicked-receiver-key'));
     console.log($('#clicked-receiver-key').length);
     console.log($('#clicked-receiver-key')[0]);
+    let receiverGiven = $('#clicked-receiver-key').length === 1 ? true: false;
 
-    if($('#clicked-receiver-key')[0]){
+    if(receiverGiven){
         console.log('Page load - user wants to message another user');
         receiver = $('#clicked-receiver-key').val();
         receiver = JSON.parse(receiver);
