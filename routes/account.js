@@ -209,7 +209,6 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             loggedInUser_imageSrc,
             emailEncode,
             imageToDisplay,
-            userToMessageUniqueKey,
             messageIdHTML,
             messageReceiverData,
             freelancerSubscriptionStatus,
