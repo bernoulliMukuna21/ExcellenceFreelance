@@ -49,9 +49,10 @@ $( document ).ready(function() {
             loggedInUser.uniqueKey;
     }
 
-    $('.user-messages-side').empty();
+    $('.user-messages-side').append('<p>Messages Coming Soon...</p>');
+    $('.user-messages-side').show();
     $('.all-different-conversations-container').empty();
-    $('.user-messages-main-container-box').show();
+    $('.user-messages-main-container-box').hide();
 
     if($('#clicked-receiver-key')[0]){
         console.log('Page load - user wants to message another user');
@@ -301,8 +302,6 @@ function roomsFromDB(roomRequirement, receiver, sourceImage){
     windowsize = $(window).width();
     sourceImage = '/images/userDefaultImage.png';
     $('.default-message-content').hide();
-
-    $('.user-messages-side').append('<p>Rooms</p>');
 
     /*$.ajax({
         type: 'GET',
