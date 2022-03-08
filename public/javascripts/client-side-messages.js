@@ -62,7 +62,7 @@ $( document ).ready(function() {
 });
 
 /*
->>>>>>> development
+
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
@@ -71,10 +71,7 @@ $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
 })
-<<<<<<< HEAD
 
-=======
->>>>>>> development
 *** Booking Initialiser button is clicked ***
 $(document).on('click', '#booking-side-message-bttn', function(event) {
     let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
@@ -121,19 +118,17 @@ $(document).on('click', '.message-single-room', function(currentRoom) {
     accountsOperation.roomConversationsNavigation(this,
         '.all-different-conversations-container',
         loggedInUser.uniqueKey, receiver.uniqueKey);
-<<<<<<< HEAD
 
-=======
->>>>>>> development
     mobileVersionFunctionality(windowsize, 'showContainerAndMessages');
-})
-********************* Second: Sending Messages ***********************
+})*/
+
+/********************* Second: Sending Messages ***********************/
 let messageData = {}
 function messageController(receiverData, messageToSend) {
-    *
+    /*
     * This function deals with the construction of the necessary information
     * for sending message from one user to another.
-    * *
+    * */
     messageData.sender = loggedInUser.uniqueKey;
     messageData.receiver = receiverData.uniqueKey;
     //Get message to send
@@ -253,7 +248,7 @@ socket.on('Receive Message', outputData => {
         }
     })
 })
-*/
+
 /********************* Third: Retrieving Rooms from DB ***********************/
 
 function roomsFromDB(requirement, roomIndex){
