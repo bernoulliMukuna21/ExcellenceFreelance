@@ -380,7 +380,6 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
             }
             singleUser.save();
         });
-
         console.log('-------------- Client -------------------')
         var allClientUsers = await UserModel.find({
             $and: [
