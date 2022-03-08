@@ -2,10 +2,8 @@
     .default-messages-container(style='display: none;')
         h4 No Conversation
     .all-messages-container
-        if messageReceiverData
-            - messageReceiverData.userToMessageImageSrc = '/images/userDefaultImage.png';
-            - console.log('message pug: ', JSON.stringify(messageReceiverData))
-            input(style='display: none;' id='clicked-receiver-key' value=JSON.stringify(messageReceiverData))
+        if userToMessageUniqueKey
+            input(style='display: none;' id='clicked-receiver-key' value=userToMessageUniqueKey)
         .user-messages-side
         .user-messages-main-container-box
             .default-message-content

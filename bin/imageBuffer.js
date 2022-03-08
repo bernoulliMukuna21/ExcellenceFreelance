@@ -21,7 +21,6 @@ module.exports = {
         let imageSource;
         let pictureData = userData.profile_picture;
 
-
         if(pictureData.data){
             if(pictureData.name === 'oauth_picture'){
                 imageSource = pictureData.data.toString();

@@ -109,7 +109,7 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
 
 router.get('/freelancer/:this_user', async function (req, res, next) {
     let loggedInUser, freelancerUser;
-    let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageReceiverData, messageIdHTML;
+    let userToMessageUniqueKey, messageIdHTML;
     let freelancerSubscriptionStatus;
     let allBookingToFreelancer;
 
@@ -126,25 +126,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             // Message Initiation setup
             userToMessageUniqueKey = req.query.receiverKey;
             if (userToMessageUniqueKey) {
-                try{
-                    userToMessage = await UserModel.find({
-                        email: emailDecode(userToMessageUniqueKey)}
-                    );
-                    if(userToMessage){
-                        userToMessage = userToMessage[0];
-                        userToMessageImageSrc = imageToDisplay(userToMessage);
-                        messageIdHTML = 'show-user-messages'
-
-                        messageReceiverData = {
-                            uniqueKey: userToMessageUniqueKey,
-                            name: userToMessage.name , surname: userToMessage.surname,
-                            userToMessageImageSrc
-                        };
-
-                    }
-                }catch ( error ) {
-                    return next(error);
-                }
+                messageIdHTML = 'show-user-messages';
             }
 
             // Booking Made to Freelancer retrieval
@@ -210,7 +192,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             emailEncode,
             imageToDisplay,
             messageIdHTML,
-            messageReceiverData,
+            userToMessageUniqueKey,
             freelancerSubscriptionStatus,
             trailDays,
             allBookingToFreelancer
