@@ -12,10 +12,10 @@ var BookingModel = require('../models/BookingModel');
 var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { base64ToImageSrc, imageToDisplay } = require('../bin/imageBuffer');
-var { stripeFindCustomerByEmail, stripeCustomerSubscription } = require('../bin/stripe-config');
 var { numberOfDaysSince, groupByKey } = require('../bin/general-helper-functions');
 
-let domain = 'http://localhost:3000';
+let domainName = 'http://localhost:3000';
+//let domainName = 'https://www.unilance.co.uk';
 
 // Set Storage Engine
 //destination: './public/images/uploads',
@@ -34,7 +34,7 @@ let multerUserProfilePicture = multer({
 router.get('/', ensureAuthentication, function (req, res, next) {
     console.log('I am inside the account function')
     req.flash('error_message', 'Please login to access your account');
-    res.send(req.user)//res.redirect('/users/login');
+    res.send(req.user);//res.redirect('/users/login');
 });
 
 router.get('/client/:this_user', ensureAuthentication , async (req,
@@ -67,7 +67,7 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 messageIdHTML= 'show-user-messages';
             }
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 
@@ -102,21 +102,20 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 userToMessageImageSrc
             });
         }).catch ( error => {
-            next(error);
+            return next(error);
         })
     }
 })
 
 router.get('/freelancer/:this_user', async function (req, res, next) {
     let loggedInUser, freelancerUser;
-    let userToMessage, userToMessageUniqueKey, userToMessageImageSrc, messageIdHTML;
+    let userToMessageUniqueKey, messageIdHTML;
     let freelancerSubscriptionStatus;
     let allBookingToFreelancer;
 
     let loggedInUser_imageSrc = '';
     let freelancerIdFromURL = req.params.this_user;
     let currentFreelancerEmail = emailDecode(freelancerIdFromURL);
-    let stripeCustomer = await stripeFindCustomerByEmail(currentFreelancerEmail);
     let isLogged = req.isAuthenticated();
 
     if (isLogged) {
@@ -127,18 +126,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             // Message Initiation setup
             userToMessageUniqueKey = req.query.receiverKey;
             if (userToMessageUniqueKey) {
-                try{
-                    userToMessage = await UserModel.find({
-                        email: emailDecode(userToMessageUniqueKey)}
-                    );
-                    if(userToMessage){
-                        userToMessage = userToMessage[0];
-                        userToMessageImageSrc = imageToDisplay(userToMessage);
-                        messageIdHTML = 'show-user-messages'
-                    }
-                }catch ( error ) {
-                    next(error);
-                }
+                messageIdHTML = 'show-user-messages';
             }
 
             // Booking Made to Freelancer retrieval
@@ -164,9 +152,8 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
                     ]
                 )
             }catch ( error ) {
-                next(error);
+                return next(error);
             }
-
             // Group the project by statuses
             allBookingToFreelancer = groupByKey(allBookingToFreelancer, 'freelancer');
         }
@@ -186,7 +173,6 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
 
             if(numberOfDaysSinceJoining > trailDays){
                 // They have used their trial days
-
                 trailDays = 0;
                 freelancerSubscriptionStatus = 'not-available';
 
@@ -195,7 +181,6 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
 
                 trailDays = trailDays - numberOfDaysSinceJoining;
                 freelancerSubscriptionStatus = 'trial';
-
             }
         }
 
@@ -206,16 +191,14 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             loggedInUser_imageSrc,
             emailEncode,
             imageToDisplay,
-            userToMessageUniqueKey,
             messageIdHTML,
-            userToMessage,
-            userToMessageImageSrc,
+            userToMessageUniqueKey,
             freelancerSubscriptionStatus,
             trailDays,
             allBookingToFreelancer
         });
     }catch ( error ) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -256,7 +239,7 @@ router.put('/client/update', ensureAuthentication, multerUserProfilePicture, asy
         }
 
     }catch ( error ) {
-        next(error);
+        return next(error);
     }
 
 })
@@ -297,7 +280,7 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
         }
 
     }catch ( error ) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -305,6 +288,7 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
 /*** Freelancer -> Client ***/
 router.get('/switch/client/:user_email', ensureAuthentication, async function (req, res, next) {
     let userUUID = req.params.user_email;
+
     UserModel.findOne({email:emailDecode(userUUID)})
         .then( user => {
             user.user_stature.current = 'client';
@@ -320,7 +304,7 @@ router.get('/switch/client/:user_email', ensureAuthentication, async function (r
 
                 if(!previousURL.includes('receiverKey')){
 
-                    if(previousURL === `${domain}/`)
+                    if(previousURL === `${domainName}/`)
                         res.redirect(`back`);
                     else
                         res.redirect(`/account/client/${userUUID}`);
@@ -331,7 +315,7 @@ router.get('/switch/client/:user_email', ensureAuthentication, async function (r
             })
         })
         .catch( error => {
-            next(error)
+            return next(error)
         })
 })
 
@@ -363,7 +347,7 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
 
                 if(!previousURL.includes('receiverKey')){
 
-                    if(previousURL === `${domain}/`)
+                    if(previousURL === `${domainName}/`)
                         res.redirect(`back`);
                     else
                         res.redirect(`/account/freelancer/${userUUID}`);
@@ -375,9 +359,10 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
 
         })
         .catch( error => {
-            next(error)
+            return next(error)
         })
 })
+
 
 /*router.get('/adminstration/all-users/:uniqueKey', async function (req, res, next) {
     if(req.params.uniqueKey === 'wehg484NWJBN24@qewq--4gwnlgkWFINJ'){
@@ -395,7 +380,6 @@ router.get('/switch/freelancer/:user_email', ensureAuthentication, async functio
             }
             singleUser.save();
         });
-
         console.log('-------------- Client -------------------')
         var allClientUsers = await UserModel.find({
             $and: [
