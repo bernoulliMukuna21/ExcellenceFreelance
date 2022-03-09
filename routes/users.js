@@ -60,7 +60,7 @@ function loginSystem(req, res, user, userType, flash_message){
                 res.redirect('/');
             }
             else if(userType==='freelancer'){
-                res.redirect('/account/freelancer/'+email_encoded)
+                res.redirect('/account/freelancer/'+email_encoded);
             }
         }
     });
@@ -199,7 +199,7 @@ router.post('/login', (req, res, next)=>{
             passport.authenticate('local', (err, user, info)=>{
                 if(typeof info === 'undefined'){
                     let flash_message = 'Hello, '+user.name + ' ' + user.surname + '. You are logged in!'
-                    loginSystem(req, res, user, user.user_stature.initial, flash_message);
+                    loginSystem(req, res, user, user.user_stature.current, flash_message);
                 }
                 else{
                     let errorMessage = '';
@@ -427,7 +427,7 @@ router.post('/reset/:token', function (req, res, next) {
                 done(err, 'done');
             });
             let flash_message = 'Password successfully Reset! Well done, ' + user.name + ' '+user.surname;
-            loginSystem(req, res, user, user.user_stature.initial, flash_message);
+            loginSystem(req, res, user, user.user_stature.current, flash_message);
         }
     ],  function (err) {
             if(err){
