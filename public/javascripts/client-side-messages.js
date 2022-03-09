@@ -374,10 +374,13 @@ function initializeMessageRoom(receiverUniqueKey) {
             loggedInUserRooms = $('.user-messages-side')[0].childNodes;
 
             $('.default-message-content').hide();
+
             accountsOperation.roomConversationsNavigation(
                 loggedInUserRooms[roomIndex],
                 '.all-different-conversations-container',
                 loggedInUser.uniqueKey, receiverData.uniqueKey);
+
+            $(loggedInUserRooms[roomIndex]).trigger('click');
         },
         error: function (error) {
             console.log('Error occurred in Initialising Message');
