@@ -17,51 +17,61 @@ $('#freelance-mssg-btn').click(function (event) {
     window.location.href = '/account/'+loggedInUser.type+'/'+
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;
 });
-/*
-*** Get all the rooms ***
+
+/*** Get all the rooms ***/
 function mobileVersionFunctionality(windowsize, sideToShow){
     if (windowsize <= 500){
         $('.user-messages-main-container-box').hide();
         $('.user-messages-side').hide();
-        if(sideToShow === 'showRoomMessages'){
+        if(sideToShow === 'showContainerAndMessages'){
             $('.user-messages-main-container-box').show();
         }else if(sideToShow === 'showRooms'){
             $('.user-messages-side').show();
         }
     }
 }
-*$(window).resize(function() {
+
+/*
+$(window).resize(function() {
     windowsize = $(window).width();
-    mobileVersionFunctionality(windowsize)
-});*
+    mobileVersionFunctionality(windowsize);
+});
 */
+
 $( document ).ready(function() {
 
     let currentURL = window.location.href;
     let previousURL = document.referrer;
-    if(previousURL === '' && currentURL.includes('?receiverKey=')){
-        window.location.href = '/account/'+loggedInUser.type+'/'+
-            loggedInUser.uniqueKey;
-    }
+    let loggedInUserURL = '/account/'+loggedInUser.type+'/'+
+        loggedInUser.uniqueKey;
 
-    $('.user-messages-side').show();
-    $('.all-different-conversations-container').empty();
+    if(currentURL.includes(loggedInUserURL)){
 
-    roomsFromDB('getRooms').then( status => {
-        console.log('Get rooms status: ', status);
-
-        let messageIntitiationKey = $('#clicked-receiver-key')[0];
-        if(messageIntitiationKey){
-            initializeMessageRoom(messageIntitiationKey.value);
+        if(previousURL === '' && currentURL.includes('?receiverKey=')){
+            window.location.href = loggedInUserURL;
         }
 
-    }).catch( error => {
-        console.log('Get rooms failed');
-    });
+        $('.user-messages-side').show();
+        $('.all-different-conversations-container').empty();
+
+        windowsize = $(window).width();
+        mobileVersionFunctionality(windowsize, 'showRooms');
+
+        roomsFromDB('getRooms').then( status => {
+            console.log('Get rooms status: ', status);
+
+            receiver = $('#clicked-receiver-key')[0];
+            if(receiver){
+                receiver = receiver.value;
+                initializeMessageRoom(receiver);
+            }
+
+        }).catch( error => {
+            console.log('Get rooms failed');
+        });
+    }
 });
 
-/*
->>>>>>> development
 $(document).on('click', '.client-profile-information ul li:nth-child(3)', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
@@ -70,7 +80,8 @@ $(document).on('click', '.user-completed-booking-page', function(event) {
     windowsize = $(window).width();
     mobileVersionFunctionality(windowsize, 'showRooms');
 })
-*** Booking Initialiser button is clicked ***
+
+/*** Booking Initialiser button is clicked ***/
 $(document).on('click', '#booking-side-message-bttn', function(event) {
     let freelancerToMessage_uniqueKey = $("#freelancerToMessageUUID").val();
     $.ajax({
@@ -84,8 +95,17 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
             let sourceImage = !data.userImageSrc ? '/images/userDefaultImage.png'
                 :data.userImageSrc;
             receiver = data.userData;
-            console.log('My receiver: ', receiver)
-            roomsFromDB({requirement: 'getRooms'}, receiver, sourceImage);
+            receiver = receiver.uniqueKey;
+
+            roomsFromDB('getRooms').then( status => {
+                console.log('Get rooms status: ', status);
+
+                initializeMessageRoom(receiver);
+
+            }).catch( error => {
+                console.log('Get rooms failed');
+            });
+
             $('.client-profile-information ul li:last-child').trigger('click');
             mobileVersionFunctionality(windowsize, 'showRooms');
         },
@@ -94,43 +114,58 @@ $(document).on('click', '#booking-side-message-bttn', function(event) {
         }
     })
 })
-*** Get the conversations of a room ***
+
+/*** Get the conversations of a room ***/
 // Ongoing conversation and restarted by opening the chat room
 $(document).on('click', '.message-single-room', function(currentRoom) {
     windowsize = $(window).width();
     let freelancerToMessage = this.childNodes[1].childNodes[0].childNodes[1].value;
-    let roomIndex = Array.from(this.parentNode.children).indexOf(this)
     receiver = JSON.parse(freelancerToMessage);
+    receiver = receiver.uniqueKey;
+
+    let roomIndex = Array.from(this.parentNode.children).indexOf(this)
+
     history.pushState(null, null, '/account/'+loggedInUser.type+'/'+
-        loggedInUser.uniqueKey+'?receiverKey='+receiver.uniqueKey);
+        loggedInUser.uniqueKey+'?receiverKey='+receiver);
+
     $('.default-message-content').hide();
     $('.user-messages-side')[0]
         .childNodes.forEach(eachRoom => {
         $(eachRoom).removeClass("roomClicked");
     })
+
     if($(this)[0].className.includes("messageReceived")){
         $( this ).removeClass( "messageReceived" )
-        roomsFromDB({requirement: 'update',
-            roomIndex: roomIndex});
+
+        roomsFromDB('update', roomIndex).then( status => {
+            console.log('Update room: ', status);
+        }).catch( error => {
+            console.log('Update room failed');
+        });
     }
+
     accountsOperation.roomConversationsNavigation(this,
         '.all-different-conversations-container',
-        loggedInUser.uniqueKey, receiver.uniqueKey);
+        loggedInUser.uniqueKey, receiver);
+    $('.user-messages-main-container-box').show();
     mobileVersionFunctionality(windowsize, 'showContainerAndMessages');
 })
-********************* Second: Sending Messages ***********************
+/********************* Second: Sending Messages ***********************/
+
 let messageData = {}
-function messageController(receiverData, messageToSend) {
-    *
+
+function messageController(receiverKey, messageToSend) {
+    /*
     * This function deals with the construction of the necessary information
     * for sending message from one user to another.
-    * *
+    * */
     messageData.sender = loggedInUser.uniqueKey;
-    messageData.receiver = receiverData.uniqueKey;
+    messageData.receiver = receiverKey;
+
     //Get message to send
     let message = messageToSend;
     let messageSendTime = new Date();
-    console.log('Inside the controller', message);
+
     if(message.length>=1){
         messageData.message = message;
         messageData.day = messageSendTime.toLocaleDateString('en-GB', {
@@ -139,34 +174,40 @@ function messageController(receiverData, messageToSend) {
         socket.emit('MessageInput', messageData);
     }
 }
+
 $(document).on('keypress', '.chat-typing-area', function(event) {
     if(event.keyCode=== 13 && event.shiftKey == false){
         event.preventDefault();
-        //console.log(receiver.uniqueKey);
-        //console.log(event.target.parentNode.parentNode.classList[1]);
+
         let message = event.target.value;
         messageController(receiver, message.trim());
+
         // Clear send form box
         $(".chat-typing-area").val('');
     }
 })
+
 $(document).on('click', '.message-container-typeBox i', function(event) {
     event.preventDefault();
+
     let message = event.target.parentNode.childNodes[0].value;
     messageController(receiver, message.trim());
+
     // Clear send form box
     $(".chat-typing-area").val('');
+
     // Start typing again
     $(".chat-typing-area").focus();
 })
+
 socket.on('Send Message', outputData => {
     // Send received
-    console.log('Send Message');
-    console.log(outputData);
+
     let messageReceiver = outputData.receiver;
     let allRooms_senderSide = $('.user-messages-side')[0].childNodes;
     let allConversationRooms_senderSide = $('.user-messages-main-container-box')[0]
         .childNodes[1].childNodes;
+
     allConversationRooms_senderSide.forEach((eachRoom, index) => {
         if(eachRoom.classList[1] === messageReceiver
             && allRooms_senderSide[index].classList[1] === messageReceiver){
@@ -181,10 +222,10 @@ socket.on('Send Message', outputData => {
         }
     })
 })
+
 socket.on('Receive Message', outputData => {
     // Message received
-    console.log('Receive Message');
-    console.log(outputData)
+
     let messageSender = outputData.sender;
     let allRooms_receiverSide = $('.user-messages-side')[0].childNodes;
     let roomReceived;
@@ -244,7 +285,7 @@ socket.on('Receive Message', outputData => {
         }
     })
 })
-*/
+
 /********************* Third: Retrieving Rooms from DB ***********************/
 
 function roomsFromDB(requirement, roomIndex){
@@ -299,63 +340,47 @@ function initializeMessageRoom(receiverUniqueKey) {
             let loggedInUserRooms = $('.user-messages-side')[0].childNodes;
             let numberOfRooms = loggedInUserRooms.length;
 
-            let receiver = data.userData;
+            let receiverData = data.userData;
             let sourceImage = data.userImageSrc;
             let roomIndex = 0;
 
             if(numberOfRooms === 0){
                 // There no rooms yet
-                accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
-                accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
+                accountsOperation.createNewRoom(receiverData, sourceImage); // Create a new room
+                accountsOperation.createNewConversationContainer(receiverData, sourceImage); // Create New Conversation holder
+
+            }else{
+                // There are already some rooms going on. Now, we need to check if
+                // the two current users already have a conversation going on
                 loggedInUserRooms = $('.user-messages-side')[0].childNodes;
+                let roomExists = false;
+                let roomToShow;
+
+                for (var i = 0; i < loggedInUserRooms.length; ++i) {
+                    if(loggedInUserRooms[i].classList[1] === receiverData.uniqueKey){
+                        roomExists = true;
+                        roomIndex = i;
+                        break;
+                    }
+                }
+
+                if(!roomExists){
+                    // Room does not exist. users have never spoken before
+                    accountsOperation.createNewRoom(receiverData, sourceImage); // Create a new room
+                    accountsOperation.createNewConversationContainer(receiverData, sourceImage); // Create New Conversation holder
+                }
             }
+
+            loggedInUserRooms = $('.user-messages-side')[0].childNodes;
 
             $('.default-message-content').hide();
             accountsOperation.roomConversationsNavigation(
                 loggedInUserRooms[roomIndex],
                 '.all-different-conversations-container',
-                loggedInUser.uniqueKey, receiver.uniqueKey);
+                loggedInUser.uniqueKey, receiverData.uniqueKey);
         },
         error: function (error) {
             console.log('Error occurred in Initialising Message');
         }
     })
 }
-/*
-let roomIndex, allMessageRooms;
-if(receiver && sourceImage){
-    console.log('Inside Ajax - Initialise message')
-    // This bit handles the loading of the chat when the button
-    // Message on the freelancer side is clicked
-    console.log('Source Image: ', sourceImage)
-    if(numberOfRooms === 0){
-        // There no rooms yet
-        accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
-        accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-        roomIndex = 0;
-        allMessageRooms = $('.user-messages-side')[0].childNodes;
-    }else{
-        // There are already some rooms going on. Now, we need to check if
-        // the two current users already have a conversation going on
-        allMessageRooms = $('.user-messages-side')[0].childNodes;
-        let roomExists = false;
-        let roomToShow;
-        allMessageRooms = $('.user-messages-side')[0].childNodes;
-        for (var i = 0; i < allMessageRooms.length; ++i) {
-            if(allMessageRooms[i].classList[1] === receiver.uniqueKey){
-                roomExists = true;
-                roomIndex = i;
-                break;
-            }
-        }
-        if(!roomExists){
-            // Room does not exist. users have never spoken before
-            accountsOperation.createNewRoom(receiver, sourceImage); // Create a new room
-            accountsOperation.createNewConversationContainer(receiver, sourceImage); // Create New Conversation holder
-            roomIndex = 0;
-        }
-    }
-    $('.default-message-content').hide();
-    accountsOperation.roomConversationsNavigation(
-        allMessageRooms[roomIndex],
-*/
