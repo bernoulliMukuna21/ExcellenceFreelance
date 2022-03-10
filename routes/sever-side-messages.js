@@ -113,7 +113,10 @@ function server_io(io) {
 
         try {
             let userProfileData = await getUserProfile(sender);
-            res.json(userProfileData)
+
+            if(userProfileData)
+                res.json(userProfileData)
+
         } catch (error) {
             next(error);
             return;
@@ -153,16 +156,19 @@ function server_io(io) {
                             ? forEachConversatioRoom.user2_id : forEachConversatioRoom.user1_id;
 
                         let currentReceiverData = await getUserProfile(receiver);
-                        currentReceiverData.userData.roomIsClicked = forEachConversatioRoom.roomIsClicked;
-                        currentReceiverData.userData.lastMessageSender = forEachConversatioRoom.messages.slice(-1)[0].sender
-                        allRoomsDetails.push(currentReceiverData);
+                        if(currentReceiverData){
+                            currentReceiverData.userData.roomIsClicked = forEachConversatioRoom.roomIsClicked;
+                            currentReceiverData.userData.lastMessageSender = forEachConversatioRoom.messages.slice(-1)[0].sender;
+                            allRoomsDetails.push(currentReceiverData);
+                        }
                     }
+
                     res.json(allRoomsDetails);
                 }
             }
             else res.json(undefined);
 
-        }).catch( error => {return next(error)});
+        }).catch( error => {console.log(error); return next(error)});
 
     });
 
