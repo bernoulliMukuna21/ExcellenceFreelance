@@ -157,26 +157,27 @@ input:focus{
     font-style: italic;
 }
 .bottom-side{
-    text-align: center;
     padding: 1rem 0 .5rem 0;
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.2rem;
 }
-.bottom-side button{
-    min-width: 10rem;
+
+.bottom-side button, .bottom-side a{
+    width: 9rem;
     color: white;
     cursor: pointer;
-    font-weight: bolder;
     border-radius: .5rem;
-    padding: .5rem;
+    padding: .25rem 0;
 }
+
 .bottom-side button{
     background-color: #4CAF50;
     border-color: #4CAF50;
-    margin-right: .5rem;
 }
 .bottom-side button:last-child{
-    background-color: #213e53;
-    border-color: #213e53;
-    margin-left: .5rem;
+    background-color: #8d2874;
+    border-color: #8d2874;
 }
 
 /*********************************************************************************************************************/

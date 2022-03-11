@@ -29,6 +29,7 @@ block content
     each freelancer in allFreelancers
       .single-user-index-details
         .top-side
+          - let freelancerUniqueKey = emailEncode(freelancer.email);
           if !freelancer.profile_picture.data
             img(src='/images/userDefaultImage.png')
           else
@@ -40,7 +41,7 @@ block content
             img(src=imageSource)
           section
             span
-              a(href='/account/freelancer/'+emailEncode(freelancer.email)): p #{freelancer.name+' '+freelancer.surname}
+              a(href='/account/freelancer/'+freelancerUniqueKey): p #{freelancer.name+' '+freelancer.surname}
         .middle-side
           div
             each service_price in freelancer.serviceAndPrice
@@ -54,6 +55,10 @@ block content
             button Instant Book
             button Request
           else
+            a(class='freelance-mssg-btn')
+              p Message
+              i.far.fa-envelope
+              input(type='hidden' class='freelancerToMessage-unique-key' value=freelancerUniqueKey)
             if(loggedInUser.user_stature.current === 'client')
               button Instant Book
               button Request

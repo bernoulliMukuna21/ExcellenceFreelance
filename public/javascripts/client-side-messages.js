@@ -11,8 +11,8 @@ var windowsize = $(window).width();
 
 /********************* First: find Receiver and right room of conversation ***********************/
 // Conversation initializer by clicking 'Message' button
-$('#freelance-mssg-btn').click(function (event) {
-    let freelancerToMessage_uniqueKey = $("#freelancerToMessage-unique-key").val();
+$('.freelance-mssg-btn').click(function (event) {
+    let freelancerToMessage_uniqueKey = $(".freelancerToMessage-unique-key").val();
 
     window.location.href = '/account/'+loggedInUser.type+'/'+
         loggedInUser.uniqueKey+'?receiverKey='+freelancerToMessage_uniqueKey;

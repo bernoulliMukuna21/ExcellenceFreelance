@@ -152,18 +152,16 @@ form select.bookform-field, .booking-time-picker select,
 }
 .booking-form button {
     border: none;
-    background: #4CAF50;
     font-size: 16px;
     font-weight: 400;
     color: #fff;
 }
-.booking-form button:hover{background-color: #308634;}
-.booking-form button:last-child{
-    background-color: #213e53;
-}
-.booking-form button:last-child:hover{
-    background-color: #1a3040;
-}
+
+#service-booking-submit-bttn{background: #4CAF50;}
+#service-booking-submit-bttn:hover{background-color: #308634;}
+
+#service-enquiry-submit-bttn{background: #8d2874;}
+#service-enquiry-submit-bttn:hover{background-color: #71205d;}
 
 .booktitle{
     font-size: 30px;

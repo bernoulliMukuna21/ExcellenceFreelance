@@ -1,6 +1,9 @@
 $(document).ready(function(){
-    if( $('.bottom-side').is(':empty') ){
-        $('.middle-side').css('border-bottom', 'none');
+    if(!$('.bottom-side button').is(':visible')){
+        $('.bottom-side .freelance-mssg-btn').css({
+            'padding':'.75rem',
+            'width': '12rem',
+        });
     }
 })
 function scrollToFreelancers(){
