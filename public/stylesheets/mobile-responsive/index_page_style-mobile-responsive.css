@@ -41,4 +41,7 @@
         margin: 0 5rem;
         padding-top: 1rem;
     }
+    .container .top-footer{
+        margin: 0;
+    }
 }

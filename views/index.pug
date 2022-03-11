@@ -23,7 +23,6 @@ block content
         p Find a Freelancer
         p Book Freelance Service
   .index-page-three
-
     if allFreelancers
       each freelancer in allFreelancers
         - let servicesPrices = freelancer.serviceAndPrice;
@@ -31,6 +30,7 @@ block content
         if areSomePricesBiggerThanMinimum
           .single-user-index-details
             .top-side
+              - let freelancerUniqueKey = emailEncode(freelancer.email);
               if !freelancer.profile_picture.data
                 img(src='/images/userDefaultImage.png')
               else
@@ -56,6 +56,10 @@ block content
                 button Instant Book
                 button Request
               else
+                a(class='freelance-mssg-btn')
+                  p Message
+                  i.far.fa-envelope
+                  input(type='hidden' class='freelancerToMessage-unique-key' value=freelancerUniqueKey)
                 if(loggedInUser.user_stature.current === 'client')
                   button Instant Book
                   button Request

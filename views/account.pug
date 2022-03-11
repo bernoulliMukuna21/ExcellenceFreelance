@@ -53,10 +53,10 @@ block content
                             - let freelancerUser_Mssg = emailEncode(freelancerUser.email)
                             if loggedInUser.user_stature.current === 'client'
                                 button(class='book-btn') Instant Book
-                            a(id='freelance-mssg-btn')
+                            a(class='freelance-mssg-btn')
                                 p Message
                                 i.far.fa-envelope
-                                input(type='hidden' id='freelancerToMessage-unique-key' value=freelancerUser_Mssg)
+                                input(type='hidden' class='freelancerToMessage-unique-key' value=freelancerUser_Mssg)
 
                     div.freelancer-services
                         if freelancerUser.serviceAndPrice.length === 0

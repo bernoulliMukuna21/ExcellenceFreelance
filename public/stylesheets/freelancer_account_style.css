@@ -145,24 +145,24 @@
     border-color: #4CAF50;
     width: 15vh;
 }
-#freelance-mssg-btn{
+.freelance-mssg-btn{
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #213e53;
     width: 17.5vh;
 }
-#freelance-mssg-btn p{
+.freelance-mssg-btn p{
     margin-right: .5rem;
 }
-#freelance-mssg-btn i{
+.freelance-mssg-btn i{
     margin-left: .5rem;
 }
 .public-service-enquiry button:hover{
     background-color: #308634;
     border-color: #308634;
 }
-#freelance-mssg-btn:hover{
+.freelance-mssg-btn:hover{
     background-color: #0d3349;
     border-color: #0d3349;
 }

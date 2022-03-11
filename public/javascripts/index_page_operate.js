@@ -1,8 +1,19 @@
 import * as accountsOperation from "./account_operate.js";
 
 $(document).ready(function(){
-    if( $('.bottom-side').is(':empty') ){
-        $('.middle-side').css('border-bottom', 'none');
+    if(!$('.bottom-side button').is(':visible')){
+        $('.bottom-side .freelance-mssg-btn').css({
+            'padding':'.75rem',
+            'width': '12rem',
+        });
+    }
+    if(!$('.bottom-side .freelance-mssg-btn').is(':visible')){
+        $('.bottom-side').css({
+            'justifyContent': 'center'
+        });
+        $('.bottom-side button').css({
+            'margin': '0 .5rem'
+        });
     }
 })
 function scrollToFreelancers(){
