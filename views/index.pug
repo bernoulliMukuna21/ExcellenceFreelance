@@ -31,6 +31,7 @@ block content
           .single-user-index-details
             .top-side
               - let freelancerUniqueKey = emailEncode(freelancer.email);
+              - console.log(freelancerUniqueKey)
               if !freelancer.profile_picture.data
                 img(src='/images/userDefaultImage.png')
               else
@@ -56,13 +57,14 @@ block content
                 button Instant Book
                 button Request
               else
+                if(loggedInUser.user_stature.current === 'client')
+                  button Instant Book
+                  button Request
                 a(class='freelance-mssg-btn')
                   p Message
                   i.far.fa-envelope
                   input(type='hidden' class='freelancerToMessage-unique-key' value=freelancerUniqueKey)
-                if(loggedInUser.user_stature.current === 'client')
-                  button Instant Book
-                  button Request
+
 
             input(type='hidden', value=emailEncode(freelancer.email))
 

@@ -179,11 +179,11 @@ input:focus{
     padding: .5rem 0;
 }
 
-.bottom-side button{
+.bottom-side>button{
     background-color: #4CAF50;
     border-color: #4CAF50;
 }
-.bottom-side button:last-child{
+.bottom-side>button:nth-child(2){
     background-color: #8d2874;
     border-color: #8d2874;
 }
