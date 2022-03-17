@@ -71,12 +71,14 @@ block content
                                     div
                                         h4 #{servicePrice.service}
                                         h4 £#{servicePrice.price}
-                                    div.freelance-package-offer(style='display: none')
-                                        h4 Package Offer:
-                                        section
-                                            ul
-                                                each package in servicePrice.servicePackage
-                                                    li  - #{package}
+
+                                    if servicePrice.servicePackage.length > 0
+                                        div.freelance-package-offer(style='display: none')
+                                            h4 Package Offer:
+                                            section
+                                                ul
+                                                    each package in servicePrice.servicePackage
+                                                        li  - #{package}
 
                     div.account-profile-information
                         ul
@@ -271,8 +273,10 @@ block content
                                                             input(type='text', name='service', value=serviceAndPrice.service, readonly=true)
                                                             input(type='text', name='price', value=serviceAndPrice.price, readonly=true)
                                                             input(type='text', name='serviceFullPackage',
-                                                                value=JSON.stringify({
+                                                                value= serviceAndPrice.servicePackage ? JSON.stringify({
                                                                     freelancerPackage: serviceAndPrice.servicePackage
+                                                                }): JSON.stringify({
+                                                                    freelancerPackage: []
                                                                 }), readonly=true)
 
                                         .user-bio-details

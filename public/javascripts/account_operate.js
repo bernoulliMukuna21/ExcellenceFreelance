@@ -143,6 +143,7 @@ function showServicesAndPrices(elements, htmlcontainer) {
         let priceOfService = singleServiceAndPrice.price;
         let service = singleServiceAndPrice.service;
         let servicePackage = singleServiceAndPrice.servicePackage;
+        console.log('account Page: ', servicePackage);
 
         if(priceOfService >= minimumPriceOfService){
             let serviceTag = document.createElement('h4');
@@ -160,6 +161,8 @@ function showServicesAndPrices(elements, htmlcontainer) {
             $(singleServicePriceClass.firstChild).append(priceTag);
 
             if(servicePackage.length>0){
+                $(singleServicePriceClass.childNodes[1]).remove();
+
                 $(singleServicePriceClass)
                     .append('<div class="freelance-package-offer" style="display: none"></div>');
 

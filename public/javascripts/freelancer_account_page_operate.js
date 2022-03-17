@@ -432,10 +432,6 @@ $(document).on('click', '.show-service-package', function(e) {
             if(serviceDetails.childNodes.length === 2){
                 console.log('It is visible')
                 servicePackageContainer = serviceDetails.childNodes[1].childNodes[0];
-                let hideServicePackageValue = JSON.parse(hideServicePackage.lastChild.value);
-                hideServicePackageValue.freelancerPackage.push(newPackageHTML.value);
-                hideServicePackage.lastChild.value = JSON.stringify(hideServicePackageValue)
-
             }else{
                 console.log('It is not visible')
                 servicePackageContainer = document.createElement('div');
@@ -443,15 +439,11 @@ $(document).on('click', '.show-service-package', function(e) {
                 $(serviceDetails).append(servicePackageContainer);
                 $(servicePackageContainer).append('<ul></ul>');
                 servicePackageContainer = servicePackageContainer.childNodes[0];
-
-                let hideServicePackageInput = document.createElement('input');
-                hideServicePackageInput.name = 'serviceFullPackage';
-                hideServicePackageInput.type = 'text';
-                hideServicePackageInput.readOnly = true;
-                hideServicePackageInput.value = JSON.stringify({freelancerPackage: [newPackageHTML.value]});
-
-                $(hideServicePackage).append(hideServicePackageInput);
             }
+
+            let hideServicePackageValue = JSON.parse(hideServicePackage.lastChild.value);
+            hideServicePackageValue.freelancerPackage.push(newPackageHTML.value);
+            hideServicePackage.lastChild.value = JSON.stringify(hideServicePackageValue)
 
             $(servicePackageContainer).append(`<li><p>- ${packageText}</p><p class="freelance-delete-aPackage">x</p></li>`);
             newPackageHTML.value = '';
@@ -470,7 +462,16 @@ $(document).on('mouseout', '.freelance-delete-aPackage', function(e) {
 });
 $(document).on('click', '.freelance-delete-aPackage', function(e) {
     // code from mouseout hover function goes here
-    let singlePackage = e.target.parentNode
+
+    let singlePackage = e.target.parentNode;
+    let packageToDeleteIndex = Array.from(singlePackage.parentNode
+        .childNodes).findIndex(updatePackage => updatePackage.firstChild.innerText === singlePackage.firstChild.innerText)
+
+    let hiddenServiceInfos = singlePackage.parentNode.parentNode.parentNode.nextSibling.nextSibling;
+    let newFreelancePackage = JSON.parse(hiddenServiceInfos.lastChild.value);
+    newFreelancePackage = newFreelancePackage.freelancerPackage;
+    newFreelancePackage = [...newFreelancePackage.slice(0, packageToDeleteIndex), ...newFreelancePackage.slice(packageToDeleteIndex + 1)]
+    hiddenServiceInfos.lastChild.value = JSON.stringify({freelancerPackage: newFreelancePackage});
 
     if (singlePackage.nextSibling || singlePackage.previousSibling)
         // There are some more packages left
@@ -551,9 +552,6 @@ $('.update-general-information').submit(function (event) {
     formData.append('saved_servicesAndPrices', getInputValues('.saved-serviceAndPrice', 2));
     formData.append('saved_skills', getInputValues('.saved-skill', 1));
 
-    for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]);
-    }
     $.ajax({
         type: 'PUT',
         enctype: 'multipart/form-data',
