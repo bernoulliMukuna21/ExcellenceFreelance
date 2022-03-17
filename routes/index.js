@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
         let loggedInUser_imageSrc;
         let allFreelancers;
 
-        let trial_days = 228;
+        let trial_days = 1228;
         let findFreelancersQuery = [{
             'user_stature.initial': 'freelancer'
         },{

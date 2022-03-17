@@ -29,7 +29,8 @@ let UserSchema = new mongoose.Schema({
     },
     serviceAndPrice:[{
         service: String,
-        price: String
+        price: String,
+        servicePackage: [{type: String}]
     }],
     description: String,
     skill:[{type: String}],

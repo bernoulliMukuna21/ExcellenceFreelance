@@ -13,6 +13,7 @@ let domain = 'http://localhost:3000';
 
 //const endpointSecret = "whsec_WiGL956JT1kUPRKkucfFIPSYQXxr5WTj";
 const endpointSecret = 'whsec_55eeb211397850dd75a9132be2f70fc698e81cf8c11c1287407d899085355157';
+
 // whsec_WiGL956JT1kUPRKkucfFIPSYQXxr5WTj
 let price, projectName, projectDescription, projectDueDate, serviceName;
 

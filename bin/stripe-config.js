@@ -1,4 +1,4 @@
-var stripe = require('stripe')('sk_test_51JaFWQAvRzpykLRe6CLZtsn26IyM6hYgKhbkYPR2XxJoXKHN9Eyn7AFQk6yho9VhcsXCoFdT5OZ1PgMVHn1iY2Gn00bHqcUdHw')
+var stripe = require('stripe')('sk_test_51JaFWQAvRzpykLReGs8cEpc8SnEpWG9eH5zjuk8jSqoQehlQ2vgufTzRvj8yM7IMeU3L0p9RTRyZwNOTofFgz96t00NmSMLdrQ')
 
 const stripeFindCustomerByEmail = async (email) => {
     try {
