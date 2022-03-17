@@ -52,6 +52,10 @@ block content
                     .index-serviceAndPrice
                       p #{service_price.service}
                       p #{'£'+price.toFixed(2)}
+                      input(type='hidden', value =JSON.stringify({
+                        freelancerPackage: service_price.servicePackage
+                      }), name='indexPageServicePackage', readOnly=true)
+
             .bottom-side
               if (!isLogged)
                 button Instant Book
@@ -64,9 +68,35 @@ block content
                   p Message
                   i.far.fa-envelope
                   input(type='hidden' class='freelancerToMessage-unique-key' value=freelancerUniqueKey)
-
-
             input(type='hidden', value=emailEncode(freelancer.email))
 
     include ./partials/booking_form
+
+    div.freelance-service-package-modal
+      div.freelance-service-package-modal-container
+        div
+          section
+            h4
+              span Interior Design
+              | #{' '}by Limo Charly
+          .closebook-form &times;
+        div
+          h4 Package Include:
+          section
+            div
+              p Empty Package
+            ul(style='display: none')
+              li  - 5 Responsive Pages
+              li  - Unlimited Reviews
+              li  - One-to-One Interview Preparation
+              li  - Mobile Responsive Pages
+              li  - Passport Authentication
+              li  - 5 Responsive Pages
+              li  - Unlimited Reviews
+              li  - One-to-One Interview Preparation
+              li  - Mobile Responsive Pages
+              li  - Passport Authentication
+          section
+              p Total Price: £ 1400
+
   include ./partials/footer

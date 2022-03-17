@@ -102,6 +102,7 @@ router.get('/client/:this_user', ensureAuthentication , async (req,
                 userToMessageImageSrc
             });
         }).catch ( error => {
+            console.log(error)
             return next(error);
         })
     }
@@ -152,6 +153,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
                     ]
                 )
             }catch ( error ) {
+                console.log(error)
                 return next(error);
             }
             // Group the project by statuses
@@ -198,6 +200,7 @@ router.get('/freelancer/:this_user', async function (req, res, next) {
             allBookingToFreelancer
         });
     }catch ( error ) {
+        console.log(error)
         return next(error);
     }
 });
@@ -252,6 +255,7 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
             req.file, 'freelancer');
 
         let updateInfos = await freelancerInformationChecker.checkLoginStrategyAndReturnInformation();
+
         if(Object.keys(updateInfos.updateErrors).length>0){
             /*
             * If the object of the errors is bigger than 0, the update form
@@ -269,11 +273,11 @@ router.put('/freelancer/update', ensureAuthentication, multerUserProfilePicture,
             let upgradeFreelancer = updateInfos.updateUser;
             let freelancerObject = JSON.stringify(upgradeFreelancer);
             freelancerObject = JSON.parse(freelancerObject);
-            freelancerObject.profileImageSrc = imageToDisplay(upgradeFreelancer);
 
             upgradeFreelancer.save(function (error) {
                 if (error) throw error;
                 else{
+                    freelancerObject.profile_picture = imageToDisplay(upgradeFreelancer);
                     res.json(freelancerObject);
                 }
             });

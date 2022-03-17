@@ -122,19 +122,29 @@ class ProfileUpdateController{
 
         if(this.userUpdateData.saved_servicesAndPrices){
             servicesAndPrices = JSON.parse(this.userUpdateData.saved_servicesAndPrices);
+
             if(Object.keys(servicesAndPrices).length>0){
                 this.user.serviceAndPrice=[];
                 for(let i=0; i<servicesAndPrices.length; i++){
                     let singleServiceAndPrice = new Object();
                     let service = servicesAndPrices[i][0];
                     let priceOfService = servicesAndPrices[i][1];
+                    let packageOfService = servicesAndPrices[i][2];
 
                     if(priceOfService >= minimumPriceOfService){
                         singleServiceAndPrice.service = service;
                         singleServiceAndPrice.price = priceOfService;
+
+                        if(packageOfService){
+                            packageOfService = JSON.parse(packageOfService);
+                            singleServiceAndPrice.servicePackage = packageOfService.freelancerPackage;
+                        }
+
                         this.user.serviceAndPrice.push(singleServiceAndPrice);
                     }
+
                 }
+
             }else{this.user.serviceAndPrice=[]}
         }
 
@@ -194,7 +204,7 @@ class ProfileUpdateController{
                 updateInfos = this.checkUserInformation();
             }
         }catch (e) {
-            console.log(e)
+            throw e;
         }
         return updateInfos;
     }

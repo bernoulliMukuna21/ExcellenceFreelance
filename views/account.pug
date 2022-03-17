@@ -68,8 +68,15 @@ block content
                         else
                             each servicePrice in freelancerUser.serviceAndPrice
                                 .freelancer-serviceAndPrice-profile
-                                    h4 #{servicePrice.service}
-                                    h4 £#{servicePrice.price}
+                                    div
+                                        h4 #{servicePrice.service}
+                                        h4 £#{servicePrice.price}
+                                    div.freelance-package-offer(style='display: none')
+                                        h4 Package Offer:
+                                        section
+                                            ul
+                                                each package in servicePrice.servicePackage
+                                                    li  - #{package}
 
                     div.account-profile-information
                         ul
@@ -245,12 +252,28 @@ block content
                                                 each serviceAndPrice in freelancerUser.serviceAndPrice
                                                     .single-serviceAndPrice
                                                         .show-serviceAndPrice
-                                                            h4 #{serviceAndPrice.service}
-                                                            h4 £#{serviceAndPrice.price}
-                                                            button.delete-aServiceAndPrice-btn x
+                                                            div
+                                                                h4 #{serviceAndPrice.service}
+                                                                h4 £#{serviceAndPrice.price}
+                                                                button.delete-aServiceAndPrice-btn x
+
+                                                            each singlePackage in serviceAndPrice.servicePackage
+                                                                div.freelancer-service-package-update
+                                                                    ul
+                                                                        li
+                                                                            p - #{singlePackage}
+                                                                            p.freelance-delete-aPackage x
+                                                        .show-service-package
+                                                            input(type='text', name='servicePackage', id='servicePackage', value='',
+                                                                placeholder=`Enter full package for this service...`)
+                                                            button#addServicePackage: i.fas.fa-plus-square
                                                         .hide-serviceAndPrice(style='display: none')
                                                             input(type='text', name='service', value=serviceAndPrice.service, readonly=true)
                                                             input(type='text', name='price', value=serviceAndPrice.price, readonly=true)
+                                                            input(type='text', name='serviceFullPackage',
+                                                                value=JSON.stringify({
+                                                                    freelancerPackage: serviceAndPrice.servicePackage
+                                                                }), readonly=true)
 
                                         .user-bio-details
                                             h3 Description and Other Necessary Information

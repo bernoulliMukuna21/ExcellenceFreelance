@@ -15,7 +15,6 @@ let administrationEmail = 'unilance.admnistration@gmail.com';
 const endpointSecret = process.env.stripe_webhookEndpointLive;
 
 //const endpointSecret = 'whsec_55eeb211397850dd75a9132be2f70fc698e81cf8c11c1287407d899085355157';
-
 let price, projectName, projectDescription, projectDueDate, serviceName;
 
 function server_io(io) {

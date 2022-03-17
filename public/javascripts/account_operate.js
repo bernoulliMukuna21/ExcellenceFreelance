@@ -142,6 +142,7 @@ function showServicesAndPrices(elements, htmlcontainer) {
     elements.forEach(singleServiceAndPrice=>{
         let priceOfService = singleServiceAndPrice.price;
         let service = singleServiceAndPrice.service;
+        let servicePackage = singleServiceAndPrice.servicePackage;
 
         if(priceOfService >= minimumPriceOfService){
             let serviceTag = document.createElement('h4');
@@ -152,9 +153,25 @@ function showServicesAndPrices(elements, htmlcontainer) {
 
             let singleServicePriceClass = document.createElement('div');
             singleServicePriceClass.classList.add('freelancer-serviceAndPrice-profile');
+            $(singleServicePriceClass)
+                .append('<div></div>');
 
-            singleServicePriceClass.appendChild(serviceTag);
-            singleServicePriceClass.appendChild(priceTag);
+            $(singleServicePriceClass.firstChild).append(serviceTag);
+            $(singleServicePriceClass.firstChild).append(priceTag);
+
+            if(servicePackage.length>0){
+                $(singleServicePriceClass)
+                    .append('<div class="freelance-package-offer" style="display: none"></div>');
+
+                $(singleServicePriceClass.lastChild).append('<h4>Package Offer:</h4><section><ul></ul></section>');
+
+                servicePackage.forEach(singlePackage => {
+                    let onePackageList = document.createElement('li');
+                    onePackageList.innerText = `- ${singlePackage}`;
+
+                    $(singleServicePriceClass.lastChild.lastChild.firstChild).append(onePackageList);
+                })
+            }
 
             $(htmlcontainer).append(singleServicePriceClass);
         }
@@ -271,7 +288,7 @@ function deleteItem(containerHtml, buttonHtml){
     *               - buttonHtml: delete button
     * **/
 
-    $(containerHtml).click(function (event) {
+    $(document).on('click', containerHtml, function(event) {
         event.preventDefault();
         let item = event.target; // listen to the clicked item
 
@@ -285,7 +302,7 @@ function deleteItem(containerHtml, buttonHtml){
             if(buttonHtml === 'delete-aServiceAndPrice-btn'){
 
                 let numberOfServices = countServices(containerHtml);
-                let parentOfContainer = container.parentElement;
+                let parentOfContainer = container.parentElement.parentElement;
 
                 if(numberOfServices>1){
                     parentOfContainer.remove();

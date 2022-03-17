@@ -104,10 +104,15 @@ $(document).click(function (event) {
     }
 });
 
-/* Portfolio Section Controller */
-//console.log('Freelancer Page Content Height: ', $('.freelancer-page-main-container').height());
-//$('.freelancer-portfolio-big-modal').height($('.freelancer-page-main-container').height());
+$(document).on('click', '.freelancer-serviceAndPrice-profile div:first-child', function(e) {
+    let hideSection;
+    if(e.target.tagName === 'DIV')
+        hideSection = e.target.nextSibling;
+    else if(e.target.tagName === 'H4')
+        hideSection = e.target.parentNode.nextSibling;
 
+    $(hideSection).toggle();
+})
 
 /*
 * The following codes deal with the changes and display of the profile
@@ -320,7 +325,14 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
         // Show childNodes
         let singleName_html = document.createElement('h4');
         singleName_html.innerText = serviceOrSkillValue;
-        showDiv.appendChild(singleName_html);
+
+        if(inputHtmlName==='service'){
+            $(showDiv).append('<div></div>');
+            $(showDiv.firstChild).append(singleName_html);
+        }else{
+            showDiv.appendChild(singleName_html);
+        }
+
 
         let removeButton = document.createElement('button');
         removeButton.classList.add(deleteButton);
@@ -339,10 +351,10 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
             // is added for each of the services
             let singlePrice_html = document.createElement('h4');
             singlePrice_html.innerText = '£'+currentService_priceValue;
-            showDiv.appendChild(singlePrice_html);
+            $(showDiv.firstChild).append(singlePrice_html);
 
             // Add the remove button on the show section
-            showDiv.appendChild(removeButton);
+            $(showDiv.firstChild).append(removeButton);
 
             // On the section of the service, Add an input tag for the price
             let priceInput_html = document.createElement('input');
@@ -361,6 +373,15 @@ function serviceAndSkill(inputIdName, singleClassName, deleteButton,
 
         // Make the single container
         containerDiv.appendChild(showDiv);
+
+        if(inputHtmlName==='service'){
+            let placeholderValue = "Enter full package "+serviceOrSkillValue+" for for this price?(<5)";
+            let servicePackageHTM = `<div class="show-service-package">`
+                +`<input type="text" name="servicePackage" id="servicePackage" value="" placeholder="Enter full package for this service..."`+
+                `><button id="addServicePackage"><i class="fas fa-plus-square"></i></button></div>`;
+            $(containerDiv).append(servicePackageHTM);
+        }
+
         containerDiv.appendChild(hideDiv);
         $(containerHtml).append(containerDiv);
 
@@ -382,7 +403,82 @@ $('#servicePriceBttn').click(function (event) {
     serviceAndSkill('#userServiceField', 'single-serviceAndPrice',
         'delete-aServiceAndPrice-btn', '.saved-serviceAndPrice',
         'show-serviceAndPrice', 'hide-serviceAndPrice', 'service');
+});
+
+$('#servicePackage').keypress((e)=>{
+    if (e.target.value.length === 80)
+        return false
 })
+
+$(document).on('click', '.show-service-package', function(e) {
+    if(e.target.className === 'fas fa-plus-square' ||
+        e.target.id === 'addServicePackage'){
+
+        let newPackageHTML, packageText;
+
+        if(e.target.className === 'fas fa-plus-square')
+            newPackageHTML = e.target.parentNode.previousSibling;
+        else
+            newPackageHTML = e.target.previousSibling;
+
+        packageText = newPackageHTML.value;
+
+        if(packageText.trim().length>0){
+            let addServicePackageHTML = newPackageHTML.parentNode
+            let serviceDetails = addServicePackageHTML.previousSibling;
+            let hideServicePackage = addServicePackageHTML.nextSibling;
+
+            let servicePackageContainer;
+            if(serviceDetails.childNodes.length === 2){
+                console.log('It is visible')
+                servicePackageContainer = serviceDetails.childNodes[1].childNodes[0];
+                let hideServicePackageValue = JSON.parse(hideServicePackage.lastChild.value);
+                hideServicePackageValue.freelancerPackage.push(newPackageHTML.value);
+                hideServicePackage.lastChild.value = JSON.stringify(hideServicePackageValue)
+
+            }else{
+                console.log('It is not visible')
+                servicePackageContainer = document.createElement('div');
+                servicePackageContainer.classList.add('freelancer-service-package-update');
+                $(serviceDetails).append(servicePackageContainer);
+                $(servicePackageContainer).append('<ul></ul>');
+                servicePackageContainer = servicePackageContainer.childNodes[0];
+
+                let hideServicePackageInput = document.createElement('input');
+                hideServicePackageInput.name = 'serviceFullPackage';
+                hideServicePackageInput.type = 'text';
+                hideServicePackageInput.readOnly = true;
+                hideServicePackageInput.value = JSON.stringify({freelancerPackage: [newPackageHTML.value]});
+
+                $(hideServicePackage).append(hideServicePackageInput);
+            }
+
+            $(servicePackageContainer).append(`<li><p>- ${packageText}</p><p class="freelance-delete-aPackage">x</p></li>`);
+            newPackageHTML.value = '';
+        }
+    };
+});
+
+$(document).on('mouseover', '.freelance-delete-aPackage', function(e) {
+    // code from mouseover hover function goes here
+    $(e.target.parentNode).css('color', '#FF0000')
+});
+
+$(document).on('mouseout', '.freelance-delete-aPackage', function(e) {
+    // code from mouseout hover function goes here
+    $(e.target.parentNode).css('color', '#FFFFFF')
+});
+$(document).on('click', '.freelance-delete-aPackage', function(e) {
+    // code from mouseout hover function goes here
+    let singlePackage = e.target.parentNode
+
+    if (singlePackage.nextSibling || singlePackage.previousSibling)
+        // There are some more packages left
+        $(singlePackage).remove();
+    else
+        // Last Service Package
+        $(singlePackage.parentNode.parentNode).remove();
+});
 
 // Add the possibility of freelancer deleting their services
 accountsOperation.deleteItem('.saved-serviceAndPrice',
@@ -409,7 +505,7 @@ $(document).on('click', '.public-service-enquiry button', function(event) {
 /*
 * Collect the Education, Skills and Services of the freelancer
 * **/
-function getInputValues(mainContainerHtml){
+function getInputValues(mainContainerHtml, positionOfInputValues){
     /*
     * This function is used to collect the education, skills an services
     * information of the freelancer.
@@ -423,7 +519,7 @@ function getInputValues(mainContainerHtml){
         }
 
         let singleChildList = [];
-        let hide_section = singleChild.childNodes[1].childNodes;
+        let hide_section = singleChild.childNodes[positionOfInputValues].childNodes;
         hide_section.forEach(input=>{
             singleChildList.push(input.value);
         })
@@ -451,10 +547,13 @@ $('.update-general-information').submit(function (event) {
     let saved_profilePicture = $('#freelancer-profile-picture')[0].files[0];
     formData.append('user_profile_picture', saved_profilePicture);
 
-    formData.append('saved_educations', getInputValues('.saved-education'));
-    formData.append('saved_servicesAndPrices', getInputValues('.saved-serviceAndPrice'));
-    formData.append('saved_skills', getInputValues('.saved-skill'));
+    formData.append('saved_educations', getInputValues('.saved-education', 1));
+    formData.append('saved_servicesAndPrices', getInputValues('.saved-serviceAndPrice', 2));
+    formData.append('saved_skills', getInputValues('.saved-skill', 1));
 
+    for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]);
+    }
     $.ajax({
         type: 'PUT',
         enctype: 'multipart/form-data',
@@ -476,11 +575,14 @@ $('.update-general-information').submit(function (event) {
             accountsOperation.showNames(data.name, data.surname,
                 '.account-profile-name');
 
+
             /******** display services and skills of the freelancer *********/
-            /**
+            /*
             * The service cannot be empty. Therefore, all the
             * children under the section that the service can
-            * be hidden to show the updated services.*/
+            * be hidden to show the updated services.
+            * */
+
             let freelancerServicesAndPrices = data.serviceAndPrice;
             if ( freelancerServicesAndPrices.length > 0 ){
                 $('.freelancer-services').children().hide();
