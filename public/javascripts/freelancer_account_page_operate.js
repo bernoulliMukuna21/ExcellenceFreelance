@@ -838,7 +838,10 @@ function projectCompletionShow(event, data) {
 
         // Time
         //$("div.id_100 > select > option[value=" + value + "]").prop("selected",true);
-        $(modificationTime[0]).val(data.modifyDueTime[0]).change();
+        let hourToModify = data.modifyDueTime[0]%12;
+        hourToModify = hourToModify < 10 ? '0'+hourToModify : hourToModify;
+
+        $(modificationTime[0]).val(hourToModify).change();
         $(modificationTime[2]).val(data.modifyDueTime[1]).change();
         $(modificationTime[3]).val(data.modifyDueTime[2]).change();
 
