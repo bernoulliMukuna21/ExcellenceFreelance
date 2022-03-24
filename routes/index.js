@@ -12,7 +12,7 @@ var {emailEncode, emailDecode} = require('../bin/encodeDecode');
 var {base64ToImageSrc, imageToDisplay} = require('../bin/imageBuffer');
 var BinData = require('bindata');
 
-let domainEmail = 'unilance.admnistration@gmail.com';
+let domainEmail = 'kingshire.team@gmail.com';
 /* GET home page. */
 router.get('/', async function (req, res, next) {
     try{
@@ -105,7 +105,7 @@ router.post('/feedback', function(req, res, next){
                 `<p><span style="font-weight: bold">Comment:</span> ${mailerBody.comment}</p>`;
 
             mailer.smtpTransport.sendMail(mailer.mailerFunction(domainEmail,
-                "Unilance - Feedback", feedbackHTML), function (err) {
+                "KingsHire - Feedback", feedbackHTML), function (err) {
                 if(err){console.log(err)}
                 else{
                     console.log('Feeback Email sent to Administration');

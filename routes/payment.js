@@ -8,9 +8,9 @@ var { ensureAuthentication } = require('../bin/authentication');
 var { emailEncode, emailDecode } = require('../bin/encodeDecode');
 var { stripeFindCustomerByEmail, stripeCustomerSubscription } = require('../bin/stripe-config');
 
-let domainName = 'https://www.unilance.co.uk';
-let unilanceLoginURL = `${domainName}/users/login`;
-let administrationEmail = 'unilance.admnistration@gmail.com';
+let domainName = 'https://kingshire.herokuapp.com';
+let kingsHireLoginURL = `${domainName}/users/login`;
+let administrationEmail = 'kingshire.team@gmail.com';
 
 const endpointSecret = process.env.stripe_webhookEndpointLive;
 
@@ -140,16 +140,16 @@ function server_io(io) {
                             '<p>Hello '+bookingUpdated.customer.name.split(' ')[0]+',</p><p>This is a confirmation' +
                             ' of the successful pay for your new booking ('+bookingUpdated.service+' - '
                             +bookingUpdated.projectName+'). Please note the unique identification of your project: '+
-                            bookingUpdated._id+'</p>'+'<p>Thank you,<br>The Unilance Team' +
+                            bookingUpdated._id+'</p>'+'<p>Thank you,<br>The KingsHire Team' +
                             '<br>07448804768</p>';
 
                         let successPayMessageToFreelancerHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Paid</h1>'+
                             '<p>Hello '+bookingUpdated.supplier.name.split(' ')[0]+',</p><p> I am pleased to inform you that' +
                             ' the following booking ('+ bookingUpdated.service+' - ' +bookingUpdated.projectName +') has' +
                             ' now been paid. Please <a target="_blank" style="text-decoration: underline;' +
-                            ' color: #0645AD; cursor: pointer" href='+unilanceLoginURL+'> login </a>' +
+                            ' color: #0645AD; cursor: pointer" href='+kingsHireLoginURL+'> login </a>' +
                             ' to your account to access the details of this booking and, possibly beginning working on it.</p>'+
-                            '<p>Thank you,<br>The Unilance Team <br>07448804768</p>';
+                            '<p>Thank you,<br>The KingsHire Team <br>07448804768</p>';
 
                         let successPayMessageToAdminHTML = '<h1 style="color: #213e53; font-size: 1.1rem">Booking Payment Successful</h1>'+
                             '<p>Hello,</p>'+'<p> The following booking has now been paid for: </p>'+
@@ -162,7 +162,7 @@ function server_io(io) {
                             '<li>Due Date: '+bookingUpdated.dueDateTime.toLocaleString()+' </li>' +
                             '<li>Description: '+bookingUpdated.projectDescription+' </li>' +
                             '</ul>'+
-                            '<p>Thank you<br>The Unilance Team<br>07448804768</p>';
+                            '<p>Thank you<br>The KingsHire Team<br>07448804768</p>';
 
                         bookingUpdated.save(err => {
                             if(err){
@@ -210,15 +210,15 @@ function server_io(io) {
 
                     let activeSubscriptionMessageToUserHTML= '<h1 style="color: #213e53; font-size: 1.1rem">Successfully Subscribed</h1>'+
                         '<p>Hello '+freelancerUser.name+',</p><p>This is a confirmation' +
-                        ' of your successful subscription to Unilance. We are pleased to have you as one of our freelancers and'+
+                        ' of your successful subscription to KingsHire. We are pleased to have you as one of our freelancers and'+
                         ' we are looking forward to working together on many exciting projects.</p>'+
-                        '<p>Thank you,<br>The Unilance Team' +
+                        '<p>Thank you,<br>The KingsHire Team' +
                         '<br>07448804768</p>';
 
                     let newSubscriptionNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">New Subscription Notification</h1>'+
-                        '<p>Hello,</p><p>This is a notification to inform you of a new subscription to Unilance. Please find the user below:</p>'+
+                        '<p>Hello,</p><p>This is a notification to inform you of a new subscription to KingsHire. Please find the user below:</p>'+
                         `<ul><li>Name: ${freelancerUser.name}</li><li>Surname: ${freelancerUser.surname}</li></ul>`+
-                        `<p>Thank you,<br>Unilance Development Team</p>`;
+                        `<p>Thank you,<br>KingsHire Development Team</p>`;
 
                     freelancerUser.save(err => {
                         if(err){
@@ -254,16 +254,16 @@ function server_io(io) {
 
                     let cancelSubscriptionMessageToUserHTML= '<h1 style="color: #213e53; font-size: 1.1rem">Subscription Cancelled</h1>'+
                         '<p>Hello '+freelancerUser.name+',</p><p>This is a confirmation' +
-                        ' of <the></the> cancellation of your subscription with Unilance. We are sad to see you go, but your account is'+
+                        ' of <the></the> cancellation of your subscription with KingsHire. We are sad to see you go, but your account is'+
                         ' still active. If you change your mind, please  <a target="_blank" style="text-decoration: underline; color: #0645AD; cursor: pointer" ' +
-                        'href='+unilanceLoginURL+'> login </a> to your account to subscribe again.</p>'+
-                        '<p>Thank you,<br>The Unilance Team' +
+                        'href='+kingsHireLoginURL+'> login </a> to your account to subscribe again.</p>'+
+                        '<p>Thank you,<br>The KingsHire Team' +
                         '<br>07448804768</p>';
 
                     let subscriptionCancelledNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">Subscription Cancelled Notification</h1>'+
-                        '<p>Hello,</p><p>We are sorry to announce that the following user is no longer subscribed to unilance:</p>'+
+                        '<p>Hello,</p><p>We are sorry to announce that the following user is no longer subscribed to KingsHire:</p>'+
                         `<ul><li>Name: ${freelancerUser.name}</li><li>Surname: ${freelancerUser.surname}</li></ul>`+
-                        `<p>Thank you,<br>Unilance Development Team</p>`;
+                        `<p>Thank you,<br>KingsHire Development Team</p>`;
 
                     freelancerUser.save(err => {
                         if(err){

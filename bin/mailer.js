@@ -6,7 +6,7 @@ let smtpTransport = nodemailer.createTransport({
     secure: true,
     auth:{
         type: 'OAuth2',
-        user: 'unilance.admnistration@gmail.com',
+        user: 'kingshire.team@gmail.com',
         clientId: process.env.google_clientID,
         clientSecret: process.env.google_secretID,
         refreshToken: process.env.google_refreshToken,
@@ -18,7 +18,7 @@ let smtpTransport = nodemailer.createTransport({
 function mailerFunction(recipientEmail, subject, messageHTML) {
     let mailOptions = {
         to: recipientEmail,
-        from: 'unilance.admnistration@gmail.com',
+        from: 'kingshire.team@gmail.com',
         subject: subject,
         html: messageHTML
     };

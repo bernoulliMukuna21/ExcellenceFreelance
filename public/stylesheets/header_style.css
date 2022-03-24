@@ -1,4 +1,9 @@
 /* Header Stylesheet*/
+.kingsHireImage{
+    height: 5vh;
+    width: 100%;
+    cursor: pointer;
+}
 .top-mobilenavcontainer{
     display: none;
 }

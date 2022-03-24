@@ -9,6 +9,7 @@ $(document).ready(function(){
     }
     if(!$('.bottom-side .freelance-mssg-btn').is(':visible')){
         $('.bottom-side').css({
+            'display':'flex',
             'justifyContent': 'center'
         });
         $('.bottom-side button').css({

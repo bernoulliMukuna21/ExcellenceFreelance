@@ -1,7 +1,8 @@
 header
     - let clientToFreelancerMessage;
     div.top-container
-        h1.web-title: a(href='/') Unilance
+        a.web-title(href='/')
+            img.kingsHireImage(src='/images/kingsHireImage-removebg-preview.png')
         div.top-navbar(style='color:#213e53;')
             if (!isLogged)
                 a(href='/users/join'): button(class='nav-btn', id='joinNow') Join For Free
@@ -32,7 +33,7 @@ header
 
     div.top-mobilenavcontainer
         .mobileweb-title
-            a(href='/') Unilance
+            a(href='/') KingsHire
         div.mobiletop-navbar
             if (!isLogged)
                 .mobileheaderLinks

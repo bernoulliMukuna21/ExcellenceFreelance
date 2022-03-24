@@ -81,7 +81,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.all(/.*/, function(req, res, next) {
+/*app.all(/.*!/, function(req, res, next) {
     let host = req.header("host");
     let domainName = host.split('.');
     domainName.shift();
@@ -93,7 +93,7 @@ app.all(/.*/, function(req, res, next) {
     else {
         next();
     }
-});
+});*/
 
 app.use('/', indexRouter); 
 app.use('/users', usersRouter);

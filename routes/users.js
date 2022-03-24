@@ -28,12 +28,12 @@ router.get('/', function(req, res, next) {
 
 });
 
-// ~~~~~~~~~~~~~~~~~ Unilance users helper functions  ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ KingsHire users helper functions  ~~~~~~~~~~~~~~~~~~~
 
 // The variable will be used to track if a user is signing up as client or freelancer
 let userType_Oauth = {};
-let domainName = 'https://www.unilance.co.uk';
-let administrationEmail = 'unilance.admnistration@gmail.com';
+let domainName = 'https://kingshire.herokuapp.com';
+let administrationEmail = 'kingshire.team@gmail.com';
 
 function loginSystem(req, res, user, userType, flash_message){
     console.log('Inside login system')
@@ -54,7 +54,7 @@ function loginSystem(req, res, user, userType, flash_message){
         else{
             if(userType==='client'){
                 // if sign up as a client, then direct to the homepage
-                //'Welcome to Unilance.' +
+                //'Welcome to KingsHire.' +
                 //                     ' Thank you for joining us!'
                 req.flash('success_message', flash_message);
                 res.redirect('/');
@@ -66,7 +66,7 @@ function loginSystem(req, res, user, userType, flash_message){
     });
 }
 
-// ~~~~~~~~~~~~~~~~~ Joining Unilance gets and posts ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~ Joining KingsHire gets and posts ~~~~~~~~~~~~~~~~~~~
 
 // get the join view page
 router.get('/join', forwardAuthentication, function(req, res, next) {
@@ -142,19 +142,19 @@ router.post('/join/:userType', function (req, res, next) {
                             throw err;
                         }
                         else{
-                            let welcomeEmailToUser = '<h1 style="color: #213e53; font-size: 1.1rem">Welcome to Unilance</h1>'+
+                            let welcomeEmailToUser = '<h1 style="color: #213e53; font-size: 1.1rem">Welcome to KingsHire</h1>'+
                                 '<p>You have successfully signed up to '+' <a target="_blank" style="text-decoration: underline;' +
-                                ' color: #0645AD; cursor: pointer" href='+domainName+'> Unilance.co.uk</a>'+
+                                ' color: #0645AD; cursor: pointer" href='+domainName+'> KingsHire</a>'+
                                 ' . Well done!</p><p> We are looking to working' +
-                                'with you.</p><p>Thank you<br>The Unilance Team<br>07448804768</p>';
+                                'with you.</p><p>Thank you<br>The KingsHire Team<br>07448804768</p>';
 
                             let signUpNotificationToAdmin = '<h1 style="color: #213e53; font-size: 1.1rem">New Joiner - Notification</h1>'+
                                 '<p> I am happy to announce to you that there has been a new joiner.</p>'+
                                 `<ul><li>Name:${name}</li><li>Surname: ${surname}</li></ul>`+
-                                `<p>Thank you,<br>Unilance Development Team</p>`
+                                `<p>Thank you,<br>KingsHire Development Team</p>`
 
                             mailer.smtpTransport.sendMail(mailer.mailerFunction(email,
-                                "Welcome to Unilance", welcomeEmailToUser), function (err) {
+                                "Welcome to KingsHire", welcomeEmailToUser), function (err) {
                                 if(err){ throw err }
                                 else{
                                     console.log('user successfully signed up!');
@@ -167,7 +167,7 @@ router.post('/join/:userType', function (req, res, next) {
                                 }
                             });
 
-                            let flash_message = `Welcome to Unilance.com, ${newUser.name} ${newUser.surname}.` +
+                            let flash_message = `Welcome to KingsHire, ${newUser.name} ${newUser.surname}.` +
                                 ' Thank you for joining us!'
                             loginSystem(req, res, newUser, userType, flash_message);
                         }
@@ -313,7 +313,7 @@ router.post('/forgot', function (req, res, next) {
                 from: administrationEmail,
                 subject: 'Password Reset',
                 text: 'Hello World '+'\n' + 'Your Password needs changing',
-                html: '<h1 style="color: #213e53; font-size: 1.1rem">Unilance Password Reset</h1>'+
+                html: '<h1 style="color: #213e53; font-size: 1.1rem">KingsHire Password Reset</h1>'+
                     '<p> Your are receiving this email because you (or someone else) have' +
                     ' requested to reset the password of your account.<br><i> Please click the ' +
                     'following, or paste this into your browser to complete this process.</i>' +
@@ -493,7 +493,7 @@ function passportUser(req, res, user, info, current_user, next){
                 return;
             }
             else{
-                let flash_message = `Welcome to Unilance, ${newUser.name} ${newUser.surname}.` +
+                let flash_message = `Welcome to KingsHire, ${newUser.name} ${newUser.surname}.` +
                     ' Thank you for joining us!';
 
                 try{
