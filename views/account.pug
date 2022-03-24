@@ -139,8 +139,18 @@ block content
                             - // if that is the case, then they are not allowd to update the email and password on this platform.
                             - if(freelancerUser.authentication.authName){updateOption = 'pointer-events: none; background-color: #213e53; color: white; border-color: #213e53; font-weight: bold';}
 
-                            h1 Update Personal Information
-                            p Setup your general profile details.
+                            div.freelance-profile-update-header
+                                section
+                                    h1 Update Personal Information
+                                    p Setup your general profile details.
+                                section
+                                    ul(style="list-style: none")
+                                        if(freelancerUser.authentication.authName)
+                                            li * Google account signup cannot update email or password.
+                                        li * Please click #{' '}
+                                            i.fas.fa-plus-square(style="color: #1E88E5")
+                                            | #{' '} to add information.
+                                        li * Click Save at the bottom after completing the form
 
                             form.update-general-information(method='post', autocomplete="off")
                                 h3 Name and other General Information

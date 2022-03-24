@@ -179,7 +179,46 @@
     padding: .5rem;
     border-radius: .5rem;
     cursor: pointer;
+    width: fit-content;
 }
+/*.freelancer-serviceAndPrice-profile {
+    margin-bottom: 1rem;
+    border: 0.1rem solid #213e53;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}*/
+.freelancer-serviceAndPrice-profile:last-child {
+    margin-bottom: 0;
+}
+.freelancer-serviceAndPrice-profile ul {
+    list-style: none;
+}
+.freelancer-serviceAndPrice-profile > div:first-child {
+    display: flex;
+    align-items: center;
+}
+.freelancer-serviceAndPrice-profile h4 {
+    font-size: 1.1rem;
+}
+.freelancer-serviceAndPrice-profile > div:first-child h4:last-child {
+    border-left: 0.2rem solid black;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+}
+.freelancer-serviceAndPrice-profile > div:last-child.freelance-package-offer {
+    border-top: 0.2rem solid black;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+}
+.freelancer-serviceAndPrice-profile > div:last-child ul {
+    margin-left: 5%;
+}
+.freelancer-serviceAndPrice-profile > div:last-child ul li {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+/*
 .freelancer-serviceAndPrice-profile:last-child{
     margin-bottom: 0;
 }
@@ -212,6 +251,7 @@
     margin: .5rem 0;
     font-size: 1.1rem;
 }
+*/
 
 
 .default-service-container{
@@ -669,10 +709,29 @@ button.like{
 /************************************************************************************************************************
 ************************************************************************************************************************
 ****************************************       Profile Update Page      *************************************************/
-.freelancer-update-page>p{
+.freelancer-update-page .freelance-profile-update-header{
+    display: flex;
+    padding: .75rem;
+}
+.freelancer-update-page .freelance-profile-update-header section:first-child{
+    flex: 1;
+    border-right: .2rem solid black;
+    margin-right: .5rem;
+    padding-right: .5rem;
+}
+.freelancer-update-page .freelance-profile-update-header section:last-child{
+    flex: 1;
+}
+
+.freelancer-update-page .freelance-profile-update-header section:last-child ul li{
+    font-size: 1.2rem;
+}
+
+
+.freelancer-update-page .freelance-profile-update-header p{
     opacity:50%;
     margin-top: .5rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 .freelancer-update-page input:focus, .user-bio-one section textarea:focus, .user-education-years select:focus,
 .input-group-btn:focus, .user-education-years button:focus, #add-skills-button:focus, #servicePriceBttn:focus{
