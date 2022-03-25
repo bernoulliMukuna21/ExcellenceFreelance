@@ -14,16 +14,8 @@ let connection_URI = process.env.remote_MongoURI;// Remote mongoDB connection
 //let database_name = '/excellence_freelance';
 //let connection_URI = process.env.local_connectionURI+database_name;
 
-
-let connection_Options = {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-    useUnifiedTopology: true
-}
-
 try{
-    EF_DB_conn.excellence_freelanceDB = mongoose.createConnection(connection_URI, connection_Options);
+    EF_DB_conn.excellence_freelanceDB = mongoose.createConnection(connection_URI);
     console.log('Mongo Connection Established!');
 
 }catch (err) {
